@@ -1,0 +1,311 @@
+<% content_for :title, "LeLocal - Trouvez l'espace idéal pour votre communauté" %>
+
+<!-- Section héro avec image d'arrière-plan -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-content">
+      <h1>Trouvez l'espace idéal pour votre communauté</h1>
+      <p>Des milliers d'espaces disponibles pour vos événements, réunions et activités associatives</p>
+      <div class="search-box">
+        <form action="<%= search_spaces_path %>" method="get" class="search-input-group">
+          <div class="search-input">
+            <label>Où</label>
+            <input type="text" name="location" placeholder="Ville, quartier...">
+          </div>
+          <div class="search-input">
+            <label>Quand</label>
+            <input type="date" name="date" placeholder="Date">
+          </div>
+          <div class="search-input">
+            <label>Horaire</label>
+            <div class="time-inputs">
+              <select name="start_time" class="time-select">
+                <option>8:00</option>
+                <option>8:30</option>
+                <option>9:00</option>
+                <option>9:30</option>
+                <option>10:00</option>
+                <option>10:30</option>
+                <option>11:00</option>
+                <option>11:30</option>
+                <option>12:00</option>
+                <option>12:30</option>
+                <option>13:00</option>
+                <option>13:30</option>
+                <option>14:00</option>
+                <option>14:30</option>
+                <option>15:00</option>
+                <option>15:30</option>
+                <option>16:00</option>
+                <option>16:30</option>
+                <option>17:00</option>
+                <option>17:30</option>
+                <option>18:00</option>
+                <option>18:30</option>
+                <option>19:00</option>
+                <option>19:30</option>
+                <option>20:00</option>
+                <option>20:30</option>
+                <option>21:00</option>
+                <option>21:30</option>
+                <option>22:00</option>
+              </select>
+              <span>à</span>
+              <select name="end_time" class="time-select">
+                <option>8:30</option>
+                <option>9:00</option>
+                <option>9:30</option>
+                <option>10:00</option>
+                <option>10:30</option>
+                <option>11:00</option>
+                <option>11:30</option>
+                <option>12:00</option>
+                <option>12:30</option>
+                <option>13:00</option>
+                <option>13:30</option>
+                <option>14:00</option>
+                <option>14:30</option>
+                <option>15:00</option>
+                <option>15:30</option>
+                <option>16:00</option>
+                <option>16:30</option>
+                <option>17:00</option>
+                <option>17:30</option>
+                <option>18:00</option>
+                <option>18:30</option>
+                <option>19:00</option>
+                <option>19:30</option>
+                <option>20:00</option>
+                <option>20:30</option>
+                <option>21:00</option>
+                <option>21:30</option>
+                <option>22:00</option>
+                <option>22:30</option>
+              </select>
+            </div>
+          </div>
+          <div class="search-input">
+            <label>Combien</label>
+            <select name="capacity">
+              <option>1-10 personnes</option>
+              <option>11-30 personnes</option>
+              <option>31-50 personnes</option>
+              <option>Plus de 50 personnes</option>
+            </select>
+          </div>
+          <button type="submit" class="search-btn">Rechercher</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Section avec des catégories d'espaces -->
+<section class="categories">
+  <div class="container">
+    <h2>Découvrez nos espaces par catégorie</h2>
+    <div class="category-grid">
+      <div class="category-card">
+        <div class="category-img" style="background-image: url('https://images.unsplash.com/photo-1497366754035-f200968a6e72')"></div>
+        <h3>Salles de réunion</h3>
+        <p>Parfaites pour vos réunions et ateliers</p>
+      </div>
+      <div class="category-card">
+        <div class="category-img" style="background-image: url('https://images.unsplash.com/photo-1517245386807-bb43f82c33c4')"></div>
+        <h3>Espaces événementiels</h3>
+        <p>Idéaux pour vos conférences et événements</p>
+      </div>
+      <div class="category-card">
+        <div class="category-img" style="background-image: url('https://images.unsplash.com/photo-1574974671999-24b7dfbb0d53')"></div>
+        <h3>Ateliers créatifs</h3>
+        <p>Des espaces conçus pour la création et l'artisanat</p>
+      </div>
+      <div class="category-card">
+        <div class="category-img" style="background-image: url('https://images.unsplash.com/photo-1526948531399-320e7e40f0ca')"></div>
+        <h3>Espaces sportifs</h3>
+        <p>Pour les activités sportives et le bien-être</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Section des espaces populaires -->
+<section class="featured-spaces">
+  <div class="container">
+    <div class="section-header">
+      <h2>Espaces populaires</h2>
+      <a href="/spaces" class="view-all">Voir tout <i class="fas fa-arrow-right"></i></a>
+    </div>
+    <div class="space-grid">
+      <div class="space-card">
+        <div class="space-img" style="background-image: url('https://images.unsplash.com/photo-1497366814617-c0893dfb1931')"></div>
+        <div class="space-badge">Populaire</div>
+        <div class="space-content">
+          <div class="space-title">
+            <h3>Espace Créatif Montmartre</h3>
+            <div class="space-rating">
+              <i class="fas fa-star"></i>
+              <span>4.8</span>
+            </div>
+          </div>
+          <p class="space-location"><i class="fas fa-map-marker-alt"></i> Paris 18ème</p>
+          <p class="space-capacity"><i class="fas fa-users"></i> Jusqu'à 25 personnes</p>
+          <div class="space-footer">
+            <p class="space-price">45€ / heure</p>
+            <a href="#" class="btn-small">Réserver</a>
+          </div>
+        </div>
+      </div>
+      <div class="space-card">
+        <div class="space-img" style="background-image: url('https://images.unsplash.com/photo-1577412647305-991150c7d163')"></div>
+        <div class="space-content">
+          <div class="space-title">
+            <h3>Salle Panoramique République</h3>
+            <div class="space-rating">
+              <i class="fas fa-star"></i>
+              <span>4.7</span>
+            </div>
+          </div>
+          <p class="space-location"><i class="fas fa-map-marker-alt"></i> Paris 11ème</p>
+          <p class="space-capacity"><i class="fas fa-users"></i> Jusqu'à 40 personnes</p>
+          <div class="space-footer">
+            <p class="space-price">60€ / heure</p>
+            <a href="#" class="btn-small">Réserver</a>
+          </div>
+        </div>
+      </div>
+      <div class="space-card">
+        <div class="space-img" style="background-image: url('https://images.unsplash.com/photo-1519167758481-83f550bb49b3')"></div>
+        <div class="space-badge">Nouveau</div>
+        <div class="space-content">
+          <div class="space-title">
+            <h3>Atelier Artistique Bastille</h3>
+            <div class="space-rating">
+              <i class="fas fa-star"></i>
+              <span>4.9</span>
+            </div>
+          </div>
+          <p class="space-location"><i class="fas fa-map-marker-alt"></i> Paris 12ème</p>
+          <p class="space-capacity"><i class="fas fa-users"></i> Jusqu'à 15 personnes</p>
+          <div class="space-footer">
+            <p class="space-price">35€ / heure</p>
+            <a href="#" class="btn-small">Réserver</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Section "Comment ça marche" -->
+<section class="how-it-works">
+  <div class="container">
+    <h2>Comment ça marche</h2>
+    <div class="steps-grid">
+      <div class="step-card">
+        <div class="step-icon">
+          <i class="fas fa-search"></i>
+        </div>
+        <h3>Rechercher</h3>
+        <p>Trouvez l'espace parfait selon vos critères : emplacement, date, capacité...</p>
+      </div>
+      <div class="step-card">
+        <div class="step-icon">
+          <i class="fas fa-calendar-alt"></i>
+        </div>
+        <h3>Réserver</h3>
+        <p>Choisissez votre créneau et réservez en quelques clics, paiement sécurisé.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-icon">
+          <i class="fas fa-key"></i>
+        </div>
+        <h3>Profiter</h3>
+        <p>Accédez à votre espace et profitez-en pour votre événement ou activité.</p>
+      </div>
+    </div>
+    <div class="cta-container">
+      <a href="#" class="btn-large">En savoir plus</a>
+    </div>
+  </div>
+</section>
+
+<!-- Section témoignages -->
+<section class="testimonials">
+  <div class="container">
+    <h2>Ce que disent nos utilisateurs</h2>
+    <div class="testimonial-slider">
+      <div class="testimonial-card">
+        <div class="testimonial-content">
+          <p>"J'ai trouvé l'espace parfait pour notre atelier mensuel. Le processus de réservation était simple et rapide. Je recommande vivement !"</p>
+        </div>
+        <div class="testimonial-author">
+          <img src="https://randomuser.me/api/portraits/women/32.jpg" alt="Sophie Martin">
+          <div class="author-info">
+            <h4>Sophie Martin</h4>
+            <p>Association Arts et Culture</p>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial-card">
+        <div class="testimonial-content">
+          <p>"LeLocal nous a permis de trouver des salles adaptées à nos besoins, même en dernière minute. Un service client au top !"</p>
+        </div>
+        <div class="testimonial-author">
+          <img src="https://randomuser.me/api/portraits/men/45.jpg" alt="Thomas Dubois">
+          <div class="author-info">
+            <h4>Thomas Dubois</h4>
+            <p>Club sportif local</p>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial-card">
+        <div class="testimonial-content">
+          <p>"Grâce à LeLocal, notre association a pu diversifier ses lieux d'activités et toucher un public plus large. Un vrai plus pour notre développement !"</p>
+        </div>
+        <div class="testimonial-author">
+          <img src="https://randomuser.me/api/portraits/women/68.jpg" alt="Julie Moreau">
+          <div class="author-info">
+            <h4>Julie Moreau</h4>
+            <p>Association d'aide à l'enfance</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Section newsletter -->
+<section class="newsletter">
+  <div class="container">
+    <div class="newsletter-content">
+      <h2>Restez informés</h2>
+      <p>Inscrivez-vous à notre newsletter pour recevoir nos actualités et offres spéciales</p>
+      <form class="newsletter-form">
+        <input type="email" placeholder="Votre adresse email" required>
+        <button type="submit" class="btn-medium">S'inscrire</button>
+      </form>
+      <p class="small">En vous inscrivant, vous acceptez de recevoir nos communications par email. Vous pourrez vous désinscrire à tout moment.</p>
+    </div>
+  </div>
+</section>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Initialiser la date minimum pour le champ de date au jour actuel
+  const dateInput = document.querySelector('input[type="date"]');
+  if (dateInput) {
+    const today = new Date().toISOString().split('T')[0];
+    dateInput.min = today;
+  }
+  
+  // Gestion des clics sur les cartes de catégorie
+  const categoryCards = document.querySelectorAll('.category-card');
+  categoryCards.forEach(card => {
+    card.addEventListener('click', function() {
+      const category = this.querySelector('h3').textContent;
+      window.location.href = `/spaces/search?category=${encodeURIComponent(category)}`;
+    });
+  });
+});
+</script>

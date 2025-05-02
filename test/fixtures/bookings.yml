@@ -1,0 +1,19 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  space_id: 1
+  user_id: 1
+  date: 2025-05-01
+  start_time: 2025-05-01 21:07:28
+  end_time: 2025-05-01 21:07:28
+  status: MyString
+  total_price: 9.99
+
+two:
+  space_id: 1
+  user_id: 1
+  date: 2025-05-01
+  start_time: 2025-05-01 21:07:28
+  end_time: 2025-05-01 21:07:28
+  status: MyString
+  total_price: 9.99

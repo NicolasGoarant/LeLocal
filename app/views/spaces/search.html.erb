@@ -1,0 +1,240 @@
+<% content_for :title, "LeLocal - Résultats de recherche" %>
+
+<section class="search-results">
+  <div class="container">
+    <div class="search-header">
+      <h1>Espaces à <%= @location.presence || 'tous les emplacements' %></h1>
+      <p><%= @spaces.count %> espaces trouvés</p>
+      
+      <div class="search-filters">
+        <div class="filter">
+          <label>Trier par :</label>
+          <select id="sort-options" onchange="updateSort(this.value)">
+            <option value="rating" <%= @sort == 'rating' ? 'selected' : '' %>>Évaluation</option>
+            <option value="price_asc" <%= @sort == 'price_asc' ? 'selected' : '' %>>Prix (croissant)</option>
+            <option value="price_desc" <%= @sort == 'price_desc' ? 'selected' : '' %>>Prix (décroissant)</option>
+            <option value="capacity" <%= @sort == 'capacity' ? 'selected' : '' %>>Capacité</option>
+          </select>
+        </div>
+        
+        <% if @date.present? %>
+          <div class="filter-tag">
+            <span>Date: <%= @date %></span>
+            <button onclick="removeFilter('date')" class="filter-remove">×</button>
+          </div>
+        <% end %>
+        
+        <% if @capacity_filter.present? %>
+          <div class="filter-tag">
+            <span>Capacité: <%= @capacity_filter %></span>
+            <button onclick="removeFilter('capacity')" class="filter-remove">×</button>
+          </div>
+        <% end %>
+      </div>
+    </div>
+    
+    <div class="search-content">
+      <div class="spaces-list">
+        <% if @spaces.any? %>
+          <% @spaces.each do |space| %>
+            <div class="space-card horizontal" data-space-id="<%= space.id %>">
+              <div class="space-img" style="background-image: url('<%= space.images %>')"></div>
+              <div class="space-content">
+                <div class="space-title">
+                  <h3><%= space.name %></h3>
+                  <div class="space-rating">
+                    <i class="fas fa-star"></i>
+                    <span><%= space.rating %></span>
+                  </div>
+                </div>
+                <p class="space-description"><%= truncate(space.description, length: 100) %></p>
+                <p class="space-location"><i class="fas fa-map-marker-alt"></i> <%= space.address %></p>
+                <p class="space-capacity"><i class="fas fa-users"></i> Jusqu'à <%= space.capacity %> personnes</p>
+                <div class="space-footer">
+                  <p class="space-price"><%= space.price_per_hour %>€ / heure</p>
+                  <div class="space-actions">
+                    <a href="<%= space_path(space) %>" class="btn-small">Voir détails</a>
+                    <% if @date.present? && @start_time.present? && @end_time.present? %>
+                      <a href="<%= new_space_booking_path(space, date: @date, start_time: @start_time, end_time: @end_time) %>" class="btn-small secondary">Réserver</a>
+                    <% else %>
+                      <a href="<%= new_space_booking_path(space) %>" class="btn-small secondary">Réserver</a>
+                    <% end %>
+                  </div>
+                </div>
+              </div>
+            </div>
+          <% end %>
+        <% else %>
+          <div class="no-results">
+            <i class="fas fa-search"></i>
+            <h3>Aucun espace trouvé</h3>
+            <p>Essayez de modifier vos critères de recherche</p>
+            <a href="/" class="btn-medium">Retour à l'accueil</a>
+          </div>
+        <% end %>
+      </div>
+      
+      <div class="map-container">
+        <div id="map"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Scripts pour la carte et les interactions -->
+<script>
+  // Fonction d'initialisation de la carte Google Maps
+  function initMap() {
+    // Récupérer les marqueurs depuis les données du contrôleur
+    const markers = <%= raw @markers.to_json %>;
+    
+    // Centrer la carte sur le premier marqueur ou sur une position par défaut si aucun marqueur
+    const center = markers.length > 0 
+      ? { lat: markers[0].lat, lng: markers[0].lng } 
+      : { lat: 48.856614, lng: 2.3522219 }; // Paris par défaut
+    
+    // Créer la carte
+    const map = new google.maps.Map(document.getElementById('map'), {
+      zoom: 12,
+      center: center,
+      mapTypeControl: false,
+      streetViewControl: false,
+      fullscreenControl: true,
+      styles: [
+        {
+          "featureType": "poi",
+          "stylers": [{ "visibility": "off" }]
+        },
+        {
+          "featureType": "transit",
+          "elementType": "labels.icon",
+          "stylers": [{ "visibility": "off" }]
+        }
+      ]
+    });
+    
+    // Créer les limites pour ajuster le zoom
+    let bounds = new google.maps.LatLngBounds();
+    
+    // Tableau pour stocker les objets marqueurs
+    const markerObjects = [];
+    
+    // Ajouter les marqueurs à la carte
+    markers.forEach(marker => {
+      const googleMarker = new google.maps.Marker({
+        position: { lat: marker.lat, lng: marker.lng },
+        map: map,
+        title: marker.info,
+        animation: google.maps.Animation.DROP
+      });
+      
+      // Stocker l'ID de l'espace dans le marqueur
+      googleMarker.spaceId = marker.id;
+      
+      // Ajouter le marqueur au tableau
+      markerObjects.push(googleMarker);
+      
+      // Étendre les limites pour inclure ce marqueur
+      bounds.extend(googleMarker.position);
+      
+      // Ajouter une infowindow au marqueur
+      const infowindow = new google.maps.InfoWindow({
+        content: `
+          <div class="map-info-window">
+            <h3>${marker.info}</h3>
+            <a href="/spaces/${marker.id}" class="map-link">Voir détails</a>
+          </div>
+        `
+      });
+      
+      // Fermer toutes les infowindows ouvertes avant d'en ouvrir une nouvelle
+      googleMarker.addListener('click', () => {
+        markerObjects.forEach(m => {
+          if (m.infowindow) {
+            m.infowindow.close();
+          }
+        });
+        
+        infowindow.open(map, googleMarker);
+        
+        // Mettre en surbrillance la carte correspondante
+        highlightCard(marker.id);
+      });
+      
+      // Stocker l'infowindow avec le marqueur
+      googleMarker.infowindow = infowindow;
+    });
+    
+    // Ajuster le zoom si plusieurs marqueurs
+    if (markers.length > 1) {
+      map.fitBounds(bounds);
+    }
+    
+    // Ajouter des interactions entre les cartes d'espace et la carte
+    setupCardMapInteractions(markerObjects);
+  }
+  
+  // Mettre en surbrillance une carte d'espace
+  function highlightCard(spaceId) {
+    // Supprimer la surbrillance de toutes les cartes
+    document.querySelectorAll('.space-card.highlighted').forEach(card => {
+      card.classList.remove('highlighted');
+    });
+    
+    // Ajouter la surbrillance à la carte correspondante
+    const card = document.querySelector(`.space-card[data-space-id="${spaceId}"]`);
+    if (card) {
+      card.classList.add('highlighted');
+      // Faire défiler jusqu'à la carte
+      card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      
+      // Supprimer la surbrillance après 3 secondes
+      setTimeout(() => {
+        card.classList.remove('highlighted');
+      }, 3000);
+    }
+  }
+  
+  // Configuration des interactions entre les cartes d'espace et la carte
+  function setupCardMapInteractions(markers) {
+    document.querySelectorAll('.space-card').forEach(card => {
+      const spaceId = parseInt(card.getAttribute('data-space-id'));
+      
+      // Survoler une carte fait rebondir le marqueur correspondant
+      card.addEventListener('mouseenter', () => {
+        const marker = markers.find(m => m.spaceId === spaceId);
+        if (marker) {
+          marker.setAnimation(google.maps.Animation.BOUNCE);
+          setTimeout(() => {
+            marker.setAnimation(null);
+          }, 700);
+        }
+      });
+      
+      // Quitter une carte arrête l'animation du marqueur
+      card.addEventListener('mouseleave', () => {
+        const marker = markers.find(m => m.spaceId === spaceId);
+        if (marker) {
+          marker.setAnimation(null);
+        }
+      });
+    });
+  }
+  
+  // Fonction pour mettre à jour le tri des résultats
+  function updateSort(sortValue) {
+    const currentUrl = new URL(window.location.href);
+    currentUrl.searchParams.set('sort', sortValue);
+    window.location.href = currentUrl.toString();
+  }
+  
+  // Fonction pour supprimer un filtre
+  function removeFilter(filterName) {
+    const currentUrl = new URL(window.location.href);
+    currentUrl.searchParams.delete(filterName);
+    window.location.href = currentUrl.toString();
+  }
+</script>
+
+<!-- Chargement de l'API Google Maps -->
+<script src="https://maps.googleapis.com/maps/api/js?key=<%= ENV['GOOGLE_MAPS_API_KEY'] %>&callback=initMap" async defer></script>

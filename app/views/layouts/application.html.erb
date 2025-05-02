@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LeLocal - La plateforme de réservation d'espaces communautaires</title>
+  <%= csrf_meta_tags %>
+  <%= csp_meta_tag %>
+  
+  <%= stylesheet_link_tag 'application', media: 'all', 'data-turbolinks-track': 'reload' %>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>
+</head>
+<body>
+  <!-- Barre de navigation -->
+  <nav class="navbar">
+    <div class="container">
+      <div class="logo">
+        <a href="/">
+          <span class="logo-text">Le<span class="highlight">Local</span></span>
+        </a>
+      </div>
+      <div class="search-bar">
+        <input type="text" placeholder="Rechercher un espace communautaire...">
+        <button><i class="fas fa-search"></i></button>
+      </div>
+      <div class="menu">
+        <a href="#" class="host-link">Proposer un espace</a>
+        <a href="#" class="login-btn">Connexion</a>
+        <a href="#" class="signup-btn">Inscription</a>
+      </div>
+    </div>
+  </nav>
+  
+  <%= yield %>
+  
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-columns">
+        <div class="footer-column">
+          <h3>LeLocal</h3>
+          <p>La plateforme de référence pour la réservation d'espaces communautaires.</p>
+          <div class="social-icons">
+            <a href="#"><i class="fab fa-facebook-f"></i></a>
+            <a href="#"><i class="fab fa-twitter"></i></a>
+            <a href="#"><i class="fab fa-instagram"></i></a>
+            <a href="#"><i class="fab fa-linkedin-in"></i></a>
+          </div>
+        </div>
+        <div class="footer-column">
+          <h4>Liens utiles</h4>
+          <ul>
+            <li><a href="#">À propos</a></li>
+            <li><a href="#">Comment ça marche</a></li>
+            <li><a href="#">FAQ</a></li>
+            <li><a href="#">Blog</a></li>
+            <li><a href="#">Nous contacter</a></li>
+          </ul>
+        </div>
+        <div class="footer-column">
+          <h4>Ressources</h4>
+          <ul>
+            <li><a href="#">Proposer un espace</a></li>
+            <li><a href="#">Devenir partenaire</a></li>
+            <li><a href="#">Guide des associations</a></li>
+            <li><a href="#">Calendrier des événements</a></li>
+          </ul>
+        </div>
+        <div class="footer-column">
+          <h4>Légal</h4>
+          <ul>
+            <li><a href="#">Conditions d'utilisation</a></li>
+            <li><a href="#">Politique de confidentialité</a></li>
+            <li><a href="#">CGV</a></li>
+            <li><a href="#">Mentions légales</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; <%= Date.today.year %> LeLocal - Tous droits réservés</p>
+      </div>
+    </div>
+  </footer>
+  
+  <script>
+    // Script pour gérer les animations et interactions sur la page d'accueil
+    document.addEventListener('DOMContentLoaded', function() {
+      // Animation de la barre de navigation lors du défilement
+      window.addEventListener('scroll', function() {
+        const navbar = document.querySelector('.navbar');
+        if (window.scrollY > 50) {
+          navbar.style.padding = '10px 0';
+          navbar.style.boxShadow = '0 4px 10px rgba(0, 0, 0, 0.1)';
+        } else {
+          navbar.style.padding = '15px 0';
+          navbar.style.boxShadow = '0 2px 10px rgba(0, 0, 0, 0.1)';
+        }
+      });
+
+      // Initialiser la date minimum pour le champ de date au jour actuel
+      const dateInput = document.querySelector('input[type="date"]');
+      if (dateInput) {
+        const today = new Date().toISOString().split('T')[0];
+        dateInput.min = today;
+      }
+
+      // Ajoutez ici les autres fonctions JavaScript si nécessaire
+    });
+  </script>
+</body>
+</html>
+

@@ -1,0 +1,25 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  name: MyString
+  description: MyText
+  address: MyString
+  capacity: 1
+  price_per_hour: 9.99
+  rating: 9.99
+  images: MyString
+  latitude: 1.5
+  longitude: 1.5
+  category: MyString
+
+two:
+  name: MyString
+  description: MyText
+  address: MyString
+  capacity: 1
+  price_per_hour: 9.99
+  rating: 9.99
+  images: MyString
+  latitude: 1.5
+  longitude: 1.5
+  category: MyString

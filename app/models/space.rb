@@ -1,0 +1,133 @@
+class Space < ApplicationRecord
+  # Associations
+  has_many :bookings, dependent: :destroy
+  # has_many :reviews, dependent: :destroy  # À décommenter si vous créez un modèle Review
+  belongs_to :user, optional: true  # À adapter selon votre implémentation de l'authentification
+  # belongs_to :category  # À décommenter si vous utilisez une table Category distincte au lieu d'un attribut string
+
+  # Validations
+  validates :name, presence: true, length: { minimum: 3, maximum: 100 }
+  validates :description, presence: true, length: { minimum: 10 }
+  validates :address, presence: true
+  validates :capacity, presence: true, numericality: { only_integer: true, greater_than: 0 }
+  validates :price_per_hour, presence: true, numericality: { greater_than: 0 }
+  validates :category, presence: true
+  
+  # Geocoding (à activer si vous utilisez la gem geocoder)
+  geocoded_by :address
+  after_validation :geocode, if: :address_changed?
+  
+  # Scopes
+  scope :by_category, ->(category) { where(category: category) if category.present? }
+  scope :by_capacity, ->(min, max = nil) { 
+    if max
+      where(capacity: min..max)
+    else
+      where("capacity >= ?", min)
+    end
+  }
+  scope :by_location, ->(query) { where("address LIKE ?", "%#{query}%") if query.present? }
+  scope :by_price, ->(min, max = nil) {
+    if max
+      where(price_per_hour: min..max)
+    else
+      where("price_per_hour >= ?", min)
+    end
+  }
+  scope :featured, -> { where("rating >= ?", 4.5).order(rating: :desc).limit(3) }
+  scope :newest, -> { order(created_at: :desc) }
+  
+  # Méthodes d'instance
+  def address_short
+    # Retourne une version courte de l'adresse (ex: juste la ville et le code postal)
+    address.split(',').last(2).join(',').strip rescue address
+  end
+  
+  def featured?
+    # Un espace est considéré comme "en vedette" s'il a une note élevée
+    rating && rating >= 4.5
+  end
+  
+  def new_space?
+    # Un espace est considéré comme "nouveau" s'il a été créé récemment
+    created_at && created_at > 1.month.ago
+  end
+  
+  def available_at?(date, start_time, end_time)
+    # Vérifie si l'espace est disponible à la date et aux horaires spécifiés
+    # Cette méthode dépend de la structure de votre modèle Booking
+    bookings.where(date: date).none? do |booking|
+      # Convertir les chaînes de temps en objets Time pour comparaison
+      booking_start = Time.parse(booking.start_time.strftime("%H:%M"))
+      booking_end = Time.parse(booking.end_time.strftime("%H:%M"))
+      check_start = Time.parse(start_time)
+      check_end = Time.parse(end_time)
+      
+      # Vérifier si les plages se chevauchent
+      (check_start < booking_end) && (check_end > booking_start)
+    end
+  end
+  
+  def available_dates(start_date = Date.today, end_date = 1.month.from_now.to_date)
+    # Retourne un tableau de dates disponibles dans la plage spécifiée
+    (start_date..end_date).select do |date|
+      bookings.where(date: date).count < max_bookings_per_day
+    end
+  end
+  
+  def max_bookings_per_day
+    # Nombre maximum de réservations par jour (à ajuster selon vos besoins)
+    # Par défaut, on considère qu'un espace ne peut être réservé qu'une fois par jour
+    1
+  end
+  
+  def average_rating
+    # Retourne la note moyenne de l'espace
+    # Si vous implémentez un système d'avis, vous pouvez calculer la moyenne dynamiquement
+    rating || 0
+  end
+  
+  def price_for_duration(hours)
+    # Calcule le prix pour une durée spécifiée en heures
+    (price_per_hour * hours).round(2)
+  end
+  
+  # Méthodes de classe
+  def self.search(params)
+    spaces = self.all
+    
+    # Filtrer par emplacement
+    spaces = spaces.by_location(params[:location]) if params[:location].present?
+    
+    # Filtrer par catégorie
+    spaces = spaces.by_category(params[:category]) if params[:category].present?
+    
+    # Filtrer par capacité
+    if params[:capacity].present?
+      capacity_range = case params[:capacity]
+                       when "1-10 personnes" then [1, 10]
+                       when "11-30 personnes" then [11, 30]
+                       when "31-50 personnes" then [31, 50]
+                       when "Plus de 50 personnes" then [51, nil]
+                       else nil
+                       end
+      
+      if capacity_range
+        spaces = spaces.by_capacity(capacity_range[0], capacity_range[1])
+      end
+    end
+    
+    # Filtrer par disponibilité si date et horaires spécifiés
+    if params[:date].present? && params[:start_time].present? && params[:end_time].present?
+      date = Date.parse(params[:date]) rescue nil
+      start_time = params[:start_time]
+      end_time = params[:end_time]
+      
+      if date && start_time && end_time
+        spaces = spaces.select { |space| space.available_at?(date, start_time, end_time) }
+      end
+    end
+    
+    spaces
+  end
+end
