@@ -4,7 +4,16 @@ class Space < ApplicationRecord
   # has_many :reviews, dependent: :destroy  # À décommenter si vous créez un modèle Review
   belongs_to :user, optional: true  # À adapter selon votre implémentation de l'authentification
   # belongs_to :category  # À décommenter si vous utilisez une table Category distincte au lieu d'un attribut string
-
+  
+  # Ajouter pour les photos
+  has_many_attached :images
+  
+  # Pour les disponibilités
+  has_many :availabilities, dependent: :destroy
+  
+  # Pour les équipements (stockés comme un tableau dans un champ texte)
+  serialize :amenities, coder: YAML
+  
   # Validations
   validates :name, presence: true, length: { minimum: 3, maximum: 100 }
   validates :description, presence: true, length: { minimum: 10 }
@@ -92,6 +101,40 @@ class Space < ApplicationRecord
     (price_per_hour * hours).round(2)
   end
   
+  # Méthodes pour la gestion des équipements
+  def has_amenity?(amenity_name)
+    amenities && amenities.include?(amenity_name)
+  end
+  
+  # Méthode pour vérifier une disponibilité spécifique
+  def available_on_day?(day_of_week)
+    availabilities.where(day_of_week: day_of_week).exists?
+  end
+  
+  # Obtenir toutes les disponibilités pour un jour spécifique
+  def availabilities_for_day(day_of_week)
+    availabilities.where(day_of_week: day_of_week).order(:start_time)
+  end
+  
+  # Méthode pour configurer les disponibilités à partir des données du formulaire
+  def update_availabilities(availabilities_params)
+    return unless availabilities_params
+    
+    # Supprimer les anciennes disponibilités
+    self.availabilities.destroy_all
+    
+    # Créer les nouvelles disponibilités
+    availabilities_params.each do |index, availability_data|
+      next unless availability_data[:available] == "1"
+      
+      self.availabilities.create(
+        day_of_week: index.to_i,
+        start_time: availability_data[:start_time],
+        end_time: availability_data[:end_time]
+      )
+    end
+  end
+  
   # Méthodes de classe
   def self.search(params)
     spaces = self.all
@@ -129,5 +172,39 @@ class Space < ApplicationRecord
     end
     
     spaces
+  end
+  
+  # Ajouter des méthodes utilitaires pour les équipements
+  def self.amenity_categories
+    {
+      basic: ["wifi", "tables", "restroom", "heating"],
+      av: ["projector", "screen", "sound_system", "microphone"],
+      comfort: ["kitchen", "coffee", "refrigerator", "wheelchair"]
+    }
+  end
+  
+  def self.amenity_labels
+    {
+      "wifi" => "WiFi",
+      "tables" => "Tables et chaises",
+      "restroom" => "Toilettes",
+      "heating" => "Chauffage",
+      "projector" => "Vidéoprojecteur",
+      "screen" => "Écran de projection",
+      "sound_system" => "Système sonore",
+      "microphone" => "Microphone",
+      "kitchen" => "Cuisine/Coin cuisine",
+      "coffee" => "Machine à café",
+      "refrigerator" => "Réfrigérateur",
+      "wheelchair" => "Accessible PMR"
+    }
+  end
+  
+  def self.cancellation_policies
+    {
+      "flexible" => "Flexible (annulation gratuite jusqu'à 24h avant)",
+      "moderate" => "Modérée (annulation gratuite jusqu'à 3 jours avant)",
+      "strict" => "Stricte (annulation gratuite jusqu'à 7 jours avant)"
+    }
   end
 end

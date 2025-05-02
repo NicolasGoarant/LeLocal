@@ -38,7 +38,10 @@
         <% if @spaces.any? %>
           <% @spaces.each do |space| %>
             <div class="space-card horizontal" data-space-id="<%= space.id %>">
-              <div class="space-img" style="background-image: url('<%= space.images %>')"></div>
+              <!-- Solution sans service externe -->
+              <div class="space-img" style="background-color: #e0e0e0; color: #333; display: flex; align-items: center; justify-content: center; font-size: 14px; text-align: center; padding: 10px;">
+                <div><%= space.name %></div>
+              </div>
               <div class="space-content">
                 <div class="space-title">
                   <h3><%= space.name %></h3>

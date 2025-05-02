@@ -56,6 +56,12 @@ class SpacesController < ApplicationController
     @space = Space.new
   end
 
+  # GET /spaces/new_host
+  def new_host
+    @space = Space.new
+    render :new_host
+  end
+
   # GET /spaces/1/edit
   def edit
   end
@@ -89,290 +95,126 @@ class SpacesController < ApplicationController
 
   # GET /spaces/search
   def search
-    @location = params[:location]
-    @date = params[:date]
-    @start_time = params[:start_time]
-    @end_time = params[:end_time]
-    @capacity_filter = params[:capacity]
-    @sort = params[:sort] || "rating"
-    
-    # Construire la requête de base
-    @spaces = Space.all
-    
-    # Recherche plus flexible par emplacement
-    if @location.present?
-      location_query = "%#{@location.downcase}%"
-      @spaces = @spaces.where("LOWER(address) LIKE ? OR LOWER(name) LIKE ?", location_query, location_query)
-    end
-    
-    # Filtrer par capacité si spécifiée
-    if @capacity_filter.present?
-      capacity_range = case @capacity_filter
-                     when "1-10 personnes" then 1..10
-                     when "11-30 personnes" then 11..30
-                     when "31-50 personnes" then 31..50
-                     when "Plus de 50 personnes" then 51..1000
-                     else nil
-                     end
-      @spaces = @spaces.where(capacity: capacity_range) if capacity_range
-    end
-    
-    # Filtrer par date et horaire si spécifiés
-    # Note: Cette partie dépend de votre structure de réservations
-    if @date.present? && @start_time.present? && @end_time.present?
-      # Convertir les chaînes en objets Time pour comparaison
-      day_date = Date.parse(@date) rescue nil
-      
-      if day_date && defined?(Booking)
-        # Trouver les IDs des espaces qui ont déjà des réservations pour cette période
-        booking_start = Time.parse("#{@date} #{@start_time}") rescue nil
-        booking_end = Time.parse("#{@date} #{@end_time}") rescue nil
-        
-        if booking_start && booking_end
-          booked_space_ids = Booking.where(date: day_date)
-                                  .where("(start_time <= ? AND end_time > ?) OR (start_time < ? AND end_time >= ?) OR (start_time >= ? AND end_time <= ?)", 
-                                        booking_end, booking_start, booking_end, booking_start, booking_start, booking_end)
-                                  .pluck(:space_id)
-          
-          # Exclure les espaces déjà réservés
-          @spaces = @spaces.where.not(id: booked_space_ids) if booked_space_ids.any?
-        end
-      end
-    end
-    
-    # Trier les résultats
-    case @sort
-    when "price_asc"
-      @spaces = @spaces.order(price_per_hour: :asc)
-    when "price_desc"
-      @spaces = @spaces.order(price_per_hour: :desc)
-    when "capacity"
-      @spaces = @spaces.order(capacity: :desc)
-    else
-      @spaces = @spaces.order(rating: :desc) # Par défaut, trier par évaluation
-    end
-    
-    # Si aucun espace n'est trouvé, mais que nous avons un emplacement,
-    # créer des exemples temporaires pour les villes majeures
-    if @spaces.empty? && @location.present?
-      # Créer des exemples pour les villes principales
-      example_spaces = []
-      
-      # Coordonnées par défaut pour quelques villes françaises majeures
-      cities_data = {
-        "paris" => {
-          base_coords: [48.8566, 2.3522],
-          spaces: [
-            {
-              name: "Espace Créatif Montmartre",
-              description: "Espace lumineux au cœur de Montmartre, idéal pour les réunions créatives et ateliers artistiques. Grande verrière, équipement audio-visuel complet et coin détente inclus.",
-              address: "18 Rue des Abbesses, Paris 18ème",
-              capacity: 25,
-              price_per_hour: 45,
-              rating: 4.8,
-              images: "https://images.unsplash.com/photo-1497366754035-f200968a6e72",
-              category: "Ateliers créatifs"
-            },
-            {
-              name: "Salle Panoramique République",
-              description: "Grande salle avec vue panoramique sur la place de la République. Équipement audiovisuel haut de gamme, grande table modulable et cuisine attenante.",
-              address: "8 Boulevard du Temple, Paris 11ème",
-              capacity: 40,
-              price_per_hour: 60,
-              rating: 4.7,
-              images: "https://images.unsplash.com/photo-1577412647305-991150c7d163",
-              category: "Espaces événementiels"
-            }
-          ]
-        },
-        "lyon" => {
-          base_coords: [45.7579, 4.8357],
-          spaces: [
-            {
-              name: "Espace Confluence",
-              description: "Grand espace modulable dans le quartier moderne de Confluence. Idéal pour les événements d'entreprise, formations et séminaires.",
-              address: "12 Cours Charlemagne, Lyon 2ème",
-              capacity: 60,
-              price_per_hour: 75,
-              rating: 4.6,
-              images: "https://images.unsplash.com/photo-1517502884422-41eaead166d4",
-              category: "Espaces événementiels"
-            },
-            {
-              name: "Salle Croix-Rousse",
-              description: "Salle cosy sur les pentes de la Croix-Rousse, parfaite pour les réunions de travail. Ambiance chaleureuse et authentique.",
-              address: "5 Rue des Pierres Plantées, Lyon 1er",
-              capacity: 20,
-              price_per_hour: 40,
-              rating: 4.5,
-              images: "https://images.unsplash.com/photo-1534298261662-f8fdd25317db",
-              category: "Salles de réunion"
-            }
-          ]
-        },
-        "nancy" => {
-          base_coords: [48.6921, 6.1844],
-          spaces: [
-            {
-              name: "Espace Stanislas",
-              description: "Belle salle historique près de la place Stanislas. Architecture XVIIIe siècle, plafonds hauts et équipement moderne.",
-              address: "15 Rue des Dominicains, Nancy",
-              capacity: 30,
-              price_per_hour: 50,
-              rating: 4.7,
-              images: "https://images.unsplash.com/photo-1517502166878-35c93a0072f0",
-              category: "Espaces événementiels"
-            },
-            {
-              name: "Studio Art Déco Nancy",
-              description: "Studio inspiré du mouvement Art Déco nancéien. Parfait pour les photoshoots, ateliers créatifs et petites réceptions.",
-              address: "8 Rue Émile Gallé, Nancy",
-              capacity: 8,
-              price_per_hour: 35,
-              rating: 4.8,
-              images: "https://images.unsplash.com/photo-1519167115178-d40f3b7b4897",
-              category: "Ateliers créatifs"
-            },
-            {
-              name: "Petit Atelier Place Carnot",
-              description: "Charmant petit atelier à deux pas de la Place Carnot. Idéal pour les réunions intimes et les ateliers créatifs en petit comité.",
-              address: "3 Rue Saint-Dizier, Nancy",
-              capacity: 6,
-              price_per_hour: 30,
-              rating: 4.9,
-              images: "https://images.unsplash.com/photo-1520013333832-607bb507f2ce",
-              category: "Ateliers créatifs"
-            }
-          ]
-        },
-        "bordeaux" => {
-          base_coords: [44.8378, -0.5792],
-          spaces: [
-            {
-              name: "Atelier Chartrons",
-              description: "Bel atelier lumineux dans le quartier des Chartrons. Idéal pour les ateliers créatifs et les petits événements.",
-              address: "45 Rue Notre Dame, Bordeaux",
-              capacity: 25,
-              price_per_hour: 40,
-              rating: 4.7,
-              images: "https://images.unsplash.com/photo-1505409859467-3a796fd5798e",
-              category: "Ateliers créatifs"
-            },
-            {
-              name: "Salle Conférence Quinconces",
-              description: "Salle de conférence moderne au cœur de Bordeaux. Équipement audiovisuel haut de gamme, parfait pour vos présentations professionnelles.",
-              address: "12 Allées de Tourny, Bordeaux",
-              capacity: 80,
-              price_per_hour: 90,
-              rating: 4.9,
-              images: "https://images.unsplash.com/photo-1573167507387-6b4b98cb7c13",
-              category: "Espaces événementiels"
-            },
-            {
-              name: "Petit Studio Saint-Pierre",
-              description: "Charmant studio au cœur du quartier Saint-Pierre. Parfait pour les petites réunions et séances de travail en équipe restreinte.",
-              address: "7 Rue Saint-Pierre, Bordeaux",
-              capacity: 8,
-              price_per_hour: 35,
-              rating: 4.8,
-              images: "https://images.unsplash.com/photo-1497366811353-6870744d04b2",
-              category: "Salles de réunion"
-            }
-          ]
-        },
-        "lille" => {
-          base_coords: [50.6365, 3.0635],
-          spaces: [
-            {
-              name: "Espace Vieux-Lille",
-              description: "Charmant espace dans une maison flamande du Vieux-Lille. Idéal pour les réunions et ateliers dans un cadre authentique.",
-              address: "24 Rue de la Monnaie, Lille",
-              capacity: 20,
-              price_per_hour: 45,
-              rating: 4.6,
-              images: "https://images.unsplash.com/photo-1532916123995-50bad0972526",
-              category: "Salles de réunion"
-            },
-            {
-              name: "Loft Euralille",
-              description: "Grand loft moderne proche d'Euralille. Espace ouvert et lumineux, parfait pour les événements corporate.",
-              address: "142 Avenue Willy Brandt, Lille",
-              capacity: 100,
-              price_per_hour: 110,
-              rating: 4.8,
-              images: "https://images.unsplash.com/photo-1505409859467-3a796fd5798e",
-              category: "Espaces événementiels"
-            },
-            {
-              name: "Studio Créatif République",
-              description: "Petit studio créatif à proximité de la place de la République. Parfait pour les réunions en petit comité et les séances de brainstorming.",
-              address: "5 Rue du Molinel, Lille",
-              capacity: 10,
-              price_per_hour: 35,
-              rating: 4.7,
-              images: "https://images.unsplash.com/photo-1522071820081-009f0129c71c",
-              category: "Ateliers créatifs"
-            }
-          ]
-        }
-      }
-      
-      # Vérifier si l'emplacement correspond à une ville connue (insensible à la casse)
-      location_key = @location.downcase.strip
-      cities_data.keys.each do |city_name|
-        if location_key.include?(city_name)
-          # Créer des objets Space temporaires
-          city_data = cities_data[city_name]
-          
-          city_data[:spaces].each_with_index do |space_data, index|
-            # Créer un objet Space temporaire avec les données fournies
-            space = Space.new(space_data)
-            space.id = -(index + 1)  # Assignation d'IDs temporaires négatifs
-            space.latitude = city_data[:base_coords][0] + (index * 0.005)  # Légère variation pour les marqueurs
-            space.longitude = city_data[:base_coords][1] + (index * 0.005)
-            
-            # Filtrer par capacité si nécessaire
-            next if @capacity_filter.present? && capacity_range && !capacity_range.include?(space.capacity)
-            
-            example_spaces << space
-          end
-          
-          break
-        end
-      end
-      
-      # Assigner les espaces temporaires à @spaces
-      @spaces = example_spaces
-      
-      # Trier selon le critère spécifié
-      case @sort
-      when "price_asc"
-        @spaces.sort_by! { |s| s.price_per_hour }
-      when "price_desc"
-        @spaces.sort_by! { |s| -s.price_per_hour }
-      when "capacity"
-        @spaces.sort_by! { |s| -s.capacity }
-      else
-        @spaces.sort_by! { |s| -s.rating } # Par défaut, trier par évaluation
-      end
-    end
-    
-    # Préparer les données pour la carte
-    @markers = @spaces.map do |space|
-      {
-        lat: space.latitude,
-        lng: space.longitude,
-        info: space.name,
-        id: space.id
-      }
-    end
-    
-    # Rendu de la vue search
-    respond_to do |format|
-      format.html
-      format.json { render json: { spaces: @spaces, markers: @markers } }
-    end
+  @location = params[:location]
+  @date = params[:date]
+  @start_time = params[:start_time]
+  @end_time = params[:end_time]
+  @capacity = params[:capacity]
+  
+  # Décommenter cette ligne si vous voulez voir les paramètres dans les logs
+  # Rails.logger.info "Search params: #{params.inspect}"
+  
+  @spaces = []
+
+  # Votre code pour les villes
+  city_data = case @location.downcase
+  when "paris", "paris "
+    {
+      name: "Paris",
+      base_coords: [48.856614, 2.3522219],
+      spaces: [
+        { name: "Atelier Créatif Bastille", description: "Grand espace lumineux idéal pour ateliers créatifs et réunions.", address: "12 Rue de la Roquette, 75011 Paris", capacity: 25, price_per_hour: 35, category: "creative_studio", rating: 4.8 },
+        { name: "Espace Coworking République", description: "Espace de coworking moderne en plein cœur de Paris.", address: "8 Place de la République, 75003 Paris", capacity: 15, price_per_hour: 28, category: "coworking", rating: 4.5 },
+        { name: "Salle de Réunion Marais", description: "Salle de réunion équipée dans le quartier du Marais.", address: "25 Rue des Archives, 75004 Paris", capacity: 8, price_per_hour: 45, category: "meeting_room", rating: 4.2 }
+      ]
+    }
+  when "lyon", "lyon "
+    {
+      name: "Lyon",
+      base_coords: [45.764043, 4.835659],
+      spaces: [
+        { name: "Espace Confluence", description: "Espace modulable dans le quartier de Confluence.", address: "15 Cours Charlemagne, 69002 Lyon", capacity: 35, price_per_hour: 40, category: "event_space", rating: 4.6 },
+        { name: "Atelier des Canuts", description: "Ancien atelier rénové dans le quartier de la Croix-Rousse.", address: "10 Rue d'Ivry, 69004 Lyon", capacity: 18, price_per_hour: 32, category: "creative_studio", rating: 4.7 },
+        { name: "Bureau Part-Dieu", description: "Bureau tout équipé à proximité de la gare.", address: "129 Rue Servient, 69003 Lyon", capacity: 6, price_per_hour: 25, category: "meeting_room", rating: 4.3 }
+      ]
+    }
+  when "nancy", "nancy "
+    # Données pour Nancy
+    {
+      name: "Nancy",
+      base_coords: [48.6921, 6.1844],
+      spaces: [
+        { name: "Espace Stanislas", description: "Belle salle dans un bâtiment historique près de la Place Stanislas.", address: "5 Rue Stanislas, 54000 Nancy", capacity: 20, price_per_hour: 30, category: "event_space", rating: 4.5 },
+        { name: "Atelier Art Nouveau", description: "Espace inspirant dans un style Art Nouveau.", address: "12 Rue Émile Gallé, 54000 Nancy", capacity: 15, price_per_hour: 28, category: "creative_studio", rating: 4.6 },
+        { name: "Salle de Formation Pépinière", description: "Salle moderne pour formations et workshops.", address: "3 Rue Victor, 54000 Nancy", capacity: 12, price_per_hour: 25, category: "training_room", rating: 4.4 }
+      ]
+    }
+  when "bordeaux", "bordeaux "
+    # Données pour Bordeaux
+    {
+      name: "Bordeaux",
+      base_coords: [44.8378, -0.5792],
+      spaces: [
+        { name: "Loft des Chartrons", description: "Loft industriel dans le quartier des Chartrons.", address: "15 Rue Notre Dame, 33000 Bordeaux", capacity: 25, price_per_hour: 35, category: "event_space", rating: 4.7 },
+        { name: "Espace Saint-Pierre", description: "Salle élégante au cœur du vieux Bordeaux.", address: "8 Place Saint-Pierre, 33000 Bordeaux", capacity: 18, price_per_hour: 40, category: "meeting_room", rating: 4.6 },
+        { name: "Studio Quai des Marques", description: "Studio créatif avec vue sur la Garonne.", address: "20 Quai des Marques, 33000 Bordeaux", capacity: 15, price_per_hour: 30, category: "creative_studio", rating: 4.5 }
+      ]
+    }
+  when "lille", "lille "
+    # Données pour Lille
+    {
+      name: "Lille",
+      base_coords: [50.6292, 3.0573],
+      spaces: [
+        { name: "Studio Vieux-Lille", description: "Charmant studio dans le Vieux-Lille.", address: "12 Rue de la Monnaie, 59000 Lille", capacity: 15, price_per_hour: 28, category: "creative_studio", rating: 4.5 },
+        { name: "Salle Euralille", description: "Salle moderne près du centre commercial Euralille.", address: "5 Avenue Willy Brandt, 59000 Lille", capacity: 20, price_per_hour: 32, category: "meeting_room", rating: 4.3 },
+        { name: "Espace Coworking Gare", description: "Espace de coworking à 5 minutes de la gare Lille Flandres.", address: "23 Place des Buisses, 59000 Lille", capacity: 10, price_per_hour: 25, category: "coworking", rating: 4.4 }
+      ]
+    }
+  else
+    nil
   end
+
+  if city_data.present?
+    @city = city_data[:name]
+    @center_coords = city_data[:base_coords]
+
+    # ICI EST LA CORRECTION - Créer des objets Space sans passer par sérialisation/désérialisation
+    city_data[:spaces].each_with_index do |space_data, index|
+      space = Space.new
+      space.name = space_data[:name]
+      space.description = space_data[:description]
+      space.address = space_data[:address]
+      space.capacity = space_data[:capacity]
+      space.price_per_hour = space_data[:price_per_hour]
+      space.category = space_data[:category]
+      space.rating = space_data[:rating]
+      
+      # Utilisation de faux ID temporaires (toujours négatifs pour éviter les conflits avec de vrais IDs)
+      space.id = -(index + 1)
+      
+      # Coordonnées légèrement modifiées pour la visualisation
+      space.latitude = city_data[:base_coords][0] + (index * 0.005)
+      space.longitude = city_data[:base_coords][1] + (index * 0.005)
+      
+      @spaces << space
+    end
+  else
+    @city = nil
+    @center_coords = nil
+  end
+
+  # Filtrer par capacité si spécifié
+  if @capacity.present?
+    capacity_range = case @capacity
+      when "1-10 personnes" then [1, 10]
+      when "11-30 personnes" then [11, 30]
+      when "31-50 personnes" then [31, 50]
+      when "Plus de 50 personnes" then [51, nil]
+      else nil
+    end
+    
+    @spaces = @spaces.select { |space| 
+      if capacity_range[1].nil?
+        space.capacity >= capacity_range[0]
+      else
+        space.capacity >= capacity_range[0] && space.capacity <= capacity_range[1]
+      end
+    } if capacity_range
+  end
+  
+  render :search
+end
 
   private
     # Récupérer l'espace par son ID

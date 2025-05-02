@@ -6,6 +6,7 @@ Rails.application.routes.draw do
   resources :spaces do
     collection do
       get 'search'  # Route pour la recherche des espaces
+      get 'new_host' # Route pour "Proposer un espace"
     end
     
     # Routes imbriquées pour les réservations d'un espace spécifique
