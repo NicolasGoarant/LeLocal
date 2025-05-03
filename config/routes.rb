@@ -40,4 +40,12 @@ Rails.application.routes.draw do
   # get '/profile', to: 'users#show'
   # get '/profile/edit', to: 'users#edit'
   # patch '/profile', to: 'users#update'
+
+  devise_for :users, controllers: {
+  registrations: 'registrations'
+}
+
+# Route directe vers la page d'inscription
+get '/inscription', to: 'registrations#new', as: 'signup'
+
 end

@@ -13,6 +13,76 @@
   
   <!-- Ajouter le yield pour le contenu head supplémentaire -->
   <%= yield :head %>
+  
+  <style>
+    /* Styles pour corriger l'affichage de la barre de recherche */
+    .search-bar {
+      display: flex;
+      align-items: center;
+      max-width: 400px;
+      width: 100%;
+    }
+    
+    .search-bar form {
+      display: flex;
+      align-items: center;
+      width: 100%;
+      background: #f5f5f5;
+      border-radius: 4px;
+      overflow: hidden;
+      border: 1px solid #e0e0e0;
+    }
+    
+    .search-bar input {
+      flex: 1;
+      padding: 10px 15px;
+      border: none;
+      background: transparent;
+      font-size: 14px;
+    }
+    
+    .search-bar button {
+      padding: 10px 15px;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      color: #555;
+      transition: color 0.3s;
+    }
+    
+    .search-bar button:hover {
+      color: #4CAF50;
+    }
+    
+    /* Ajustement pour les petits écrans */
+    @media (max-width: 768px) {
+      .navbar .container {
+        flex-direction: column;
+        align-items: center;
+      }
+      
+      .logo {
+        margin-bottom: 10px;
+      }
+      
+      .search-bar {
+        margin: 10px 0;
+        max-width: 100%;
+        order: 3;
+      }
+      
+      .menu {
+        margin-top: 10px;
+      }
+    }
+    
+    /* Pour les écrans moyens */
+    @media (min-width: 769px) and (max-width: 991px) {
+      .search-bar {
+        max-width: 250px;
+      }
+    }
+  </style>
 </head>
 <body>
   <!-- Barre de navigation -->
@@ -23,14 +93,19 @@
           <span class="logo-text">Le<span class="highlight">Local</span></span>
         </a>
       </div>
+      
+      <!-- Barre de recherche corrigée -->
       <div class="search-bar">
-        <input type="text" placeholder="Rechercher un espace communautaire...">
-        <button><i class="fas fa-search"></i></button>
+        <form action="/spaces/search" method="get">
+          <input type="text" name="location" placeholder="Rechercher un espace communautaire..." aria-label="Rechercher">
+          <button type="submit"><i class="fas fa-search"></i></button>
+        </form>
       </div>
+
       <div class="menu">
         <a href="/spaces/new_host" class="host-link">Proposer un espace</a>
         <a href="#" class="login-btn">Connexion</a>
-        <a href="#" class="signup-btn">Inscription</a>
+        <%= link_to "Inscription", signup_path, class: "signup-btn" %>
       </div>
     </div>
   </nav>
@@ -115,4 +190,3 @@
   <%= yield :scripts %>
 </body>
 </html>
-

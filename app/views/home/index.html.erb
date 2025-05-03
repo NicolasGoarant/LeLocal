@@ -1,10 +1,10 @@
-<% content_for :title, "LeLocal - Trouvez l'espace idéal pour votre communauté" %>
+<% content_for :title, "LeLocal - Louer un espace pour son association" %>
 
 <!-- Section héro avec image d'arrière-plan -->
 <section class="hero">
   <div class="container">
     <div class="hero-content">
-      <h1>Trouvez l'espace idéal pour votre communauté</h1>
+      <h1>Louer un espace pour son association</h1>
       <p>Des milliers d'espaces disponibles pour vos événements, réunions et activités associatives</p>
       <div class="search-box">
         <form action="<%= search_spaces_path %>" method="get" class="search-input-group">
@@ -201,31 +201,38 @@
 <section class="how-it-works">
   <div class="container">
     <h2>Comment ça marche</h2>
-    <div class="steps-grid">
-      <div class="step-card">
+    <div class="steps-container">
+      <div class="step">
         <div class="step-icon">
           <i class="fas fa-search"></i>
         </div>
         <h3>Rechercher</h3>
         <p>Trouvez l'espace parfait selon vos critères : emplacement, date, capacité...</p>
       </div>
-      <div class="step-card">
+      
+      <div class="step-arrow">
+        <i class="fas fa-chevron-right"></i>
+      </div>
+      
+      <div class="step">
         <div class="step-icon">
-          <i class="fas fa-calendar-alt"></i>
+          <i class="fas fa-calendar-check"></i>
         </div>
         <h3>Réserver</h3>
         <p>Choisissez votre créneau et réservez en quelques clics, paiement sécurisé.</p>
       </div>
-      <div class="step-card">
+      
+      <div class="step-arrow">
+        <i class="fas fa-chevron-right"></i>
+      </div>
+      
+      <div class="step">
         <div class="step-icon">
-          <i class="fas fa-key"></i>
+          <i class="fas fa-smile"></i>
         </div>
         <h3>Profiter</h3>
         <p>Accédez à votre espace et profitez-en pour votre événement ou activité.</p>
       </div>
-    </div>
-    <div class="cta-container">
-      <a href="#" class="btn-large">En savoir plus</a>
     </div>
   </div>
 </section>

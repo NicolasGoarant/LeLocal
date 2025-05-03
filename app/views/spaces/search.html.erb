@@ -3,8 +3,23 @@
 <section class="search-results">
   <div class="container">
     <div class="search-header">
-      <h1>Espaces à <%= @location.presence || 'tous les emplacements' %></h1>
-      <p><%= @spaces.count %> espaces trouvés</p>
+      <h1>
+        <% if @location.present? %>
+          Espaces à <%= @location.capitalize %>
+        <% else %>
+          Tous les espaces disponibles
+        <% end %>
+      </h1>
+      
+      <p class="search-summary">
+        <%= @spaces.count %> espaces trouvés
+        <% if @category.present? && @category != "Toutes les catégories" %>
+          dans la catégorie "<%= @category %>"
+        <% end %>
+        <% if @capacity.present? && @capacity.to_i > 0 %>
+          pour <%= @capacity %> personnes ou plus
+        <% end %>
+      </p>
       
       <div class="search-filters">
         <div class="filter">
@@ -15,6 +30,43 @@
             <option value="price_desc" <%= @sort == 'price_desc' ? 'selected' : '' %>>Prix (décroissant)</option>
             <option value="capacity" <%= @sort == 'capacity' ? 'selected' : '' %>>Capacité</option>
           </select>
+        </div>
+        
+        <div class="filter-form">
+          <form action="<%= search_spaces_path %>" method="get" class="inline-filter-form">
+            <input type="hidden" name="location" value="<%= @location %>">
+            
+            <div class="filter-group">
+              <label for="category">Catégorie</label>
+              <select name="category" id="category" onchange="this.form.submit()">
+                <option value="Toutes les catégories" <%= @category.blank? || @category == "Toutes les catégories" ? "selected" : "" %>>Toutes les catégories</option>
+                <option value="Salle de réunion" <%= @category == "Salle de réunion" ? "selected" : "" %>>Salle de réunion</option>
+                <option value="Espace événementiel" <%= @category == "Espace événementiel" ? "selected" : "" %>>Espace événementiel</option>
+                <option value="Bureau partagé" <%= @category == "Bureau partagé" ? "selected" : "" %>>Bureau partagé</option>
+                <option value="Salle de sport" <%= @category == "Salle de sport" ? "selected" : "" %>>Salle de sport</option>
+                <option value="Atelier" <%= @category == "Atelier" ? "selected" : "" %>>Atelier</option>
+              </select>
+            </div>
+            
+            <div class="filter-group">
+              <label for="capacity">Capacité</label>
+              <select name="capacity" id="capacity" onchange="this.form.submit()">
+                <option value="" <%= @capacity.blank? ? "selected" : "" %>>Tous</option>
+                <option value="5" <%= @capacity == "5" ? "selected" : "" %>>5+</option>
+                <option value="10" <%= @capacity == "10" ? "selected" : "" %>>10+</option>
+                <option value="20" <%= @capacity == "20" ? "selected" : "" %>>20+</option>
+                <option value="50" <%= @capacity == "50" ? "selected" : "" %>>50+</option>
+                <option value="100" <%= @capacity == "100" ? "selected" : "" %>>100+</option>
+              </select>
+            </div>
+            
+            <% if @date.present? %>
+              <div class="filter-group">
+                <label for="date">Date</label>
+                <input type="date" name="date" id="date" value="<%= @date %>" onchange="this.form.submit()">
+              </div>
+            <% end %>
+          </form>
         </div>
         
         <% if @date.present? %>
@@ -37,10 +89,9 @@
       <div class="spaces-list">
         <% if @spaces.any? %>
           <% @spaces.each do |space| %>
-            <div class="space-card horizontal" data-space-id="<%= space.id %>">
-              <!-- Solution sans service externe -->
-              <div class="space-img" style="background-color: #e0e0e0; color: #333; display: flex; align-items: center; justify-content: center; font-size: 14px; text-align: center; padding: 10px;">
-                <div><%= space.name %></div>
+            <div class="space-card horizontal" data-space-id="<%= space.id %>" data-lat="<%= space.latitude %>" data-lng="<%= space.longitude %>">
+              <div class="space-img" style="background-color: <%= get_category_color(space.category) %>; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 14px; text-align: center; padding: 10px;">
+                <div><%= get_category_icon(space.category) %><span class="space-img-name"><%= space.name %></span></div>
               </div>
               <div class="space-content">
                 <div class="space-title">
@@ -56,11 +107,11 @@
                 <div class="space-footer">
                   <p class="space-price"><%= space.price_per_hour %>€ / heure</p>
                   <div class="space-actions">
-                    <a href="<%= space_path(space) %>" class="btn-small">Voir détails</a>
+                    <a href="<%= space_path(id: space.id, space_name: space.name) %>" class="btn-small">Voir détails</a>
                     <% if @date.present? && @start_time.present? && @end_time.present? %>
-                      <a href="<%= new_space_booking_path(space, date: @date, start_time: @start_time, end_time: @end_time) %>" class="btn-small secondary">Réserver</a>
+                      <a href="<%= new_space_booking_path(space_id: space.id, date: @date, start_time: @start_time, end_time: @end_time) %>" class="btn-small secondary">Réserver</a>
                     <% else %>
-                      <a href="<%= new_space_booking_path(space) %>" class="btn-small secondary">Réserver</a>
+                      <a href="<%= new_space_booking_path(space_id: space.id) %>" class="btn-small secondary">Réserver</a>
                     <% end %>
                   </div>
                 </div>
@@ -72,172 +123,541 @@
             <i class="fas fa-search"></i>
             <h3>Aucun espace trouvé</h3>
             <p>Essayez de modifier vos critères de recherche</p>
-            <a href="/" class="btn-medium">Retour à l'accueil</a>
+            <a href="<%= root_path %>" class="btn-medium">Retour à l'accueil</a>
           </div>
         <% end %>
       </div>
       
       <div class="map-container">
-        <div id="map"></div>
+        <div id="search-map"></div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- Scripts pour la carte et les interactions -->
-<script>
-  // Fonction d'initialisation de la carte Google Maps
-  function initMap() {
-    // Récupérer les marqueurs depuis les données du contrôleur
-    const markers = <%= raw @markers.to_json %>;
-    
-    // Centrer la carte sur le premier marqueur ou sur une position par défaut si aucun marqueur
-    const center = markers.length > 0 
-      ? { lat: markers[0].lat, lng: markers[0].lng } 
-      : { lat: 48.856614, lng: 2.3522219 }; // Paris par défaut
-    
-    // Créer la carte
-    const map = new google.maps.Map(document.getElementById('map'), {
-      zoom: 12,
-      center: center,
-      mapTypeControl: false,
-      streetViewControl: false,
-      fullscreenControl: true,
-      styles: [
-        {
-          "featureType": "poi",
-          "stylers": [{ "visibility": "off" }]
-        },
-        {
-          "featureType": "transit",
-          "elementType": "labels.icon",
-          "stylers": [{ "visibility": "off" }]
-        }
-      ]
-    });
-    
-    // Créer les limites pour ajuster le zoom
-    let bounds = new google.maps.LatLngBounds();
-    
-    // Tableau pour stocker les objets marqueurs
-    const markerObjects = [];
-    
-    // Ajouter les marqueurs à la carte
-    markers.forEach(marker => {
-      const googleMarker = new google.maps.Marker({
-        position: { lat: marker.lat, lng: marker.lng },
-        map: map,
-        title: marker.info,
-        animation: google.maps.Animation.DROP
-      });
-      
-      // Stocker l'ID de l'espace dans le marqueur
-      googleMarker.spaceId = marker.id;
-      
-      // Ajouter le marqueur au tableau
-      markerObjects.push(googleMarker);
-      
-      // Étendre les limites pour inclure ce marqueur
-      bounds.extend(googleMarker.position);
-      
-      // Ajouter une infowindow au marqueur
-      const infowindow = new google.maps.InfoWindow({
-        content: `
-          <div class="map-info-window">
-            <h3>${marker.info}</h3>
-            <a href="/spaces/${marker.id}" class="map-link">Voir détails</a>
-          </div>
-        `
-      });
-      
-      // Fermer toutes les infowindows ouvertes avant d'en ouvrir une nouvelle
-      googleMarker.addListener('click', () => {
-        markerObjects.forEach(m => {
-          if (m.infowindow) {
-            m.infowindow.close();
-          }
-        });
-        
-        infowindow.open(map, googleMarker);
-        
-        // Mettre en surbrillance la carte correspondante
-        highlightCard(marker.id);
-      });
-      
-      // Stocker l'infowindow avec le marqueur
-      googleMarker.infowindow = infowindow;
-    });
-    
-    // Ajuster le zoom si plusieurs marqueurs
-    if (markers.length > 1) {
-      map.fitBounds(bounds);
-    }
-    
-    // Ajouter des interactions entre les cartes d'espace et la carte
-    setupCardMapInteractions(markerObjects);
-  }
-  
-  // Mettre en surbrillance une carte d'espace
-  function highlightCard(spaceId) {
-    // Supprimer la surbrillance de toutes les cartes
-    document.querySelectorAll('.space-card.highlighted').forEach(card => {
-      card.classList.remove('highlighted');
-    });
-    
-    // Ajouter la surbrillance à la carte correspondante
-    const card = document.querySelector(`.space-card[data-space-id="${spaceId}"]`);
-    if (card) {
-      card.classList.add('highlighted');
-      // Faire défiler jusqu'à la carte
-      card.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      
-      // Supprimer la surbrillance après 3 secondes
-      setTimeout(() => {
-        card.classList.remove('highlighted');
-      }, 3000);
-    }
-  }
-  
-  // Configuration des interactions entre les cartes d'espace et la carte
-  function setupCardMapInteractions(markers) {
-    document.querySelectorAll('.space-card').forEach(card => {
-      const spaceId = parseInt(card.getAttribute('data-space-id'));
-      
-      // Survoler une carte fait rebondir le marqueur correspondant
-      card.addEventListener('mouseenter', () => {
-        const marker = markers.find(m => m.spaceId === spaceId);
-        if (marker) {
-          marker.setAnimation(google.maps.Animation.BOUNCE);
-          setTimeout(() => {
-            marker.setAnimation(null);
-          }, 700);
-        }
-      });
-      
-      // Quitter une carte arrête l'animation du marqueur
-      card.addEventListener('mouseleave', () => {
-        const marker = markers.find(m => m.spaceId === spaceId);
-        if (marker) {
-          marker.setAnimation(null);
-        }
-      });
-    });
-  }
-  
-  // Fonction pour mettre à jour le tri des résultats
-  function updateSort(sortValue) {
-    const currentUrl = new URL(window.location.href);
-    currentUrl.searchParams.set('sort', sortValue);
-    window.location.href = currentUrl.toString();
-  }
-  
-  // Fonction pour supprimer un filtre
-  function removeFilter(filterName) {
-    const currentUrl = new URL(window.location.href);
-    currentUrl.searchParams.delete(filterName);
-    window.location.href = currentUrl.toString();
-  }
-</script>
+<% content_for :head do %>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+<% end %>
 
-<!-- Chargement de l'API Google Maps -->
-<script src="https://maps.googleapis.com/maps/api/js?key=<%= ENV['GOOGLE_MAPS_API_KEY'] %>&callback=initMap" async defer></script>
+<% content_for :scripts do %>
+  <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Initialiser la carte Leaflet
+      const map = L.map('search-map');
+      
+      // Ajouter la couche de tuiles OpenStreetMap
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+      }).addTo(map);
+      
+      // Récupérer les espaces et créer des marqueurs
+      const spaces = document.querySelectorAll('.space-card');
+      const markers = [];
+      const markerObjects = {};
+      
+      // Créer des icônes personnalisées par catégorie
+      const categoryIcons = {
+        'event_space': 'fa-calendar-check',
+        'meeting_room': 'fa-handshake',
+        'creative_studio': 'fa-paint-brush',
+        'coworking': 'fa-laptop',
+        'training_room': 'fa-chalkboard-teacher'
+      };
+      
+      const categoryColors = {
+        'event_space': '#4CAF50',
+        'meeting_room': '#2196F3',
+        'creative_studio': '#FF9800',
+        'coworking': '#9C27B0',
+        'training_room': '#F44336',
+        'default': '#607D8B'
+      };
+      
+      // Fonction pour obtenir l'icône par catégorie
+      function getMarkerIcon(category) {
+        const color = categoryColors[category] || categoryColors.default;
+        return L.divIcon({
+          html: `<div style="background-color: ${color}; color: white; border-radius: 50%; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center;">
+                  <i class="fas ${categoryIcons[category] || 'fa-building'}"></i>
+                </div>`,
+          className: 'custom-marker',
+          iconSize: [30, 30],
+          iconAnchor: [15, 15]
+        });
+      }
+      
+      // Ajouter les marqueurs pour chaque espace
+      spaces.forEach(function(spaceCard) {
+        const lat = parseFloat(spaceCard.dataset.lat);
+        const lng = parseFloat(spaceCard.dataset.lng);
+        const id = spaceCard.dataset.spaceId;
+        const name = spaceCard.querySelector('h3').textContent;
+        const address = spaceCard.querySelector('.space-location').textContent;
+        const price = spaceCard.querySelector('.space-price').textContent;
+        const category = getCategoryFromCard(spaceCard);
+        
+        if (!isNaN(lat) && !isNaN(lng)) {
+          // Créer un marqueur avec une icône personnalisée
+          const marker = L.marker([lat, lng], {
+            icon: getMarkerIcon(category)
+          }).addTo(map);
+          
+          // Créer une popup avec plus d'informations
+          marker.bindPopup(`
+            <div class="map-popup">
+              <h4>${name}</h4>
+              <p>${address}</p>
+              <p class="popup-price">${price}</p>
+              <a href="/spaces/${id}?space_name=${encodeURIComponent(name)}" class="popup-link">Voir détails</a>
+            </div>
+          `);
+          
+          markers.push([lat, lng]);
+          markerObjects[id] = marker;
+          
+          // Interaction au survol de la carte d'espace
+          spaceCard.addEventListener('mouseenter', function() {
+            marker.openPopup();
+            spaceCard.classList.add('highlighted');
+          });
+          
+          spaceCard.addEventListener('mouseleave', function() {
+            marker.closePopup();
+            spaceCard.classList.remove('highlighted');
+          });
+          
+          // Interaction au clic sur un marqueur
+          marker.on('click', function() {
+            // Supprimer la classe 'highlighted' de toutes les cartes
+            document.querySelectorAll('.space-card').forEach(function(card) {
+              card.classList.remove('highlighted');
+            });
+            
+            // Ajouter la classe 'highlighted' à la carte correspondante
+            spaceCard.classList.add('highlighted');
+            
+            // Faire défiler jusqu'à la carte
+            spaceCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            
+            // Supprimer la surbrillance après 3 secondes
+            setTimeout(function() {
+              spaceCard.classList.remove('highlighted');
+            }, 3000);
+          });
+        }
+      });
+      
+      // Extraire la catégorie à partir de la carte
+      function getCategoryFromCard(card) {
+        const imgDiv = card.querySelector('.space-img');
+        const style = window.getComputedStyle(imgDiv);
+        const bgColor = style.backgroundColor;
+        
+        // Reconnaître la catégorie en fonction de la couleur
+        for (const [cat, color] of Object.entries(categoryColors)) {
+          if (colorToRgb(color) === bgColor) {
+            return cat;
+          }
+        }
+        
+        return 'default';
+      }
+      
+      // Convertir une couleur hexadécimale en RGB pour comparaison
+      function colorToRgb(hex) {
+        // Fonction simple, dans un vrai projet utiliser une librairie de gestion des couleurs
+        return hex; // Simplification, à améliorer dans une implémentation réelle
+      }
+      
+      // Définir la vue de la carte
+      if (markers.length > 0) {
+        // Créer un groupe de tous les marqueurs et ajuster la vue
+        const group = new L.featureGroup(Object.values(markerObjects));
+        map.fitBounds(group.getBounds().pad(0.1));
+      } else {
+        // Centrer sur la France si aucun marqueur
+        map.setView([46.603354, 1.888334], 6);
+      }
+      
+      // Centre spécifique si fourni par le contrôleur
+      <% if @center_coords.present? %>
+        map.setView([<%= @center_coords[0] %>, <%= @center_coords[1] %>], 13);
+      <% end %>
+    });
+    
+    // Fonction pour mettre à jour le tri des résultats
+    function updateSort(sortValue) {
+      const currentUrl = new URL(window.location.href);
+      currentUrl.searchParams.set('sort', sortValue);
+      window.location.href = currentUrl.toString();
+    }
+    
+    // Fonction pour supprimer un filtre
+    function removeFilter(filterName) {
+      const currentUrl = new URL(window.location.href);
+      currentUrl.searchParams.delete(filterName);
+      window.location.href = currentUrl.toString();
+    }
+  </script>
+<% end %>
+
+<style>
+  /* Styles pour la page des résultats de recherche */
+  .search-results {
+    padding-top: 80px;
+    padding-bottom: 60px;
+  }
+  
+  .search-header {
+    margin-bottom: 30px;
+  }
+  
+  .search-header h1 {
+    font-size: 28px;
+    margin-bottom: 5px;
+    color: #333;
+  }
+  
+  .search-summary {
+    color: #666;
+    margin-bottom: 20px;
+    font-size: 16px;
+  }
+  
+  .search-filters {
+    background-color: #f9f9f9;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 30px;
+  }
+  
+  .filter {
+    margin-bottom: 15px;
+  }
+  
+  .filter label {
+    font-weight: 500;
+    margin-right: 10px;
+  }
+  
+  .filter select {
+    padding: 8px 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    min-width: 180px;
+  }
+  
+  .inline-filter-form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 15px;
+  }
+  
+  .filter-group {
+    flex: 1;
+    min-width: 160px;
+  }
+  
+  .filter-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 500;
+  }
+  
+  .filter-group select,
+  .filter-group input {
+    width: 100%;
+    padding: 8px 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+  }
+  
+  .filter-tag {
+    display: inline-flex;
+    align-items: center;
+    background-color: #e0f2f1;
+    padding: 5px 10px;
+    border-radius: 20px;
+    margin-right: 10px;
+    font-size: 14px;
+    color: #00796b;
+  }
+  
+  .filter-remove {
+    background: none;
+    border: none;
+    color: #00796b;
+    font-size: 18px;
+    cursor: pointer;
+    margin-left: 5px;
+    padding: 0 5px;
+  }
+  
+  .search-content {
+    display: flex;
+    gap: 30px;
+  }
+  
+  .spaces-list {
+    flex: 1;
+    max-width: 60%;
+  }
+  
+  .map-container {
+    flex: 1;
+    position: sticky;
+    top: 100px;
+    height: 600px;
+  }
+  
+  #search-map {
+    width: 100%;
+    height: 100%;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .space-card {
+    display: flex;
+    background-color: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+    transition: transform 0.3s, box-shadow 0.3s;
+  }
+  
+  .space-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+  }
+  
+  .space-card.highlighted {
+    box-shadow: 0 0 0 3px #4CAF50, 0 5px 15px rgba(0, 0, 0, 0.2);
+  }
+  
+  .space-img {
+    width: 30%;
+    min-width: 150px;
+  }
+  
+  .space-img-name {
+    margin-top: 8px;
+    display: block;
+    font-weight: 500;
+  }
+  
+  .space-content {
+    padding: 15px;
+    flex: 1;
+  }
+  
+  .space-title {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 10px;
+  }
+  
+  .space-title h3 {
+    margin: 0;
+    font-size: 18px;
+    color: #333;
+  }
+  
+  .space-rating {
+    display: flex;
+    align-items: center;
+    background-color: #f9f9f9;
+    padding: 3px 8px;
+    border-radius: 4px;
+  }
+  
+  .space-rating i {
+    color: #FFC107;
+    margin-right: 5px;
+  }
+  
+  .space-description {
+    margin-bottom: 10px;
+    color: #666;
+    font-size: 14px;
+    line-height: 1.4;
+  }
+  
+  .space-location, .space-capacity {
+    margin: 5px 0;
+    font-size: 14px;
+    color: #555;
+  }
+  
+  .space-location i, .space-capacity i {
+    width: 20px;
+    text-align: center;
+    margin-right: 5px;
+    color: #666;
+  }
+  
+  .space-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 15px;
+    padding-top: 10px;
+    border-top: 1px solid #f0f0f0;
+  }
+  
+  .space-price {
+    font-size: 18px;
+    font-weight: 600;
+    color: #4CAF50;
+    margin: 0;
+  }
+  
+  .space-actions {
+    display: flex;
+    gap: 10px;
+  }
+  
+  .btn-small {
+    display: inline-block;
+    padding: 6px 12px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: 500;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .btn-small:hover {
+    background-color: #388E3C;
+  }
+  
+  .btn-small.secondary {
+    background-color: #FF9800;
+  }
+  
+  .btn-small.secondary:hover {
+    background-color: #F57C00;
+  }
+  
+  .no-results {
+    text-align: center;
+    padding: 40px 0;
+  }
+  
+  .no-results i {
+    font-size: 3rem;
+    color: #ccc;
+    margin-bottom: 15px;
+  }
+  
+  .no-results h3 {
+    margin-bottom: 10px;
+    color: #333;
+  }
+  
+  .no-results p {
+    margin-bottom: 20px;
+    color: #666;
+  }
+  
+  .btn-medium {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    font-weight: 500;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .btn-medium:hover {
+    background-color: #388E3C;
+  }
+  
+  /* Styles pour la popup Leaflet */
+  .map-popup {
+    text-align: center;
+    min-width: 150px;
+  }
+  
+  .map-popup h4 {
+    margin: 0 0 5px;
+    color: #333;
+    font-size: 16px;
+  }
+  
+  .map-popup p {
+    margin: 3px 0;
+    font-size: 13px;
+    color: #555;
+  }
+  
+  .popup-price {
+    font-weight: 600;
+    color: #4CAF50;
+  }
+  
+  .popup-link {
+    display: inline-block;
+    margin-top: 8px;
+    color: #2196F3;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 13px;
+  }
+  
+  .custom-marker {
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+    border-radius: 50%;
+  }
+  
+  /* Responsive */
+  @media (max-width: 992px) {
+    .search-content {
+      flex-direction: column;
+    }
+    
+    .spaces-list {
+      max-width: 100%;
+    }
+    
+    .map-container {
+      order: -1;
+      height: 400px;
+      margin-bottom: 20px;
+      position: static;
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .space-card {
+      flex-direction: column;
+    }
+    
+    .space-img {
+      width: 100%;
+      height: 120px;
+    }
+    
+    .inline-filter-form {
+      flex-direction: column;
+      gap: 10px;
+    }
+    
+    .filter-group {
+      min-width: 100%;
+    }
+  }
+</style>
