@@ -187,26 +187,26 @@ lille_spaces = [
 ]
 
 # Fusionner tous les espaces
-all_spaces = paris_spaces + lyon_spaces + nancy_spaces + bordeaux_spaces + lille_spaces
+# all_spaces = paris_spaces + lyon_spaces + nancy_spaces + bordeaux_spaces + lille_spaces
 
 # Créer les espaces dans la base de données
-all_spaces.each do |space_attrs|
+# all_spaces.each do |space_attrs|
   # S'assurer que la catégorie existe et la récupérer
-  category_name = space_attrs[:category]
-  space_attrs.delete(:category) # Retirer la catégorie des attributs si c'est une string
+  # category_name = space_attrs[:category]
+  # space_attrs.delete(:category) # Retirer la catégorie des attributs si c'est une string
   
   # Si vous avez un modèle Category distinct
-  if defined?(Category)
-    category = Category.find_by(name: category_name)
-    space = Space.new(space_attrs)
-    space.category = category
-  else
+  # if defined?(Category)
+  #  category = Category.find_by(name: category_name)
+   # space = Space.new(space_attrs)
+   # space.category = category
+  # else
     # Sinon, utiliser directement le nom de la catégorie
-    space = Space.new(space_attrs.merge(category: category_name))
-  end
+  #   space = Space.new(space_attrs.merge(category: category_name))
+  # end
   
-  space.save!
-  puts "Créé : #{space.name} à #{space.address}"
-end
+ # space.save!
+ # puts "Créé : #{space.name} à #{space.address}"
+# end
 
 puts "Seed terminé : #{Space.count} espaces créés"

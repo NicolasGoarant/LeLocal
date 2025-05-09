@@ -142,6 +142,8 @@ class SpacesController < ApplicationController
   end
   
   def new_host
+    # Initialiser un nouvel objet Space pour le formulaire
+    @space = Space.new
     # Page de présentation pour les hôtes
   end
   
