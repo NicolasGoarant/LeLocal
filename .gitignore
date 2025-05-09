@@ -69,4 +69,5 @@ yarn-debug.log*
 
 # Autres
 *.swp
-*~
+*~config/master.key
+config/credentials.yml.enc
