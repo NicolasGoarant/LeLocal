@@ -1,0 +1,20 @@
+<h1>Exprimer un besoin en local</h1>
+
+<%= form_with model: @need do |f| %>
+  <%= f.label :title, "Titre du besoin" %>
+  <%= f.text_field :title %>
+
+  <%= f.label :description %>
+  <%= f.text_area :description %>
+
+  <%= f.label :city, "Ville" %>
+  <%= f.text_field :city %>
+
+  <%= f.label :surface_min, "Surface minimale souhaitée (m²)" %>
+  <%= f.number_field :surface_min %>
+
+  <%= f.label :duration, "Durée d’occupation souhaitée" %>
+  <%= f.text_field :duration %>
+
+  <%= f.submit "Publier le besoin" %>
+<% end %>

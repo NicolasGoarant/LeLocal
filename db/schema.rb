@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_05_03_174047) do
+ActiveRecord::Schema[8.0].define(version: 2025_05_09_164203) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -62,6 +62,18 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_03_174047) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "needs", force: :cascade do |t|
+    t.string "title"
+    t.text "description"
+    t.string "city"
+    t.integer "surface_min"
+    t.string "duration"
+    t.bigint "user_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_needs_on_user_id"
+  end
+
   create_table "spaces", force: :cascade do |t|
     t.string "name"
     t.text "description"
@@ -93,4 +105,5 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_03_174047) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "needs", "users"
 end

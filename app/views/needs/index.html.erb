@@ -1,0 +1,8 @@
+<h1>Besoin de locaux par des associations</h1>
+
+<% @needs.each do |need| %>
+  <div class="border p-4 my-2">
+    <strong><%= link_to need.title, need_path(need) %></strong> - <%= need.city %><br>
+    <%= truncate(need.description, length: 100) %>
+  </div>
+<% end %>

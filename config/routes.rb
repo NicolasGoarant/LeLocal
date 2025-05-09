@@ -1,4 +1,8 @@
 Rails.application.routes.draw do
+  get "needs/index"
+  get "needs/new"
+  get "needs/create"
+  get "needs/show"
   # Page d'accueil
   root 'home#index'
   
@@ -24,7 +28,8 @@ Rails.application.routes.draw do
   
   # Routes pour le profil utilisateur (si vous utilisez Devise)
   # devise_for :users
-  
+  resources :needs, only: [:index, :new, :create, :show]
+
   # Route pour la newsletter
   post '/newsletter', to: 'newsletters#create'
   
