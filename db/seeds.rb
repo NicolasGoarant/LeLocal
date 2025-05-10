@@ -2,6 +2,7 @@
 
 puts "Nettoyage de la base de données..."
 Space.destroy_all
+Need.destroy_all if defined?(Need)
 Category.destroy_all if defined?(Category)
 
 puts "Création des catégories..."
@@ -187,26 +188,203 @@ lille_spaces = [
 ]
 
 # Fusionner tous les espaces
-# all_spaces = paris_spaces + lyon_spaces + nancy_spaces + bordeaux_spaces + lille_spaces
+all_spaces = paris_spaces + lyon_spaces + nancy_spaces + bordeaux_spaces + lille_spaces
 
 # Créer les espaces dans la base de données
-# all_spaces.each do |space_attrs|
+all_spaces.each do |space_attrs|
   # S'assurer que la catégorie existe et la récupérer
-  # category_name = space_attrs[:category]
-  # space_attrs.delete(:category) # Retirer la catégorie des attributs si c'est une string
+  category_name = space_attrs[:category]
+  space_attrs.delete(:category) # Retirer la catégorie des attributs si c'est une string
   
   # Si vous avez un modèle Category distinct
-  # if defined?(Category)
-  #  category = Category.find_by(name: category_name)
-   # space = Space.new(space_attrs)
-   # space.category = category
-  # else
+  if defined?(Category)
+    category = Category.find_by(name: category_name)
+    space = Space.new(space_attrs)
+    space.category = category
+  else
     # Sinon, utiliser directement le nom de la catégorie
-  #   space = Space.new(space_attrs.merge(category: category_name))
-  # end
+    space = Space.new(space_attrs.merge(category: category_name))
+  end
   
- # space.save!
- # puts "Créé : #{space.name} à #{space.address}"
-# end
+  space.save!
+  puts "Créé : #{space.name} à #{space.address}"
+end
 
 puts "Seed terminé : #{Space.count} espaces créés"
+
+# Création de besoins d'association avec coordonnées pour la carte
+
+# Vérifier si la classe Need existe
+if defined?(Need)
+  puts "\nNettoyage des besoins existants..."
+  Need.destroy_all
+
+  # Récupérer ou créer un utilisateur pour les besoins
+  user = if User.exists?
+    User.first
+  else
+    puts "Création d'un utilisateur administrateur..."
+    User.create!(
+      email: 'admin@lelocal.fr',
+      password: 'password123',
+      password_confirmation: 'password123',
+      first_name: 'Admin',
+      last_name: 'LeLocal',
+      role: 'admin',
+      confirmed_at: Time.now
+    )
+  end
+  puts "Utilisateur pour les besoins: #{user.email}"
+
+  # Création de besoins d'association avec coordonnées pour la carte
+  needs_data = [
+    {
+      title: "Recherche salle pour répétition théâtre",
+      description: "Notre troupe de théâtre amateur recherche une salle pour des répétitions hebdomadaires. Nous avons besoin d'un espace suffisamment grand pour 15 personnes, avec idéalement un peu de matériel son et lumière.",
+      category: "atelier",
+      address: "25 rue de la République",
+      city: "Lyon",
+      postal_code: "69001",
+      country: "France",
+      capacity: 15,
+      date_needed: Date.today + 14.days,
+      start_time: "18:00",
+      end_time: "21:00",
+      budget: 50,
+      recurrence: "weekly",
+      latitude: 45.767,
+      longitude: 4.836,
+      equipment_needs: ["videoprojecteur", "son"]
+    },
+    {
+      title: "Local pour atelier cuisine participative",
+      description: "Notre association d'intégration sociale cherche un espace avec cuisine pour organiser des ateliers de cuisine participative une fois par mois.",
+      category: "atelier",
+      address: "10 rue de la Croix Rousse",
+      city: "Lyon",
+      postal_code: "69004",
+      country: "France",
+      capacity: 20,
+      date_needed: Date.today + 21.days,
+      start_time: "10:00",
+      end_time: "14:00",
+      budget: 80,
+      recurrence: "monthly",
+      latitude: 45.779,
+      longitude: 4.830,
+      equipment_needs: ["cuisine", "mobilier"]
+    },
+    {
+      title: "Salle de réunion pour assemblée générale",
+      description: "Notre association environnementale recherche une salle pour notre assemblée générale annuelle qui réunira environ 50 adhérents.",
+      category: "reunion",
+      address: "3 rue Victor Hugo",
+      city: "Paris",
+      postal_code: "75004",
+      country: "France",
+      capacity: 50,
+      date_needed: Date.today + 30.days,
+      start_time: "14:00",
+      end_time: "18:00",
+      budget: 150,
+      recurrence: "once",
+      latitude: 48.856,
+      longitude: 2.351,
+      equipment_needs: ["wifi", "videoprojecteur", "mobilier"]
+    },
+    {
+      title: "Espace pour cours de yoga hebdomadaire",
+      description: "Association proposant des cours de yoga accessibles à tous cherche une salle calme et lumineuse pouvant accueillir 10 à 15 personnes.",
+      category: "sport",
+      address: "15 avenue Jean Jaurès",
+      city: "Marseille",
+      postal_code: "13005",
+      country: "France",
+      capacity: 15,
+      date_needed: Date.today + 10.days,
+      start_time: "18:30",
+      end_time: "20:00",
+      budget: 40,
+      recurrence: "weekly",
+      latitude: 43.296,
+      longitude: 5.377,
+      equipment_needs: ["son"]
+    },
+    {
+      title: "Local pour exposition photos temporaire",
+      description: "Notre collectif de photographes amateurs cherche un espace pour exposer une série de photos sur le thème de la biodiversité urbaine pendant une semaine.",
+      category: "evenement",
+      address: "8 rue des Arts",
+      city: "Bordeaux",
+      postal_code: "33000",
+      country: "France",
+      capacity: 30,
+      date_needed: Date.today + 60.days,
+      start_time: "10:00",
+      end_time: "19:00",
+      budget: 200,
+      recurrence: "once",
+      latitude: 44.841,
+      longitude: -0.580,
+      equipment_needs: ["wifi", "son"]
+    },
+    {
+      title: "Salle pour atelier d'écriture",
+      description: "Notre association littéraire recherche un espace calme et inspirant pour organiser des ateliers d'écriture créative.",
+      category: "atelier",
+      address: "12 rue de la Liberté",
+      city: "Lille",
+      postal_code: "59000",
+      country: "France",
+      capacity: 10,
+      date_needed: Date.today + 21.days,
+      start_time: "16:00",
+      end_time: "19:00",
+      budget: 40,
+      recurrence: "biweekly",
+      latitude: 50.630,
+      longitude: 3.057,
+      equipment_needs: ["wifi", "mobilier"]
+    },
+    {
+      title: "Local pour formation aux premiers secours",
+      description: "Notre antenne locale de secouristes recherche un espace pour organiser des formations aux premiers secours.",
+      category: "formation",
+      address: "5 rue de la Santé",
+      city: "Nantes",
+      postal_code: "44000",
+      country: "France",
+      capacity: 12,
+      date_needed: Date.today + 35.days,
+      start_time: "09:00",
+      end_time: "17:00",
+      budget: 100,
+      recurrence: "monthly",
+      latitude: 47.217,
+      longitude: -1.554,
+      equipment_needs: ["wifi", "videoprojecteur"]
+    }
+  ]
+
+  # Créer les besoins d'associations
+  needs_created = 0
+  needs_data.each do |need_data|
+    begin
+      need = Need.new(need_data)
+      need.user = user
+      
+      if need.save
+        needs_created += 1
+        puts "Besoin créé: #{need.title} à #{need.city}"
+      else
+        puts "Erreur lors de la création du besoin '#{need_data[:title]}': #{need.errors.full_messages.join(', ')}"
+      end
+    rescue => e
+      puts "Exception lors de la création du besoin '#{need_data[:title]}': #{e.message}"
+    end
+  end
+
+  puts "Total des besoins d'associations créés: #{needs_created}"
+else
+  puts "La classe Need n'est pas définie. Impossible de créer les besoins."
+end
