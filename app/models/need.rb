@@ -39,7 +39,7 @@ class Need < ApplicationRecord
                                            (obj.country_changed? if obj.respond_to?(:country_changed?)) }
   
   # Pour stocker la liste des équipements nécessaires
-  serialize :equipment_needs, Array
+  # serialize :equipment_needs, Array
   
   # Méthodes d'instance
   
@@ -82,8 +82,16 @@ class Need < ApplicationRecord
       where(capacity: min..max)
     end
   }
-  scope :with_equipment, ->(equipment) { where("equipment_needs @> ?", equipment) if equipment.present? }
+ 
   
+  scope :with_equipment, ->(equipment) {
+    where("equipment_needs @> ARRAY[?]::varchar[]", equipment) if equipment.present?
+  }
+  
+
+
+
+
   # Méthodes de classe
   def self.search(params)
     needs = self.all

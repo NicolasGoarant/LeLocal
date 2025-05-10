@@ -6,15 +6,9 @@ class NeedsController < ApplicationController
   def index
     @needs = Need.all
    
-    # Si le paramètre map est présent, utiliser la vue carte
-    if params[:map].present? && params[:map] == "true"
-      # Préparation des données pour la carte
-      @center_coords = @needs.any? && @needs.first.respond_to?(:latitude) && @needs.first.respond_to?(:longitude) ? 
-                      [@needs.first.latitude, @needs.first.longitude] : 
-                      [46.603354, 1.888334] # Centre de la France par défaut
-                      
-      # Utilisation du template map.html.erb
-      render "map"
+    # Si le paramètre map est présent, rediriger vers l'action map
+    if params[:map] == "true"
+      redirect_to map_needs_path
       return
     end
   end
@@ -24,11 +18,11 @@ class NeedsController < ApplicationController
     @needs = Need.all
 
     # Préparation des données pour la carte
-    @center_coords = @needs.any? && @needs.first.respond_to?(:latitude) && @needs.first.respond_to?(:longitude) ? 
-                    [@needs.first.latitude, @needs.first.longitude] : 
-                    [46.603354, 1.888334] # Centre de la France par défaut
-    
-    # Rails utilisera automatiquement la vue map.html.erb
+    if @needs.any? && @needs.first.respond_to?(:latitude) && @needs.first.respond_to?(:longitude)
+      @center_coords = [@needs.first.latitude, @needs.first.longitude]
+    else
+      @center_coords = [46.603354, 1.888334] # Centre de la France par défaut
+    end
   end
 
   # GET /needs/1
@@ -49,7 +43,6 @@ class NeedsController < ApplicationController
   
   # GET /needs/1/edit
   def edit
-    # Action pour éditer un besoin existant
   end
 
   # POST /needs

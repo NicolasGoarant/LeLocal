@@ -2,55 +2,70 @@ Rails.application.routes.draw do
   # Page d'accueil
   root 'home#index'
   
+  # Routes pour l'authentification via Devise
+  devise_for :users
+  
   # Routes pour les espaces
   resources :spaces do
     collection do
-      get 'search'  # Route pour la recherche des espaces
-      get 'new_host' # Route pour "Proposer un espace"
+      get 'map'
     end
-    
-    # Routes imbriquées pour les réservations d'un espace spécifique
-    resources :bookings, only: [:new, :create]
-    
-    # Routes imbriquées pour les avis/reviews d'un espace
-    resources :reviews, only: [:new, :create]
+    member do
+      get 'reserve'
+      post 'book'
+    end
   end
   
-  # Routes pour les catégories
-  resources :categories, only: [:index, :show]
-  
-  # Routes pour les réservations (sauf new et create qui sont imbriquées)
-  resources :bookings, except: [:new, :create]
-  
-  # Route pour la newsletter
-  post '/newsletter', to: 'newsletters#create'
-  
-  # Routes pour les pages statiques
-  get '/about', to: 'pages#about'
-  get '/how-it-works', to: 'pages#how_it_works'
-  get '/faq', to: 'pages#faq'
-  get '/contact', to: 'pages#contact'
-  get '/terms', to: 'pages#terms'
-  get '/privacy', to: 'pages#privacy'
-  
-  # Routes pour les besoins des associations
-  # Définition unique et complète
+  # Routes pour les besoins
   resources :needs do
     collection do
       get 'map'
     end
+    member do
+      get 'propose'
+      post 'offer'
+    end
   end
-
-  # Route de profile utilisateur (si vous n'utilisez pas Devise)
-  # get '/profile', to: 'users#show'
-  # get '/profile/edit', to: 'users#edit'
-  # patch '/profile', to: 'users#update'
-
-  # Routes pour l'authentification
-  devise_for :users, controllers: {
-    registrations: 'registrations'
-  }
-
-  # Route directe vers la page d'inscription
-  get '/inscription', to: 'registrations#new', as: 'signup'
+  
+  # Routes statiques
+  get 'about', to: 'static_pages#about'
+  get 'contact', to: 'static_pages#contact'
+  get 'terms', to: 'static_pages#terms'
+  get 'privacy', to: 'static_pages#privacy'
+  get 'faq', to: 'static_pages#faq'
+  
+  # Routes pour les réservations
+  resources :bookings do
+    member do
+      patch 'confirm'
+      patch 'cancel'
+      patch 'complete'
+    end
+  end
+  
+  # Routes pour les avis
+  resources :reviews, only: [:create, :edit, :update, :destroy]
+  
+  # Routes pour la recherche
+  get 'search', to: 'search#index'
+  
+  # Routes pour le profil utilisateur
+  resource :profile, only: [:show, :edit, :update]
+  
+  # Dashboard
+  namespace :dashboard do
+    root to: 'overview#index'
+    resources :spaces
+    resources :needs
+    resources :bookings
+    resources :notifications, only: [:index, :show, :update]
+  end
+  
+  # API
+  namespace :api, defaults: { format: :json } do
+    namespace :v1 do
+      resources :spaces, only: [:index, :show]
+      resources :needs, only: [:index, :show]
+    end
+  end
 end
