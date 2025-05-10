@@ -1,8 +1,4 @@
 Rails.application.routes.draw do
-  get "needs/index"
-  get "needs/new"
-  get "needs/create"
-  get "needs/show"
   # Page d'accueil
   root 'home#index'
   
@@ -26,10 +22,6 @@ Rails.application.routes.draw do
   # Routes pour les réservations (sauf new et create qui sont imbriquées)
   resources :bookings, except: [:new, :create]
   
-  # Routes pour le profil utilisateur (si vous utilisez Devise)
-  # devise_for :users
-  resources :needs, only: [:index, :new, :create, :show]
-
   # Route pour la newsletter
   post '/newsletter', to: 'newsletters#create'
   
@@ -40,20 +32,25 @@ Rails.application.routes.draw do
   get '/contact', to: 'pages#contact'
   get '/terms', to: 'pages#terms'
   get '/privacy', to: 'pages#privacy'
-    
-  # Route pour les besoins des associations
-  resources :needs, only: [:index, :show, :new, :create]
   
+  # Routes pour les besoins des associations
+  # Définition unique et complète
+  resources :needs do
+    collection do
+      get 'map'
+    end
+  end
+
   # Route de profile utilisateur (si vous n'utilisez pas Devise)
   # get '/profile', to: 'users#show'
   # get '/profile/edit', to: 'users#edit'
   # patch '/profile', to: 'users#update'
 
+  # Routes pour l'authentification
   devise_for :users, controllers: {
-  registrations: 'registrations'
-}
+    registrations: 'registrations'
+  }
 
-# Route directe vers la page d'inscription
-get '/inscription', to: 'registrations#new', as: 'signup'
-
+  # Route directe vers la page d'inscription
+  get '/inscription', to: 'registrations#new', as: 'signup'
 end

@@ -2,21 +2,24 @@ class NeedsController < ApplicationController
   before_action :set_need, only: [:show, :edit, :update, :destroy]
   before_action :authenticate_user!, except: [:index, :show, :map]
   
-
   # GET /needs
   def index
     @needs = Need.all
    
-
-      
     # Si le paramètre map est présent, utiliser la vue carte
     if params[:map].present? && params[:map] == "true"
-      map
+      # Préparation des données pour la carte
+      @center_coords = @needs.any? && @needs.first.respond_to?(:latitude) && @needs.first.respond_to?(:longitude) ? 
+                      [@needs.first.latitude, @needs.first.longitude] : 
+                      [46.603354, 1.888334] # Centre de la France par défaut
+                      
+      # Utilisation du template map.html.erb
+      render "map"
+      return
     end
   end
   
   # GET /needs/map
-  # GET /needs?map=true
   def map
     @needs = Need.all
 
@@ -24,9 +27,8 @@ class NeedsController < ApplicationController
     @center_coords = @needs.any? && @needs.first.respond_to?(:latitude) && @needs.first.respond_to?(:longitude) ? 
                     [@needs.first.latitude, @needs.first.longitude] : 
                     [46.603354, 1.888334] # Centre de la France par défaut
-                    
-    # Utilisation du template map.html.erb
-    render "needs/map"
+    
+    # Rails utilisera automatiquement la vue map.html.erb
   end
 
   # GET /needs/1
@@ -44,6 +46,11 @@ class NeedsController < ApplicationController
   def new
     @need = Need.new
   end
+  
+  # GET /needs/1/edit
+  def edit
+    # Action pour éditer un besoin existant
+  end
 
   # POST /needs
   def create
@@ -55,6 +62,21 @@ class NeedsController < ApplicationController
     else
       render :new
     end
+  end
+  
+  # PATCH/PUT /needs/1
+  def update
+    if @need.update(need_params)
+      redirect_to @need, notice: 'Votre besoin a été mis à jour avec succès.'
+    else
+      render :edit
+    end
+  end
+  
+  # DELETE /needs/1
+  def destroy
+    @need.destroy
+    redirect_to needs_path, notice: 'Votre besoin a été supprimé avec succès.'
   end
 
   private
