@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_05_10_105953) do
+ActiveRecord::Schema[8.0].define(version: 2025_05_10_164518) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -72,7 +72,30 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_10_105953) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "equipment_needs", default: [], null: false, array: true
+    t.string "category"
+    t.string "address"
+    t.string "country"
+    t.float "latitude"
+    t.float "longitude"
+    t.string "start_time"
+    t.string "end_time"
+    t.integer "budget"
+    t.string "recurrence"
+    t.string "postal_code"
+    t.integer "capacity"
+    t.date "date_needed"
     t.index ["user_id"], name: "index_needs_on_user_id"
+  end
+
+  create_table "reviews", force: :cascade do |t|
+    t.text "content"
+    t.integer "rating"
+    t.bigint "user_id", null: false
+    t.bigint "space_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["space_id"], name: "index_reviews_on_space_id"
+    t.index ["user_id"], name: "index_reviews_on_user_id"
   end
 
   create_table "spaces", force: :cascade do |t|
@@ -100,6 +123,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_10_105953) do
     t.datetime "updated_at", null: false
     t.string "first_name"
     t.string "last_name"
+    t.string "association_name"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
@@ -107,4 +131,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_10_105953) do
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "needs", "users"
+  add_foreign_key "reviews", "spaces"
+  add_foreign_key "reviews", "users"
 end

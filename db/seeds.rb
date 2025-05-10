@@ -1,5 +1,3 @@
-# db/seeds.rb
-
 puts "Nettoyage de la base de données..."
 Space.destroy_all
 Need.destroy_all if defined?(Need)
@@ -7,384 +5,81 @@ Category.destroy_all if defined?(Category)
 
 puts "Création des catégories..."
 categories = [
-  {name: "Salles de réunion", description: "Parfaites pour vos réunions et ateliers", image: "https://images.unsplash.com/photo-1577896851231-70ef18881754"},
-  {name: "Espaces événementiels", description: "Idéaux pour vos conférences et événements", image: "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4"},
-  {name: "Ateliers créatifs", description: "Des espaces conçus pour la création et l'artisanat", image: "https://images.unsplash.com/photo-1574974671999-24b7dfbb0d53"},
-  {name: "Espaces sportifs", description: "Pour les activités sportives et le bien-être", image: "https://images.unsplash.com/photo-1526948531399-320e7e40f0ca"}
+  {name: "Salles de réunion", description: "Parfaites pour vos réunions et ateliers"},
+  {name: "Espaces événementiels", description: "Idéaux pour vos conférences et événements"},
+  {name: "Ateliers créatifs", description: "Des espaces conçus pour la création et l'artisanat"},
+  {name: "Espaces sportifs", description: "Pour les activités sportives et le bien-être"}
 ]
+categories.each { |cat| Category.create!(cat) }
 
-# Si vous avez un modèle Category distinct
-if defined?(Category)
-  categories.each do |category_attrs|
-    Category.create!(category_attrs)
-  end
-  category_names = Category.all.pluck(:name)
-else
-  category_names = categories.map { |c| c[:name] }
+puts "Création de l'utilisateur admin..."
+user = User.find_or_create_by!(email: 'admin@lelocal.fr') do |u|
+  u.password = 'password123'
+  u.password_confirmation = 'password123'
+  u.first_name = 'Admin'
+  u.last_name = 'LeLocal'
+  u.association_name = 'Les Lilas de la rue Mortier'  # 👈 ici, et seulement ici
 end
 
-puts "Création des espaces à Paris..."
-paris_spaces = [
+puts "Création des espaces..."
+[
   {
     name: "Espace Créatif Montmartre",
-    description: "Espace lumineux au cœur de Montmartre, idéal pour les réunions créatives et ateliers artistiques. Grande verrière, équipement audio-visuel complet et coin détente inclus.",
-    address: "18 Rue des Abbesses, Paris 18ème",
+    description: "Espace lumineux au cœur de Montmartre",
+    address: "18 Rue des Abbesses, Paris",
     capacity: 25,
     price_per_hour: 45,
-    rating: 4.8,
-    images: "https://images.unsplash.com/photo-1497366754035-f200968a6e72",
     latitude: 48.8845,
     longitude: 2.3322,
     category: "Ateliers créatifs"
   },
   {
-    name: "Salle Panoramique République",
-    description: "Grande salle avec vue panoramique sur la place de la République. Équipement audiovisuel haut de gamme, grande table modulable et cuisine attenante.",
-    address: "8 Boulevard du Temple, Paris 11ème",
-    capacity: 40,
-    price_per_hour: 60,
-    rating: 4.7,
-    images: "https://images.unsplash.com/photo-1577412647305-991150c7d163",
-    latitude: 48.8673,
-    longitude: 2.3679,
-    category: "Espaces événementiels"
-  },
-  {
-    name: "Atelier Artistique Bastille",
-    description: "Petit atelier chaleureux proche de la Bastille pour vos activités artistiques. Matériel de peinture disponible, éclairage naturel et ambiance inspirante.",
-    address: "12 Rue de la Roquette, Paris 12ème",
-    capacity: 15,
-    price_per_hour: 35,
-    rating: 4.9,
-    images: "https://images.unsplash.com/photo-1519167758481-83f550bb49b3",
-    latitude: 48.8531,
-    longitude: 2.3704,
-    category: "Ateliers créatifs"
-  }
-]
-
-puts "Création des espaces à Lyon..."
-lyon_spaces = [
-  {
-    name: "Espace Confluence",
-    description: "Grand espace modulable dans le quartier moderne de Confluence. Idéal pour les événements d'entreprise, formations et séminaires.",
-    address: "12 Cours Charlemagne, Lyon 2ème",
+    name: "Salle Confluence",
+    description: "Grande salle à Lyon pour séminaires",
+    address: "12 Cours Charlemagne, Lyon",
     capacity: 60,
     price_per_hour: 75,
-    rating: 4.6,
-    images: "https://images.unsplash.com/photo-1517502884422-41eaead166d4",
     latitude: 45.7464,
     longitude: 4.8197,
     category: "Espaces événementiels"
-  },
-  {
-    name: "Salle Croix-Rousse",
-    description: "Salle cosy sur les pentes de la Croix-Rousse, parfaite pour les réunions de travail. Ambiance chaleureuse et authentique.",
-    address: "5 Rue des Pierres Plantées, Lyon 1er",
-    capacity: 20,
-    price_per_hour: 40,
-    rating: 4.5,
-    images: "https://images.unsplash.com/photo-1534298261662-f8fdd25317db",
-    latitude: 45.7745,
-    longitude: 4.8308,
-    category: "Salles de réunion"
   }
-]
+].each do |space_data|
+  category = Category.find_by(name: space_data.delete(:category))
+  Space.create!(space_data.merge(category: category))
+end
 
-puts "Création des espaces à Nancy..."
-nancy_spaces = [
+puts "Création des besoins..."
+needs = [
   {
-    name: "Espace Stanislas",
-    description: "Belle salle historique près de la place Stanislas. Architecture XVIIIe siècle, plafonds hauts et équipement moderne.",
-    address: "15 Rue des Dominicains, Nancy",
-    capacity: 30,
-    price_per_hour: 50,
-    rating: 4.7,
-    images: "https://images.unsplash.com/photo-1517502166878-35c93a0072f0",
-    latitude: 48.6921,
-    longitude: 6.1844,
-    category: "Espaces événementiels"
-  },
-  {
-    name: "Studio Art Déco Nancy",
-    description: "Studio inspiré du mouvement Art Déco nancéien. Parfait pour les photoshoots, ateliers créatifs et petites réceptions.",
-    address: "8 Rue Émile Gallé, Nancy",
+    title: "Recherche salle pour répétition",
+    description: "Nous cherchons une salle pour des répétitions de théâtre.",
+    category: "atelier",
+    address: "25 rue de la République",
+    city: "Lyon",
+    postal_code: "69001",
+    country: "France",
     capacity: 15,
-    price_per_hour: 35,
-    rating: 4.8,
-    images: "https://images.unsplash.com/photo-1519167115178-d40f3b7b4897",
-    latitude: 48.6889,
-    longitude: 6.1765,
-    category: "Ateliers créatifs"
-  },
-  {
-    name: "Centre Sportif Pépinière",
-    description: "Espace sportif moderne proche du parc de la Pépinière. Salle multisport, vestiaires et douches inclus.",
-    address: "25 Boulevard Albert 1er, Nancy",
-    capacity: 50,
-    price_per_hour: 65,
-    rating: 4.6,
-    images: "https://images.unsplash.com/photo-1571902943202-507ec2618e8f",
-    latitude: 48.6952,
-    longitude: 6.1932,
-    category: "Espaces sportifs"
+    date_needed: 2.weeks.from_now,
+    start_time: "18:00",
+    end_time: "21:00",
+    budget: 50,
+    recurrence: "weekly",
+    latitude: 45.767,
+    longitude: 4.836,
+    equipment_needs: ["videoprojecteur", "son"]
   }
 ]
 
-puts "Création des espaces à Bordeaux..."
-bordeaux_spaces = [
-  {
-    name: "Atelier Chartrons",
-    description: "Bel atelier lumineux dans le quartier des Chartrons. Idéal pour les ateliers créatifs et les petits événements.",
-    address: "45 Rue Notre Dame, Bordeaux",
-    capacity: 25,
-    price_per_hour: 40,
-    rating: 4.7,
-    images: "https://images.unsplash.com/photo-1505409859467-3a796fd5798e",
-    latitude: 44.8536,
-    longitude: -0.5723,
-    category: "Ateliers créatifs"
-  },
-  {
-    name: "Salle Conférence Quinconces",
-    description: "Salle de conférence moderne au cœur de Bordeaux. Équipement audiovisuel haut de gamme, parfait pour vos présentations professionnelles.",
-    address: "12 Allées de Tourny, Bordeaux",
-    capacity: 80,
-    price_per_hour: 90,
-    rating: 4.9,
-    images: "https://images.unsplash.com/photo-1573167507387-6b4b98cb7c13",
-    latitude: 44.8434,
-    longitude: -0.5748,
-    category: "Espaces événementiels"
-  }
-]
-
-puts "Création des espaces à Lille..."
-lille_spaces = [
-  {
-    name: "Espace Vieux-Lille",
-    description: "Charmant espace dans une maison flamande du Vieux-Lille. Idéal pour les réunions et ateliers dans un cadre authentique.",
-    address: "24 Rue de la Monnaie, Lille",
-    capacity: 20,
-    price_per_hour: 45,
-    rating: 4.6,
-    images: "https://images.unsplash.com/photo-1532916123995-50bad0972526",
-    latitude: 50.6388,
-    longitude: 3.0629,
-    category: "Salles de réunion"
-  },
-  {
-    name: "Loft Euralille",
-    description: "Grand loft moderne proche d'Euralille. Espace ouvert et lumineux, parfait pour les événements corporate.",
-    address: "142 Avenue Willy Brandt, Lille",
-    capacity: 100,
-    price_per_hour: 110,
-    rating: 4.8,
-    images: "https://images.unsplash.com/photo-1505409859467-3a796fd5798e",
-    latitude: 50.6371,
-    longitude: 3.0714,
-    category: "Espaces événementiels"
-  }
-]
-
-# Fusionner tous les espaces
-all_spaces = paris_spaces + lyon_spaces + nancy_spaces + bordeaux_spaces + lille_spaces
-
-# Créer les espaces dans la base de données
-all_spaces.each do |space_attrs|
-  # S'assurer que la catégorie existe et la récupérer
-  category_name = space_attrs[:category]
-  space_attrs.delete(:category) # Retirer la catégorie des attributs si c'est une string
-  
-  # Si vous avez un modèle Category distinct
-  if defined?(Category)
-    category = Category.find_by(name: category_name)
-    space = Space.new(space_attrs)
-    space.category = category
+created = 0
+needs.each do |need_data|
+  need = Need.new(need_data)
+  need.user = user  # ✅ C’est ici qu'on lie l'association via l'utilisateur
+  if need.save
+    puts "✅ Besoin créé : #{need.title}"
+    created += 1
   else
-    # Sinon, utiliser directement le nom de la catégorie
-    space = Space.new(space_attrs.merge(category: category_name))
+    puts "❌ Erreur : #{need.errors.full_messages.join(', ')}"
   end
-  
-  space.save!
-  puts "Créé : #{space.name} à #{space.address}"
 end
 
-puts "Seed terminé : #{Space.count} espaces créés"
-
-# Création de besoins d'association avec coordonnées pour la carte
-
-# Vérifier si la classe Need existe
-if defined?(Need)
-  puts "\nNettoyage des besoins existants..."
-  Need.destroy_all
-
-  # Récupérer ou créer un utilisateur pour les besoins
-  user = if User.exists?
-    User.first
-  else
-    puts "Création d'un utilisateur administrateur..."
-    User.create!(
-      email: 'admin@lelocal.fr',
-      password: 'password123',
-      password_confirmation: 'password123',
-      first_name: 'Admin',
-      last_name: 'LeLocal',
-      role: 'admin',
-      confirmed_at: Time.now
-    )
-  end
-  puts "Utilisateur pour les besoins: #{user.email}"
-
-  # Création de besoins d'association avec coordonnées pour la carte
-  needs_data = [
-    {
-      title: "Recherche salle pour répétition théâtre",
-      description: "Notre troupe de théâtre amateur recherche une salle pour des répétitions hebdomadaires. Nous avons besoin d'un espace suffisamment grand pour 15 personnes, avec idéalement un peu de matériel son et lumière.",
-      category: "atelier",
-      address: "25 rue de la République",
-      city: "Lyon",
-      postal_code: "69001",
-      country: "France",
-      capacity: 15,
-      date_needed: Date.today + 14.days,
-      start_time: "18:00",
-      end_time: "21:00",
-      budget: 50,
-      recurrence: "weekly",
-      latitude: 45.767,
-      longitude: 4.836,
-      equipment_needs: ["videoprojecteur", "son"]
-    },
-    {
-      title: "Local pour atelier cuisine participative",
-      description: "Notre association d'intégration sociale cherche un espace avec cuisine pour organiser des ateliers de cuisine participative une fois par mois.",
-      category: "atelier",
-      address: "10 rue de la Croix Rousse",
-      city: "Lyon",
-      postal_code: "69004",
-      country: "France",
-      capacity: 20,
-      date_needed: Date.today + 21.days,
-      start_time: "10:00",
-      end_time: "14:00",
-      budget: 80,
-      recurrence: "monthly",
-      latitude: 45.779,
-      longitude: 4.830,
-      equipment_needs: ["cuisine", "mobilier"]
-    },
-    {
-      title: "Salle de réunion pour assemblée générale",
-      description: "Notre association environnementale recherche une salle pour notre assemblée générale annuelle qui réunira environ 50 adhérents.",
-      category: "reunion",
-      address: "3 rue Victor Hugo",
-      city: "Paris",
-      postal_code: "75004",
-      country: "France",
-      capacity: 50,
-      date_needed: Date.today + 30.days,
-      start_time: "14:00",
-      end_time: "18:00",
-      budget: 150,
-      recurrence: "once",
-      latitude: 48.856,
-      longitude: 2.351,
-      equipment_needs: ["wifi", "videoprojecteur", "mobilier"]
-    },
-    {
-      title: "Espace pour cours de yoga hebdomadaire",
-      description: "Association proposant des cours de yoga accessibles à tous cherche une salle calme et lumineuse pouvant accueillir 10 à 15 personnes.",
-      category: "sport",
-      address: "15 avenue Jean Jaurès",
-      city: "Marseille",
-      postal_code: "13005",
-      country: "France",
-      capacity: 15,
-      date_needed: Date.today + 10.days,
-      start_time: "18:30",
-      end_time: "20:00",
-      budget: 40,
-      recurrence: "weekly",
-      latitude: 43.296,
-      longitude: 5.377,
-      equipment_needs: ["son"]
-    },
-    {
-      title: "Local pour exposition photos temporaire",
-      description: "Notre collectif de photographes amateurs cherche un espace pour exposer une série de photos sur le thème de la biodiversité urbaine pendant une semaine.",
-      category: "evenement",
-      address: "8 rue des Arts",
-      city: "Bordeaux",
-      postal_code: "33000",
-      country: "France",
-      capacity: 30,
-      date_needed: Date.today + 60.days,
-      start_time: "10:00",
-      end_time: "19:00",
-      budget: 200,
-      recurrence: "once",
-      latitude: 44.841,
-      longitude: -0.580,
-      equipment_needs: ["wifi", "son"]
-    },
-    {
-      title: "Salle pour atelier d'écriture",
-      description: "Notre association littéraire recherche un espace calme et inspirant pour organiser des ateliers d'écriture créative.",
-      category: "atelier",
-      address: "12 rue de la Liberté",
-      city: "Lille",
-      postal_code: "59000",
-      country: "France",
-      capacity: 10,
-      date_needed: Date.today + 21.days,
-      start_time: "16:00",
-      end_time: "19:00",
-      budget: 40,
-      recurrence: "biweekly",
-      latitude: 50.630,
-      longitude: 3.057,
-      equipment_needs: ["wifi", "mobilier"]
-    },
-    {
-      title: "Local pour formation aux premiers secours",
-      description: "Notre antenne locale de secouristes recherche un espace pour organiser des formations aux premiers secours.",
-      category: "formation",
-      address: "5 rue de la Santé",
-      city: "Nantes",
-      postal_code: "44000",
-      country: "France",
-      capacity: 12,
-      date_needed: Date.today + 35.days,
-      start_time: "09:00",
-      end_time: "17:00",
-      budget: 100,
-      recurrence: "monthly",
-      latitude: 47.217,
-      longitude: -1.554,
-      equipment_needs: ["wifi", "videoprojecteur"]
-    }
-  ]
-
-  # Créer les besoins d'associations
-  needs_created = 0
-  needs_data.each do |need_data|
-    begin
-      need = Need.new(need_data)
-      need.user = user
-      
-      if need.save
-        needs_created += 1
-        puts "Besoin créé: #{need.title} à #{need.city}"
-      else
-        puts "Erreur lors de la création du besoin '#{need_data[:title]}': #{need.errors.full_messages.join(', ')}"
-      end
-    rescue => e
-      puts "Exception lors de la création du besoin '#{need_data[:title]}': #{e.message}"
-    end
-  end
-
-  puts "Total des besoins d'associations créés: #{needs_created}"
-else
-  puts "La classe Need n'est pas définie. Impossible de créer les besoins."
-end
+puts "Seeding terminé avec succès. #{created} besoin(s) créé(s)."

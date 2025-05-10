@@ -23,8 +23,8 @@ class Space < ApplicationRecord
   belongs_to :user, optional: true
   has_many :bookings, dependent: :destroy
   has_many :reviews, dependent: :destroy
-  has_many :availabilities, dependent: :destroy
-  has_many :space_amenities, dependent: :destroy
+  # has_many :availabilities, dependent: :destroy
+  # has_many :space_amenities, dependent: :destroy
   has_many :amenities, through: :space_amenities
   
   # Ajouter pour les photos
