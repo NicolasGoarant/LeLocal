@@ -40,6 +40,9 @@ Rails.application.routes.draw do
   get '/contact', to: 'pages#contact'
   get '/terms', to: 'pages#terms'
   get '/privacy', to: 'pages#privacy'
+    
+  # Route pour les besoins des associations
+  resources :needs, only: [:index, :show, :new, :create]
   
   # Route de profile utilisateur (si vous n'utilisez pas Devise)
   # get '/profile', to: 'users#show'

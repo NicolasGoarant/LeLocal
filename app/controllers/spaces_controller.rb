@@ -7,6 +7,19 @@ class SpacesController < ApplicationController
     @spaces = Space.all
     # Combiner les espaces de la BD avec les espaces simulés
     @spaces = (@spaces + simulated_spaces).sort_by(&:created_at).reverse
+
+    # Appliquer les filtres si présents
+    @spaces = filter_by_location(@spaces, params[:location]) if params[:location].present?
+    @spaces = filter_by_date_and_time(@spaces, params[:date], params[:start_time], params[:end_time]) if params[:date].present?
+    @spaces = filter_by_capacity(@spaces, params[:capacity]) if params[:capacity].present?
+    @spaces = filter_by_price(@spaces, params[:min_price], params[:max_price]) if params[:min_price].present? || params[:max_price].present?
+    @spaces = filter_by_categories(@spaces, params[:categories]) if params[:categories].present?
+    @spaces = filter_by_amenities(@spaces, params[:amenities]) if params[:amenities].present?
+
+    # Si le paramètre map est présent, utiliser la vue carte
+    if params[:map].present? && params[:map] == "true"
+      render :map
+    end
   end
   
   def show
@@ -43,6 +56,9 @@ class SpacesController < ApplicationController
       info: @space.name,
       id: @space.id
     }
+    
+    @reviews = @space.respond_to?(:reviews) ? @space.reviews.includes(:user) : []
+    @reservation = Reservation.new if defined?(Reservation)
   end
   
   def new
@@ -162,6 +178,8 @@ class SpacesController < ApplicationController
   def space_params
     params.require(:space).permit(:name, :description, :address, :city, :capacity, 
                                   :price_per_hour, :category, :rules, :cancellation_policy,
+                                  :hourly_price, :postal_code, :country, :minimum_hours,
+                                  :latitude, :longitude, photos: [], amenity_ids: [], 
                                   :amenities => [])
   end
   
@@ -203,13 +221,17 @@ class SpacesController < ApplicationController
         city: "Paris",
         capacity: 15,
         price_per_hour: 35,
+        hourly_price: 35,
         rating: 4.8,
         category: "Espace événementiel",
         amenities: ["WiFi", "Équipement audio", "Éclairage", "Prises multiples"],
         rules: "Pas de nourriture ni boisson près des équipements. Nettoyage obligatoire.",
         cancellation_policy: "Remboursement à 100% si annulation 72h avant.",
         latitude: 48.8843,
-        longitude: 2.3378
+        longitude: 2.3378,
+        created_at: Time.now - 10.days,
+        average_rating: 4.8,
+        address_short: "Paris, 75"
       )
       
       spaces << OpenStruct.new(
@@ -220,13 +242,17 @@ class SpacesController < ApplicationController
         city: "Paris",
         capacity: 25,
         price_per_hour: 45,
+        hourly_price: 45,
         rating: 4.5,
         category: "Salle de réunion",
         amenities: ["WiFi", "Vidéoprojecteur", "Tableau blanc", "Eau", "Café"],
         rules: "Uniquement réservé aux réunions professionnelles.",
         cancellation_policy: "Remboursement à 50% si annulation 48h avant.",
         latitude: 48.8701,
-        longitude: 2.3631
+        longitude: 2.3631,
+        created_at: Time.now - 30.days,
+        average_rating: 4.5,
+        address_short: "Paris, 75"
       )
       
     when "lyon"
@@ -239,13 +265,17 @@ class SpacesController < ApplicationController
         city: "Lyon",
         capacity: 18,
         price_per_hour: 30,
+        hourly_price: 30,
         rating: 4.7,
         category: "Atelier",
         amenities: ["WiFi", "Tables de travail", "Matériel créatif", "Cuisine"],
         rules: "Respect des lieux et nettoyage après usage.",
         cancellation_policy: "Remboursement à 100% si annulation 48h avant.",
         latitude: 45.7741,
-        longitude: 4.8284
+        longitude: 4.8284,
+        created_at: Time.now - 15.days,
+        average_rating: 4.7,
+        address_short: "Lyon, 69"
       )
       
     when "nancy"
@@ -258,13 +288,17 @@ class SpacesController < ApplicationController
         city: "Nancy",
         capacity: 10,
         price_per_hour: 20,
+        hourly_price: 20,
         rating: 4.3,
         category: "Bureau partagé",
         amenities: ["WiFi", "Imprimante", "Cuisine partagée", "Café", "Eau"],
         rules: "Respect du calme pour tous les coworkers.",
         cancellation_policy: "Remboursement à 100% si annulation 24h avant.",
         latitude: 48.6921,
-        longitude: 6.1844
+        longitude: 6.1844,
+        created_at: Time.now - 45.days,
+        average_rating: 4.3,
+        address_short: "Nancy, 54"
       )
       
       spaces << OpenStruct.new(
@@ -275,13 +309,17 @@ class SpacesController < ApplicationController
         city: "Nancy",
         capacity: 50,
         price_per_hour: 60,
+        hourly_price: 60,
         rating: 4.6,
         category: "Espace événementiel",
         amenities: ["WiFi", "Système de son", "Tables et chaises", "Cuisine", "Parking"],
         rules: "Interdiction de fumer. Nettoyage à la charge du réservant.",
         cancellation_policy: "Remboursement à 50% si annulation 72h avant.",
         latitude: 48.6840,
-        longitude: 6.1746
+        longitude: 6.1746,
+        created_at: Time.now - 20.days,
+        average_rating: 4.6,
+        address_short: "Nancy, 54"
       )
       
     when "bordeaux"
@@ -294,13 +332,17 @@ class SpacesController < ApplicationController
         city: "Bordeaux",
         capacity: 35,
         price_per_hour: 50,
+        hourly_price: 50,
         rating: 4.9,
         category: "Salle de réunion",
         amenities: ["WiFi", "Vidéoprojecteur", "Sonorisation", "Climatisation"],
         rules: "Événements culturels prioritaires. Pas de musique après 22h.",
         cancellation_policy: "Remboursement à 70% si annulation 72h avant.",
         latitude: 44.8511,
-        longitude: -0.5689
+        longitude: -0.5689,
+        created_at: Time.now - 5.days,
+        average_rating: 4.9,
+        address_short: "Bordeaux, 33"
       )
       
     when "lille"
@@ -313,14 +355,35 @@ class SpacesController < ApplicationController
         city: "Lille",
         capacity: 20,
         price_per_hour: 40,
+        hourly_price: 40,
         rating: 4.7,
         category: "Salle de sport",
         amenities: ["Miroirs", "Système audio", "Vestiaires", "Douches"],
         rules: "Chaussures de danse obligatoires. Respect des horaires.",
         cancellation_policy: "Remboursement à 50% si annulation 48h avant.",
         latitude: 50.6387,
-        longitude: 3.0639
+        longitude: 3.0639,
+        created_at: Time.now - 25.days,
+        average_rating: 4.7,
+        address_short: "Lille, 59"
       )
+    end
+
+    # Ajouter les méthodes nécessaires pour la vue carte
+    spaces.each do |space|
+      # Définir une méthode pour vérifier si l'espace est nouveau (créé au cours des 30 derniers jours)
+      space.define_singleton_method(:new_space?) do
+        created_at >= 30.days.ago
+      end
+
+      # Définir d'autres méthodes si nécessaires pour la vue carte
+      space.define_singleton_method(:photos) do
+        []
+      end
+      
+      space.define_singleton_method(:photos_attached?) do
+        false
+      end
     end
     
     spaces
@@ -340,6 +403,87 @@ class SpacesController < ApplicationController
       [50.6292, 3.0573]
     else
       [46.603354, 1.888334] # Centre de la France
+    end
+  end
+
+  # Méthodes de filtrage pour les espaces
+  def filter_by_location(spaces, location)
+    if spaces.respond_to?(:where)
+      # Si @spaces est un ActiveRecord::Relation, utiliser where
+      spaces.where('lower(city) LIKE ? OR lower(address) LIKE ?', "%#{location.downcase}%", "%#{location.downcase}%")
+    else
+      # Sinon, c'est probablement un Array, utiliser select
+      spaces.select do |space|
+        space.city&.downcase&.include?(location.downcase) || 
+        space.address&.downcase&.include?(location.downcase)
+      end
+    end
+  end
+
+  def filter_by_date_and_time(spaces, date, start_time, end_time)
+    date = Date.parse(date) rescue Date.today
+    start_time = start_time.presence || "8:00"
+    end_time = end_time.presence || "18:00"
+
+    if spaces.respond_to?(:joins)
+      # Si @spaces est un ActiveRecord::Relation, utiliser joins
+      spaces.joins(:availabilities)
+        .where("availabilities.day_of_week = ? AND availabilities.start_time <= ? AND availabilities.end_time >= ?", 
+               date.wday, start_time, end_time)
+        .distinct
+    else
+      # Sinon, c'est probablement un Array, filtrer différemment (simulation)
+      spaces # Pour les espaces simulés, on ne filtre pas par date/heure
+    end
+  end
+
+  def filter_by_capacity(spaces, capacity)
+    if capacity.is_a?(String) && capacity.include?('-')
+      min_capacity, max_capacity = capacity.split("-").map(&:to_i)
+      if spaces.respond_to?(:where)
+        spaces.where("capacity > ? AND capacity <= ?", min_capacity, max_capacity)
+      else
+        spaces.select { |s| s.capacity > min_capacity && s.capacity <= max_capacity }
+      end
+    else
+      min_capacity = capacity.to_i
+      if spaces.respond_to?(:where)
+        spaces.where("capacity >= ?", min_capacity)
+      else
+        spaces.select { |s| s.capacity >= min_capacity }
+      end
+    end
+  end
+
+  def filter_by_price(spaces, min_price, max_price)
+    if spaces.respond_to?(:where)
+      spaces = spaces.where("hourly_price >= ?", min_price.to_f) if min_price.present?
+      spaces = spaces.where("hourly_price <= ?", max_price.to_f) if max_price.present?
+    else
+      spaces = spaces.select { |s| s.hourly_price >= min_price.to_f } if min_price.present?
+      spaces = spaces.select { |s| s.hourly_price <= max_price.to_f } if max_price.present?
+    end
+    spaces
+  end
+
+  def filter_by_categories(spaces, categories)
+    categories = Array(categories)
+    if spaces.respond_to?(:where)
+      spaces.where(category: categories)
+    else
+      spaces.select { |s| categories.include?(s.category) }
+    end
+  end
+
+  def filter_by_amenities(spaces, amenities)
+    amenities = Array(amenities)
+    if spaces.respond_to?(:joins)
+      spaces.joins(:space_amenities).where(space_amenities: { amenity_id: amenities }).distinct
+    else
+      spaces.select do |s| 
+        # Pour les espaces simulés, vérifier si les amenities contiennent au moins un des amenities demandés
+        (s.amenities & amenities).any?
+      end
     end
   end
 end

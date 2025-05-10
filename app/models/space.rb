@@ -1,18 +1,38 @@
 class Space < ApplicationRecord
+  # Constantes pour les catégories et équipements
+  CATEGORIES = [
+    ["Salle de réunion", "salle_reunion"],
+    ["Espace de coworking", "coworking"],
+    ["Espace événementiel", "evenementiel"],
+    ["Atelier créatif", "atelier"],
+    ["Espace sportif", "sport"],
+    ["Autre", "autre"]
+  ]
+  
+  AMENITIES = [
+    ["WiFi", "wifi"],
+    ["Vidéoprojecteur", "videoprojecteur"],
+    ["Tableau blanc", "tableau"],
+    ["Cuisine", "cuisine"],
+    ["Climatisation", "climatisation"],
+    ["Accessible PMR", "accessible_pmr"],
+    ["Parking", "parking"]
+  ]
+  
   # Associations
+  belongs_to :user, optional: true
   has_many :bookings, dependent: :destroy
-  # has_many :reviews, dependent: :destroy  # À décommenter si vous créez un modèle Review
-  belongs_to :user, optional: true  # À adapter selon votre implémentation de l'authentification
-  # belongs_to :category  # À décommenter si vous utilisez une table Category distincte au lieu d'un attribut string
+  has_many :reviews, dependent: :destroy
+  has_many :availabilities, dependent: :destroy
+  has_many :space_amenities, dependent: :destroy
+  has_many :amenities, through: :space_amenities
   
   # Ajouter pour les photos
   has_many_attached :images
-  
-  # Pour les disponibilités
-  has_many :availabilities, dependent: :destroy
+  has_many_attached :photos # Pour compatibilité avec le code de carte
   
   # Pour les équipements (stockés comme un tableau dans un champ texte)
-  serialize :amenities, coder: YAML
+  serialize :amenities, coder: YAML, unless: -> { defined?(space_amenities) }
   
   # Validations
   validates :name, presence: true, length: { minimum: 3, maximum: 100 }
@@ -22,9 +42,12 @@ class Space < ApplicationRecord
   validates :price_per_hour, presence: true, numericality: { greater_than: 0 }
   validates :category, presence: true
   
-  # Geocoding (à activer si vous utilisez la gem geocoder)
-  geocoded_by :address
-  after_validation :geocode, if: :address_changed?
+  # Alias pour la compatibilité avec les différentes versions du code
+  alias_attribute :hourly_price, :price_per_hour
+  
+  # Geocoding 
+  geocoded_by :full_address
+  after_validation :geocode, if: :should_geocode?
   
   # Scopes
   scope :by_category, ->(category) { where(category: category) if category.present? }
@@ -35,7 +58,7 @@ class Space < ApplicationRecord
       where("capacity >= ?", min)
     end
   }
-  scope :by_location, ->(query) { where("address LIKE ?", "%#{query}%") if query.present? }
+  scope :by_location, ->(query) { where("address LIKE ? OR city LIKE ?", "%#{query}%", "%#{query}%") if query.present? }
   scope :by_price, ->(min, max = nil) {
     if max
       where(price_per_hour: min..max)
@@ -47,19 +70,76 @@ class Space < ApplicationRecord
   scope :newest, -> { order(created_at: :desc) }
   
   # Méthodes d'instance
+  
+  # Retourne l'adresse complète pour le géocodage
+  def full_address
+    components = [address]
+    components << postal_code if respond_to?(:postal_code) && postal_code.present?
+    components << city if respond_to?(:city) && city.present?
+    components << country if respond_to?(:country) && country.present?
+    components.compact.join(', ')
+  end
+  
+  # Déterminer si le géocodage est nécessaire
+  def should_geocode?
+    address_changed? || 
+    (respond_to?(:city_changed?) && city_changed?) || 
+    (respond_to?(:postal_code_changed?) && postal_code_changed?) || 
+    (respond_to?(:country_changed?) && country_changed?)
+  end
+  
+  # Retourne une version courte de l'adresse pour l'affichage
   def address_short
-    # Retourne une version courte de l'adresse (ex: juste la ville et le code postal)
-    address.split(',').last(2).join(',').strip rescue address
+    if respond_to?(:city) && city.present? && respond_to?(:postal_code) && postal_code.present?
+      "#{city}, #{postal_code.first(2)}"
+    elsif respond_to?(:city) && city.present?
+      city
+    else
+      # Retourne une version courte de l'adresse (ex: juste la ville et le code postal)
+      address.split(',').last(2).join(',').strip rescue address
+    end
   end
   
   def featured?
     # Un espace est considéré comme "en vedette" s'il a une note élevée
-    rating && rating >= 4.5
+    average_rating >= 4.5
   end
   
   def new_space?
     # Un espace est considéré comme "nouveau" s'il a été créé récemment
-    created_at && created_at > 1.month.ago
+    created_at && created_at >= 30.days.ago
+  end
+  
+  # Calcule la note moyenne à partir des avis
+  def average_rating
+    return rating if respond_to?(:rating) && !rating.nil?
+    return 0 if !respond_to?(:reviews) || reviews.nil? || reviews.empty?
+    (reviews.average(:rating) || 0).round(1)
+  end
+  
+  # Récupère les URLs des photos pour l'affichage dans la carte
+  def photos_urls
+    if respond_to?(:photos) && photos.respond_to?(:attached?) && photos.attached?
+      photos.map { |photo| Rails.application.routes.url_helpers.url_for(photo) }
+    elsif respond_to?(:images) && images.respond_to?(:attached?) && images.attached?
+      images.map { |image| Rails.application.routes.url_helpers.url_for(image) }
+    else
+      nil
+    end
+  end
+  
+  # S'assurer que les attributs nécessaires pour la vue carte existent
+  def method_missing(method_name, *arguments, &block)
+    # Liste des méthodes que nous voulons simuler si elles n'existent pas
+    if [:latitude, :longitude, :hourly_price, :capacity, :average_rating, :address_short].include?(method_name)
+      nil
+    else
+      super
+    end
+  end
+  
+  def respond_to_missing?(method_name, include_private = false)
+    [:latitude, :longitude, :hourly_price, :capacity, :average_rating, :address_short].include?(method_name) || super
   end
   
   def available_at?(date, start_time, end_time)
@@ -90,12 +170,6 @@ class Space < ApplicationRecord
     1
   end
   
-  def average_rating
-    # Retourne la note moyenne de l'espace
-    # Si vous implémentez un système d'avis, vous pouvez calculer la moyenne dynamiquement
-    rating || 0
-  end
-  
   def price_for_duration(hours)
     # Calcule le prix pour une durée spécifiée en heures
     (price_per_hour * hours).round(2)
@@ -103,7 +177,9 @@ class Space < ApplicationRecord
   
   # Méthodes pour la gestion des équipements
   def has_amenity?(amenity_name)
-    amenities && amenities.include?(amenity_name)
+    return amenities.include?(amenity_name) if amenities.is_a?(Array)
+    return amenities.map(&:name).include?(amenity_name) if respond_to?(:space_amenities) && space_amenities.any?
+    false
   end
   
   # Méthode pour vérifier une disponibilité spécifique
@@ -136,6 +212,24 @@ class Space < ApplicationRecord
   end
   
   # Méthodes de classe
+  
+  # Recherche des espaces par ville ou adresse
+  def self.search_by_location(query)
+    where('lower(city) LIKE :query OR lower(address) LIKE :query', query: "%#{query.downcase}%")
+  end
+  
+  # Récupère les espaces populaires (avec les meilleures notes)
+  def self.popular
+    joins(:reviews).group('spaces.id').order('AVG(reviews.rating) DESC').limit(6)
+  rescue
+    order(rating: :desc).limit(6)
+  end
+  
+  # Récupère les espaces récemment ajoutés
+  def self.recent
+    order(created_at: :desc).limit(6)
+  end
+  
   def self.search(params)
     spaces = self.all
     

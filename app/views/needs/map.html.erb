@@ -1,0 +1,705 @@
+<% content_for :title, "LeLocal - Besoins des associations" %>
+
+<% content_for :head do %>
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" 
+  integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A==" 
+  crossorigin="" />
+  
+  <!-- Font Awesome pour les icônes -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  
+  <style>
+    /* Styles pour la page de recherche avec carte */
+    .sub-hero {
+      background-color: #f5f5f5;
+      padding: 80px 0 50px;
+      text-align: center;
+      margin-bottom: 40px;
+      margin-top: 50px;
+    }
+    
+    .sub-hero h1 {
+      font-size: 32px;
+      margin-bottom: 15px;
+      color: #333;
+      font-weight: 600;
+    }
+    
+    .sub-hero p {
+      font-size: 18px;
+      color: #666;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+    
+    .search-map-container {
+      display: flex;
+      gap: 30px;
+      margin: 30px 0;
+    }
+    
+    .search-filters {
+      flex: 1;
+      min-width: 300px;
+      max-width: 350px;
+      background-color: #fff;
+      border-radius: 10px;
+      box-shadow: 0 2px 15px rgba(0, 0, 0, 0.08);
+      padding: 25px;
+      height: fit-content;
+    }
+    
+    .search-filters h2 {
+      font-size: 20px;
+      margin-bottom: 20px;
+      color: #333;
+      font-weight: 600;
+    }
+    
+    .filter-section {
+      margin-bottom: 25px;
+    }
+    
+    .filter-section h3 {
+      font-size: 16px;
+      margin-bottom: 15px;
+      color: #444;
+      font-weight: 500;
+    }
+    
+    .filter-group {
+      margin-bottom: 15px;
+    }
+    
+    .filter-group label {
+      display: block;
+      margin-bottom: 8px;
+      color: #555;
+      font-size: 14px;
+    }
+    
+    .filter-group input[type="text"],
+    .filter-group input[type="date"],
+    .filter-group input[type="number"],
+    .filter-group select {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      font-size: 14px;
+      transition: border-color 0.3s;
+    }
+    
+    .filter-group input:focus,
+    .filter-group select:focus {
+      border-color: #4CAF50;
+      outline: none;
+    }
+    
+    .checkbox-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    
+    .checkbox-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .checkbox-item input[type="checkbox"] {
+      margin: 0;
+    }
+    
+    .checkbox-item label {
+      margin: 0;
+      cursor: pointer;
+    }
+    
+    .apply-filters-btn {
+      background-color: #4CAF50;
+      color: white;
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 5px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    
+    .apply-filters-btn:hover {
+      background-color: #388E3C;
+    }
+    
+    .map-results {
+      flex: 3;
+      position: relative;
+    }
+    
+    #map {
+      width: 100%;
+      height: 500px;
+      border-radius: 10px;
+      box-shadow: 0 2px 15px rgba(0, 0, 0, 0.08);
+      z-index: 10;
+      margin-bottom: 30px;
+    }
+    
+    .need-list {
+      margin-top: 30px;
+    }
+    
+    .need-item {
+      background-color: #fff;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+      margin-bottom: 20px;
+      overflow: hidden;
+      display: flex;
+      cursor: pointer;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    
+    .need-item:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+    }
+    
+    .need-item.selected {
+      background-color: #f5f9f5;
+      border-left: 4px solid #4CAF50;
+      transform: translateY(-5px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    }
+    
+    .need-item-img {
+      width: 180px;
+      height: 140px;
+      flex-shrink: 0;
+      background-size: cover;
+      background-position: center;
+    }
+    
+    .need-item-content {
+      padding: 15px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .need-item-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      align-items: flex-start;
+    }
+    
+    .need-item-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: #333;
+      margin: 0;
+    }
+    
+    .need-item-date {
+      display: inline-block;
+      background-color: #f8f8f8;
+      padding: 4px 8px;
+      border-radius: 4px;
+      color: #666;
+      font-size: 14px;
+    }
+    
+    .need-item-details {
+      flex: 1;
+      margin-bottom: 15px;
+    }
+    
+    .need-item-location, 
+    .need-item-capacity,
+    .need-item-category {
+      font-size: 14px;
+      color: #666;
+      margin-bottom: 5px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    
+    .need-item-location i, 
+    .need-item-capacity i,
+    .need-item-category i {
+      color: #666;
+      font-size: 14px;
+      width: 16px;
+      text-align: center;
+    }
+    
+    .need-item-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .need-item-budget {
+      font-size: 16px;
+      color: #666;
+    }
+    
+    .need-item-budget span {
+      font-weight: 600;
+      color: #333;
+      font-size: 18px;
+    }
+    
+    .btn-small {
+      display: inline-block;
+      background-color: #4CAF50;
+      color: white;
+      padding: 6px 12px;
+      border-radius: 4px;
+      text-decoration: none;
+      font-size: 14px;
+      transition: background-color 0.3s;
+    }
+    
+    .btn-small:hover {
+      background-color: #388E3C;
+    }
+    
+    .need-badge {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      padding: 5px 10px;
+      border-radius: 15px;
+      font-size: 12px;
+      font-weight: 500;
+      color: white;
+    }
+    
+    .need-badge.urgent {
+      background-color: #FF5722;
+    }
+    
+    .need-badge.new {
+      background-color: #4CAF50;
+    }
+    
+    /* Styles pour les popups de la carte */
+    .popup-content {
+      padding: 10px;
+      max-width: 250px;
+    }
+    
+    .popup-image {
+      width: 100%;
+      height: 120px;
+      object-fit: cover;
+      border-radius: 5px;
+      margin-bottom: 10px;
+    }
+    
+    .popup-title {
+      font-weight: 600;
+      margin-bottom: 5px;
+      color: #333;
+      font-size: 16px;
+    }
+    
+    .popup-details {
+      font-size: 13px;
+      color: #666;
+      margin-bottom: 10px;
+    }
+    
+    .popup-budget {
+      font-weight: 600;
+      color: #4CAF50;
+      margin-bottom: 10px;
+    }
+    
+    .popup-link {
+      display: inline-block;
+      padding: 5px 10px;
+      background-color: #4CAF50;
+      color: white;
+      border-radius: 4px;
+      text-decoration: none;
+      font-size: 13px;
+      transition: background-color 0.3s;
+    }
+    
+    .popup-link:hover {
+      background-color: #388E3C;
+    }
+    
+    /* Styles pour les popups Leaflet */
+    .leaflet-popup-content-wrapper {
+      border-radius: 8px;
+      box-shadow: 0 3px 14px rgba(0,0,0,0.2);
+    }
+    
+    .leaflet-popup-content {
+      margin: 10px;
+      padding: 0;
+    }
+    
+    .leaflet-popup-tip-container {
+      margin-top: -1px;
+    }
+    
+    .leaflet-popup-tip {
+      box-shadow: 0 3px 14px rgba(0,0,0,0.2);
+    }
+    
+    .no-results {
+      background-color: #f8f8f8;
+      padding: 30px;
+      text-align: center;
+      border-radius: 10px;
+      margin-top: 20px;
+    }
+    
+    .no-results p {
+      color: #666;
+      font-size: 16px;
+      margin-bottom: 20px;
+    }
+    
+    /* Responsive */
+    @media (max-width: 968px) {
+      .search-map-container {
+        flex-direction: column;
+      }
+      
+      .search-filters {
+        max-width: 100%;
+      }
+      
+      .need-item {
+        flex-direction: column;
+      }
+      
+      .need-item-img {
+        width: 100%;
+        height: 180px;
+      }
+    }
+  </style>
+<% end %>
+
+<!-- Section de titre et description -->
+<section class="sub-hero bg-light">
+  <div class="container">
+    <div class="sub-hero-content">
+      <h1>Besoins des associations</h1>
+      <p>Découvrez les besoins des associations près de chez vous et proposez votre espace pour les aider</p>
+      <div class="hero-decoration" style="width: 50px; height: 4px; background-color: #4CAF50; margin: 20px auto 0;"></div>
+    </div>
+  </div>
+</section>
+
+<!-- Container principal avec les filtres et la carte -->
+<div class="container" style="margin-top: 40px;">
+  <div class="search-map-container">
+    <!-- Section des filtres de recherche -->
+    <div class="search-filters">
+      <h2>Affinez votre recherche</h2>
+      <form action="/needs" method="get">
+        <input type="hidden" name="map" value="true">
+        
+        <div class="filter-section">
+          <h3>Localisation</h3>
+          <div class="filter-group">
+            <label>Ville ou quartier</label>
+            <input type="text" name="location" value="<%= params[:location] %>" placeholder="Paris, Lyon, Marseille...">
+          </div>
+        </div>
+        
+        <div class="filter-section">
+          <h3>Date</h3>
+          <div class="filter-group">
+            <label>Date</label>
+            <input type="date" name="date" value="<%= params[:date] %>">
+          </div>
+        </div>
+        
+        <div class="filter-section">
+          <h3>Nombre de personnes</h3>
+          <div class="filter-group">
+            <label>Capacité</label>
+            <select name="capacity">
+              <option value="">Toutes capacités</option>
+              <option value="1-10" <%= params[:capacity] == "1-10" ? 'selected' : '' %>>1-10 personnes</option>
+              <option value="11-30" <%= params[:capacity] == "11-30" ? 'selected' : '' %>>11-30 personnes</option>
+              <option value="31-50" <%= params[:capacity] == "31-50" ? 'selected' : '' %>>31-50 personnes</option>
+              <option value="50+" <%= params[:capacity] == "50+" ? 'selected' : '' %>>Plus de 50 personnes</option>
+            </select>
+          </div>
+        </div>
+        
+        <div class="filter-section">
+          <h3>Type de besoin</h3>
+          <div class="filter-group">
+            <div class="checkbox-list">
+              <% if defined?(Need::CATEGORIES) %>
+                <% Need::CATEGORIES.each do |category| %>
+                  <div class="checkbox-item">
+                    <input type="checkbox" name="categories[]" value="<%= category[1] %>" id="categories_<%= category[1] %>" 
+                           <%= params[:categories]&.include?(category[1]) ? 'checked' : '' %>>
+                    <label for="categories_<%= category[1] %>"><%= category[0] %></label>
+                  </div>
+                <% end %>
+              <% else %>
+                <div class="checkbox-item">
+                  <input type="checkbox" name="categories[]" value="reunion" id="categories_reunion">
+                  <label for="categories_reunion">Réunion</label>
+                </div>
+                <div class="checkbox-item">
+                  <input type="checkbox" name="categories[]" value="evenement" id="categories_evenement">
+                  <label for="categories_evenement">Événement</label>
+                </div>
+                <div class="checkbox-item">
+                  <input type="checkbox" name="categories[]" value="atelier" id="categories_atelier">
+                  <label for="categories_atelier">Atelier</label>
+                </div>
+              <% end %>
+            </div>
+          </div>
+        </div>
+        
+        <div class="filter-section">
+          <h3>Équipements nécessaires</h3>
+          <div class="filter-group">
+            <div class="checkbox-list">
+              <% if defined?(Need::EQUIPMENT_NEEDS) %>
+                <% Need::EQUIPMENT_NEEDS.each do |equipment| %>
+                  <div class="checkbox-item">
+                    <input type="checkbox" name="equipment[]" value="<%= equipment[1] %>" id="equipment_<%= equipment[1] %>"
+                           <%= params[:equipment]&.include?(equipment[1]) ? 'checked' : '' %>>
+                    <label for="equipment_<%= equipment[1] %>"><%= equipment[0] %></label>
+                  </div>
+                <% end %>
+              <% else %>
+                <div class="checkbox-item">
+                  <input type="checkbox" name="equipment[]" value="wifi" id="equipment_wifi">
+                  <label for="equipment_wifi">WiFi</label>
+                </div>
+                <div class="checkbox-item">
+                  <input type="checkbox" name="equipment[]" value="videoprojecteur" id="equipment_videoprojecteur">
+                  <label for="equipment_videoprojecteur">Vidéoprojecteur</label>
+                </div>
+                <div class="checkbox-item">
+                  <input type="checkbox" name="equipment[]" value="son" id="equipment_son">
+                  <label for="equipment_son">Système son</label>
+                </div>
+              <% end %>
+            </div>
+          </div>
+        </div>
+        
+        <button type="submit" class="apply-filters-btn">Appliquer les filtres</button>
+      </form>
+    </div>
+    
+    <!-- Section avec la carte et les résultats -->
+    <div class="map-results">
+      <div id="map"></div>
+      
+      <div class="need-list">
+        <% if @needs.present? %>
+          <% @needs.each do |need| %>
+            <div class="need-item" data-need-id="<%= need.id %>" onclick="highlightMarker('<%= need.id %>')">
+              <div class="need-item-img" style="background-image: url('<%= need.respond_to?(:photos) && need.photos.respond_to?(:attached?) && need.photos.attached? ? 
+                                                   url_for(need.photos.first) : 
+                                                   'https://images.unsplash.com/photo-1517457373958-b7bdd4587205' %>')"></div>
+              
+              <% if need.respond_to?(:urgent?) && need.urgent? %>
+                <div class="need-badge urgent">Urgent</div>
+              <% elsif need.respond_to?(:new_need?) && need.new_need? %>
+                <div class="need-badge new">Nouveau</div>
+              <% end %>
+              
+              <div class="need-item-content">
+                <div class="need-item-header">
+                  <h3 class="need-item-title"><%= need.title %></h3>
+                  <div class="need-item-date">
+                    <i class="far fa-calendar-alt"></i>
+                    <%= need.date_needed.strftime("%d/%m/%Y") %>
+                  </div>
+                </div>
+                
+                <div class="need-item-details">
+                  <p class="need-item-location">
+                    <i class="fas fa-map-marker-alt"></i> 
+                    <%= need.respond_to?(:address_short) ? need.address_short : 
+                        (need.respond_to?(:city) ? "#{need.city}" : need.address.split(",").first) %>
+                  </p>
+                  <p class="need-item-capacity">
+                    <i class="fas fa-users"></i> 
+                    <%= need.respond_to?(:capacity) && need.capacity.present? ? "#{need.capacity} personnes" : "Capacité non spécifiée" %>
+                  </p>
+                  <p class="need-item-category">
+                    <i class="fas fa-tag"></i>
+                    <%= Need::CATEGORIES.find { |c| c[1] == need.category }&.first || need.category %>
+                  </p>
+                </div>
+                
+                <div class="need-item-footer">
+                  <p class="need-item-budget">
+                    <% if need.respond_to?(:budget) && need.budget.present? %>
+                      Budget : <span><%= need.budget %>€</span>
+                    <% else %>
+                      Budget non spécifié
+                    <% end %>
+                  </p>
+                  <a href="/needs/<%= need.id %>" class="btn-small">Proposer mon espace</a>
+                </div>
+              </div>
+            </div>
+          <% end %>
+        <% else %>
+          <div class="no-results">
+            <p>Aucun besoin ne correspond à vos critères actuellement.</p>
+            <a href="/needs/new" class="btn-primary" style="display: inline-block; padding: 10px 20px; background-color: #4CAF50; color: white; text-decoration: none; border-radius: 5px;">Publier un besoin</a>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<% content_for :scripts do %>
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+  integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
+  crossorigin=""></script>
+  
+  <script>
+    // Déclarer les variables au niveau global pour pouvoir les utiliser dans d'autres fonctions
+    var map;
+    var markers = {};
+    var previouslyHighlighted = null;
+    
+    // Fonction pour mettre en évidence un marqueur quand on clique sur un élément de la liste
+    function highlightMarker(needId) {
+      if (markers[needId]) {
+        // Réinitialiser le marqueur précédemment mis en évidence
+        if (previouslyHighlighted && markers[previouslyHighlighted]) {
+          markers[previouslyHighlighted].setIcon(defaultIcon);
+        }
+        
+        // Centre la carte sur le marqueur sélectionné
+        map.setView(markers[needId].getLatLng(), 15);
+        markers[needId].openPopup();
+        
+        // Mettre en évidence le marqueur actuel
+        markers[needId].setIcon(highlightIcon);
+        previouslyHighlighted = needId;
+        
+        // Mettre en évidence l'élément dans la liste
+        var listItems = document.querySelectorAll('.need-item');
+        listItems.forEach(function(item) {
+          item.classList.remove('selected');
+        });
+        var selectedItem = document.querySelector('.need-item[data-need-id="' + needId + '"]');
+        if (selectedItem) {
+          selectedItem.classList.add('selected');
+          // Faire défiler jusqu'à l'élément de la liste
+          selectedItem.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }
+    }
+    
+    document.addEventListener('DOMContentLoaded', function() {
+      // Créer les icônes pour les marqueurs standard et mis en évidence
+      var defaultIcon = L.icon({
+        iconUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon.png',
+        iconSize: [25, 41],
+        iconAnchor: [12, 41],
+        popupAnchor: [1, -34],
+        shadowUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png',
+        shadowSize: [41, 41]
+      });
+      
+      var highlightIcon = L.icon({
+        iconUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon-2x.png',
+        iconSize: [30, 45],
+        iconAnchor: [15, 45],
+        popupAnchor: [1, -34],
+        shadowUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png',
+        shadowSize: [41, 41]
+      });
+      
+      // Initialiser la carte avec le centre par défaut (Paris)
+      map = L.map('map').setView([48.8566, 2.3522], 13);
+      
+      // Ajouter la couche de tuiles OpenStreetMap
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+      }).addTo(map);
+      
+      // Tableau pour stocker les coordonnées des marqueurs
+      var bounds = [];
+      
+      <% if @needs.present? %>
+        <% @needs.each do |need| %>
+          <% if need.respond_to?(:latitude) && need.respond_to?(:longitude) && need.latitude.present? && need.longitude.present? %>
+            // Ajouter les coordonnées aux limites
+            bounds.push([<%= need.latitude %>, <%= need.longitude %>]);
+            
+            // Créer le contenu du popup
+            var popupContent = '<div class="popup-content">' +
+              '<img src="<%= need.respond_to?(:photos) && need.photos.respond_to?(:attached?) && need.photos.attached? ? url_for(need.photos.first) : "https://images.unsplash.com/photo-1517457373958-b7bdd4587205" %>" class="popup-image">' +
+              '<h3 class="popup-title"><%= need.title %></h3>' +
+              '<p class="popup-details"><%= need.respond_to?(:address_short) ? need.address_short : (need.respond_to?(:city) ? need.city : need.address.split(",").first) %> • <%= need.date_needed.strftime("%d/%m/%Y") %></p>' +
+              '<% if need.respond_to?(:budget) && need.budget.present? %>' +
+              '<p class="popup-budget">Budget : <%= need.budget %>€</p>' +
+              '<% else %>' +
+              '<p class="popup-budget">Budget non spécifié</p>' +
+              '<% end %>' +
+              '<a href="/needs/<%= need.id %>" class="popup-link">Proposer mon espace</a>' +
+              '</div>';
+            
+            // Créer un marqueur et l'ajouter à la carte
+            var marker = L.marker([<%= need.latitude %>, <%= need.longitude %>], {icon: defaultIcon}).addTo(map)
+              .bindPopup(popupContent);
+            
+            // Ajouter un événement de clic au marqueur pour mettre en évidence l'élément correspondant dans la liste
+            marker.on('click', function() {
+              highlightMarker('<%= need.id %>');
+            });
+            
+            // Stocker le marqueur dans le tableau des marqueurs
+            markers['<%= need.id %>'] = marker;
+          <% end %>
+        <% end %>
+      <% end %>
+      
+      // Si aucun besoin n'a de coordonnées, centrer la carte sur la France
+      if (bounds.length === 0) {
+        map.setView([46.603354, 1.888334], 6); // Centre de la France
+      } else if (bounds.length === 1) {
+        // Si un seul besoin, zoomer dessus
+        map.setView(bounds[0], 15);
+      } else {
+        // Adapter la vue pour voir tous les marqueurs
+        try {
+          map.fitBounds(bounds);
+        } catch (e) {
+          console.error("Erreur lors de l'ajustement des limites:", e);
+          map.setView([46.603354, 1.888334], 6); // Fallback sur le centre de la France
+        }
+      }
+      
+      // Gérer le redimensionnement de la carte
+      setTimeout(function() {
+        map.invalidateSize();
+      }, 100);
+    });
+  </script>
+<% end %>

@@ -1,329 +1,728 @@
-<% content_for :title, "LeLocal - Louer un espace pour son association" %>
-
-<!-- Section héro avec image d'arrière-plan -->
-<section class="hero">
-  <div class="container">
-    <div class="hero-content">
-      <h1>Louer un espace pour son association</h1>
-      <p>Des milliers d'espaces disponibles pour vos événements, réunions et activités associatives</p>
-      <div class="search-box">
-        <form action="<%= search_spaces_path %>" method="get" class="search-input-group">
-          <div class="search-input">
-            <label>Où</label>
-            <input type="text" name="location" placeholder="Ville, quartier...">
-          </div>
-          <div class="search-input">
-            <label>Quand</label>
-            <input type="date" name="date" placeholder="Date">
-          </div>
-          <div class="search-input">
-            <label>Horaire</label>
-            <div class="time-inputs">
-              <select name="start_time" class="time-select">
-                <option>8:00</option>
-                <option>8:30</option>
-                <option>9:00</option>
-                <option>9:30</option>
-                <option>10:00</option>
-                <option>10:30</option>
-                <option>11:00</option>
-                <option>11:30</option>
-                <option>12:00</option>
-                <option>12:30</option>
-                <option>13:00</option>
-                <option>13:30</option>
-                <option>14:00</option>
-                <option>14:30</option>
-                <option>15:00</option>
-                <option>15:30</option>
-                <option>16:00</option>
-                <option>16:30</option>
-                <option>17:00</option>
-                <option>17:30</option>
-                <option>18:00</option>
-                <option>18:30</option>
-                <option>19:00</option>
-                <option>19:30</option>
-                <option>20:00</option>
-                <option>20:30</option>
-                <option>21:00</option>
-                <option>21:30</option>
-                <option>22:00</option>
-              </select>
-              <span>à</span>
-              <select name="end_time" class="time-select">
-                <option>8:30</option>
-                <option>9:00</option>
-                <option>9:30</option>
-                <option>10:00</option>
-                <option>10:30</option>
-                <option>11:00</option>
-                <option>11:30</option>
-                <option>12:00</option>
-                <option>12:30</option>
-                <option>13:00</option>
-                <option>13:30</option>
-                <option>14:00</option>
-                <option>14:30</option>
-                <option>15:00</option>
-                <option>15:30</option>
-                <option>16:00</option>
-                <option>16:30</option>
-                <option>17:00</option>
-                <option>17:30</option>
-                <option>18:00</option>
-                <option>18:30</option>
-                <option>19:00</option>
-                <option>19:30</option>
-                <option>20:00</option>
-                <option>20:30</option>
-                <option>21:00</option>
-                <option>21:30</option>
-                <option>22:00</option>
-                <option>22:30</option>
-              </select>
-            </div>
-          </div>
-          <div class="search-input">
-            <label>Combien</label>
-            <select name="capacity">
-              <option>1-10 personnes</option>
-              <option>11-30 personnes</option>
-              <option>31-50 personnes</option>
-              <option>Plus de 50 personnes</option>
-            </select>
-          </div>
-          <button type="submit" class="search-btn">Rechercher</button>
-        </form>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- Section héro alternative pour exprimer un besoin -->
-<section class="hero hero-need bg-gray-100 py-10">
-  <div class="container">
-    <div class="hero-content text-center">
-      <h1>Vous recherchez un local ?</h1>
-      <p>Publiez votre besoin et soyez mis en relation avec des structures prêtes à vous aider</p>
-      <%= link_to "Exprimer un besoin en local", new_need_path, class: "btn btn-primary mt-4 px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition" %>
-    </div>
-  </div>
-</section>
-
-<!-- Section avec des catégories d'espaces -->
-<section class="categories">
-  <div class="container">
-    <h2>Découvrez nos espaces par catégorie</h2>
-    <div class="category-grid">
-      <div class="category-card">
-        <div class="category-img" style="background-image: url('https://images.unsplash.com/photo-1497366754035-f200968a6e72')"></div>
-        <h3>Salles de réunion</h3>
-        <p>Parfaites pour vos réunions et ateliers</p>
-      </div>
-      <div class="category-card">
-        <div class="category-img" style="background-image: url('https://images.unsplash.com/photo-1517245386807-bb43f82c33c4')"></div>
-        <h3>Espaces événementiels</h3>
-        <p>Idéaux pour vos conférences et événements</p>
-      </div>
-      <div class="category-card">
-        <div class="category-img" style="background-image: url('https://images.unsplash.com/photo-1574974671999-24b7dfbb0d53')"></div>
-        <h3>Ateliers créatifs</h3>
-        <p>Des espaces conçus pour la création et l'artisanat</p>
-      </div>
-      <div class="category-card">
-        <div class="category-img" style="background-image: url('https://images.unsplash.com/photo-1526948531399-320e7e40f0ca')"></div>
-        <h3>Espaces sportifs</h3>
-        <p>Pour les activités sportives et le bien-être</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- Section des espaces populaires -->
-<section class="featured-spaces">
-  <div class="container">
-    <div class="section-header">
-      <h2>Espaces populaires</h2>
-      <a href="/spaces" class="view-all">Voir tout <i class="fas fa-arrow-right"></i></a>
-    </div>
-    <div class="space-grid">
-      <div class="space-card">
-        <div class="space-img" style="background-image: url('https://images.unsplash.com/photo-1497366814617-c0893dfb1931')"></div>
-        <div class="space-badge">Populaire</div>
-        <div class="space-content">
-          <div class="space-title">
-            <h3>Espace Créatif Montmartre</h3>
-            <div class="space-rating">
-              <i class="fas fa-star"></i>
-              <span>4.8</span>
-            </div>
-          </div>
-          <p class="space-location"><i class="fas fa-map-marker-alt"></i> Paris 18ème</p>
-          <p class="space-capacity"><i class="fas fa-users"></i> Jusqu'à 25 personnes</p>
-          <div class="space-footer">
-            <p class="space-price">45€ / heure</p>
-            <a href="#" class="btn-small">Réserver</a>
-          </div>
-        </div>
-      </div>
-      <div class="space-card">
-        <div class="space-img" style="background-image: url('https://images.unsplash.com/photo-1577412647305-991150c7d163')"></div>
-        <div class="space-content">
-          <div class="space-title">
-            <h3>Salle Panoramique République</h3>
-            <div class="space-rating">
-              <i class="fas fa-star"></i>
-              <span>4.7</span>
-            </div>
-          </div>
-          <p class="space-location"><i class="fas fa-map-marker-alt"></i> Paris 11ème</p>
-          <p class="space-capacity"><i class="fas fa-users"></i> Jusqu'à 40 personnes</p>
-          <div class="space-footer">
-            <p class="space-price">60€ / heure</p>
-            <a href="#" class="btn-small">Réserver</a>
-          </div>
-        </div>
-      </div>
-      <div class="space-card">
-        <div class="space-img" style="background-image: url('https://images.unsplash.com/photo-1519167758481-83f550bb49b3')"></div>
-        <div class="space-badge">Nouveau</div>
-        <div class="space-content">
-          <div class="space-title">
-            <h3>Atelier Artistique Bastille</h3>
-            <div class="space-rating">
-              <i class="fas fa-star"></i>
-              <span>4.9</span>
-            </div>
-          </div>
-          <p class="space-location"><i class="fas fa-map-marker-alt"></i> Paris 12ème</p>
-          <p class="space-capacity"><i class="fas fa-users"></i> Jusqu'à 15 personnes</p>
-          <div class="space-footer">
-            <p class="space-price">35€ / heure</p>
-            <a href="#" class="btn-small">Réserver</a>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- Section "Comment ça marche ?" -->
-<section class="how-it-works">
-  <div class="container">
-    <h2>Comment ça marche</h2>
-    <div class="steps-container">
-      <div class="step">
-        <div class="step-icon">
-          <i class="fas fa-search"></i>
-        </div>
-        <h3>Rechercher</h3>
-        <p>Trouvez l'espace parfait selon vos critères : emplacement, date, capacité...</p>
-      </div>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LeLocal - La plateforme qui connecte associations et propriétaires d'espaces</title>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <link rel="stylesheet" href="styles.css?v=1.1">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+      /* Styles pour les sections horizontales */
+      .dual-sections {
+        display: flex;
+        gap: 30px;
+        margin: 60px 0;
+      }
       
-      <div class="step-arrow">
-        <i class="fas fa-chevron-right"></i>
-      </div>
+      .dual-section {
+        flex: 1;
+        background-color: #fff;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        padding: 40px;
+        transition: transform 0.3s, box-shadow 0.3s;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+      }
       
-      <div class="step">
-        <div class="step-icon">
-          <i class="fas fa-calendar-check"></i>
-        </div>
-        <h3>Réserver</h3>
-        <p>Choisissez votre créneau et réservez en quelques clics, paiement sécurisé.</p>
-      </div>
+      .dual-section:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+      }
       
-      <div class="step-arrow">
-        <i class="fas fa-chevron-right"></i>
-      </div>
+      .dual-section h2 {
+        font-size: 26px;
+        margin-bottom: 20px;
+        color: #333;
+        position: relative;
+        padding-bottom: 12px;
+        line-height: 1.3;
+      }
       
-      <div class="step">
-        <div class="step-icon">
-          <i class="fas fa-smile"></i>
+      .dual-section h2::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 70px;
+        height: 3px;
+        background-color: var(--primary-color);
+        border-radius: 2px;
+      }
+      
+      .dual-section p {
+        font-size: 16px;
+        color: #666;
+        margin-bottom: 30px;
+        line-height: 1.6;
+      }
+      
+      .dual-section .icon {
+        font-size: 48px;
+        color: var(--primary-color);
+        margin-bottom: 20px;
+      }
+      
+      .dual-section .btn-primary {
+        display: inline-block;
+        background-color: var(--primary-color);
+        color: white;
+        padding: 12px 30px;
+        border-radius: 30px;
+        text-decoration: none;
+        font-weight: 500;
+        transition: background-color 0.3s;
+      }
+      
+      .dual-section .btn-primary:hover {
+        background-color: var(--primary-dark);
+      }
+      
+      .dual-section .btn-secondary {
+        display: inline-block;
+        background-color: white;
+        color: var(--primary-color);
+        padding: 12px 30px;
+        border-radius: 30px;
+        text-decoration: none;
+        font-weight: 500;
+        border: 2px solid var(--primary-color);
+        transition: all 0.3s;
+      }
+      
+      .dual-section .btn-secondary:hover {
+        background-color: var(--primary-color);
+        color: white;
+      }
+      
+      .dual-section.association {
+        background: linear-gradient(rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.95)), url('https://images.unsplash.com/photo-1497366754035-f200968a6e72?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format');
+        background-size: cover;
+        background-position: center;
+        border-top: 5px solid #4CAF50;
+      }
+      
+      .dual-section.proprietaire {
+        background: linear-gradient(rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.95)), url('https://images.unsplash.com/photo-1464116125414-e2e3b25f2a52?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format');
+        background-size: cover;
+        background-position: center;
+        border-top: 5px solid #FF9800;
+      }
+      
+      .dual-section-features {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 20px;
+        margin: 20px 0 30px;
+      }
+      
+      .dual-section-feature {
+        width: calc(50% - 20px);
+        text-align: left;
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+      }
+      
+      .dual-section-feature i {
+        color: var(--primary-color);
+        font-size: 20px;
+        margin-top: 3px;
+      }
+      
+      .dual-section.proprietaire .dual-section-feature i {
+        color: #FF9800;
+      }
+      
+      .dual-section-feature div {
+        flex: 1;
+      }
+      
+      .dual-section-feature h4 {
+        margin: 0 0 5px;
+        font-size: 16px;
+        color: #333;
+      }
+      
+      .dual-section-feature p {
+        margin: 0;
+        font-size: 14px;
+        color: #666;
+      }
+      
+      /* Responsive pour les écrans plus petits */
+      @media (max-width: 900px) {
+        .dual-sections {
+          flex-direction: column;
+        }
+        
+        .dual-section {
+          margin-bottom: 30px;
+        }
+      }
+    </style>
+</head>
+<body>
+    <!-- Barre de navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="logo">
+                <a href="#"><span class="logo-text">Le<span class="highlight">Local</span></span></a>
+            </div>
+            <div class="search-bar">
+                <input type="text" placeholder="Rechercher un espace...">
+                <button><i class="fas fa-search"></i></button>
+            </div>
+            <div class="menu">
+                <a href="#" class="host-link">Proposer un espace</a>
+                <a href="#" class="login-btn">Connexion</a>
+                <a href="#" class="signup-btn">Inscription</a>
+            </div>
         </div>
-        <h3>Profiter</h3>
-        <p>Accédez à votre espace et profitez-en pour votre événement ou activité.</p>
-      </div>
-    </div>
-  </div>
-</section>
+    </nav>
 
-<!-- Section témoignages -->
-<section class="testimonials">
-  <div class="container">
-    <h2>Ce que disent nos utilisateurs</h2>
-    <div class="testimonial-slider">
-      <div class="testimonial-card">
-        <div class="testimonial-content">
-          <p>"J'ai trouvé l'espace parfait pour notre atelier mensuel. Le processus de réservation était simple et rapide. Je recommande vivement !"</p>
+    <!-- Section héro avec image d'arrière-plan -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1>Connectons associations et espaces disponibles</h1>
+                <p>La plateforme qui facilite l'accès aux espaces pour les associations et valorise les locaux sous-utilisés</p>
+                <div class="search-box">
+                    <form class="search-input-group">
+                        <div class="search-input">
+                            <label>Où</label>
+                            <input type="text" name="location" placeholder="Ville, quartier...">
+                        </div>
+                        <div class="search-input">
+                            <label>Quand</label>
+                            <input type="date" name="date" placeholder="Date">
+                        </div>
+                        <div class="search-input">
+                            <label>Horaire</label>
+                            <div class="time-inputs">
+                                <select name="start_time" class="time-select">
+                                    <option value="8:00">8:00</option>
+                                    <option value="8:30">8:30</option>
+                                    <option value="9:00">9:00</option>
+                                    <option value="9:30">9:30</option>
+                                    <option value="10:00">10:00</option>
+                                    <option value="10:30">10:30</option>
+                                    <option value="11:00">11:00</option>
+                                    <option value="11:30">11:30</option>
+                                    <option value="12:00">12:00</option>
+                                    <option value="12:30">12:30</option>
+                                    <option value="13:00">13:00</option>
+                                    <option value="13:30">13:30</option>
+                                    <option value="14:00">14:00</option>
+                                    <option value="14:30">14:30</option>
+                                    <option value="15:00">15:00</option>
+                                    <option value="15:30">15:30</option>
+                                    <option value="16:00">16:00</option>
+                                    <option value="16:30">16:30</option>
+                                    <option value="17:00">17:00</option>
+                                    <option value="17:30">17:30</option>
+                                    <option value="18:00">18:00</option>
+                                    <option value="18:30">18:30</option>
+                                    <option value="19:00">19:00</option>
+                                    <option value="19:30">19:30</option>
+                                    <option value="20:00">20:00</option>
+                                    <option value="20:30">20:30</option>
+                                    <option value="21:00">21:00</option>
+                                    <option value="21:30">21:30</option>
+                                    <option value="22:00">22:00</option>
+                                </select>
+                                <span>à</span>
+                                <select name="end_time" class="time-select">
+                                    <option value="8:30">8:30</option>
+                                    <option value="9:00">9:00</option>
+                                    <option value="9:30">9:30</option>
+                                    <option value="10:00">10:00</option>
+                                    <option value="10:30">10:30</option>
+                                    <option value="11:00">11:00</option>
+                                    <option value="11:30">11:30</option>
+                                    <option value="12:00">12:00</option>
+                                    <option value="12:30">12:30</option>
+                                    <option value="13:00">13:00</option>
+                                    <option value="13:30">13:30</option>
+                                    <option value="14:00">14:00</option>
+                                    <option value="14:30">14:30</option>
+                                    <option value="15:00">15:00</option>
+                                    <option value="15:30">15:30</option>
+                                    <option value="16:00">16:00</option>
+                                    <option value="16:30">16:30</option>
+                                    <option value="17:00">17:00</option>
+                                    <option value="17:30">17:30</option>
+                                    <option value="18:00">18:00</option>
+                                    <option value="18:30">18:30</option>
+                                    <option value="19:00">19:00</option>
+                                    <option value="19:30">19:30</option>
+                                    <option value="20:00">20:00</option>
+                                    <option value="20:30">20:30</option>
+                                    <option value="21:00">21:00</option>
+                                    <option value="21:30">21:30</option>
+                                    <option value="22:00">22:00</option>
+                                    <option value="22:30">22:30</option>
+                                    <option value="23:00">23:00</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="search-input">
+                            <label>Combien</label>
+                            <select name="capacity">
+                                <option>1-10 personnes</option>
+                                <option>11-30 personnes</option>
+                                <option>31-50 personnes</option>
+                                <option>Plus de 50 personnes</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="search-btn">Rechercher</button>
+                    </form>
+                </div>
+            </div>
         </div>
-        <div class="testimonial-author">
-          <img src="https://randomuser.me/api/portraits/women/32.jpg" alt="Sophie Martin">
-          <div class="author-info">
-            <h4>Sophie Martin</h4>
-            <p>Association Arts et Culture</p>
-          </div>
-        </div>
-      </div>
-      <div class="testimonial-card">
-        <div class="testimonial-content">
-          <p>"LeLocal nous a permis de trouver des salles adaptées à nos besoins, même en dernière minute. Un service client au top !"</p>
-        </div>
-        <div class="testimonial-author">
-          <img src="https://randomuser.me/api/portraits/men/45.jpg" alt="Thomas Dubois">
-          <div class="author-info">
-            <h4>Thomas Dubois</h4>
-            <p>Club sportif local</p>
-          </div>
-        </div>
-      </div>
-      <div class="testimonial-card">
-        <div class="testimonial-content">
-          <p>"Grâce à LeLocal, notre association a pu diversifier ses lieux d'activités et toucher un public plus large. Un vrai plus pour notre développement !"</p>
-        </div>
-        <div class="testimonial-author">
-          <img src="https://randomuser.me/api/portraits/women/68.jpg" alt="Julie Moreau">
-          <div class="author-info">
-            <h4>Julie Moreau</h4>
-            <p>Association d'aide à l'enfance</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
+    </section>
 
-<!-- Section newsletter -->
-<section class="newsletter">
-  <div class="container">
-    <div class="newsletter-content">
-      <h2>Restez informés</h2>
-      <p>Inscrivez-vous à notre newsletter pour recevoir nos actualités et offres spéciales</p>
-      <form class="newsletter-form">
-        <input type="email" placeholder="Votre adresse email" required>
-        <button type="submit" class="btn-medium">S'inscrire</button>
-      </form>
-      <p class="small">En vous inscrivant, vous acceptez de recevoir nos communications par email. Vous pourrez vous désinscrire à tout moment.</p>
+    <!-- Sections horizontales "Je suis une association" et "J'ai un espace" -->
+    <div class="container">
+        <div class="dual-sections">
+            <!-- Section "Je suis une association qui cherche un espace" -->
+            <div class="dual-section association">
+                <div class="icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <h2>Je suis une association qui cherche un espace</h2>
+                <p>Trouvez des locaux adaptés à vos besoins pour réunions, activités ou événements associatifs, en quelques clics.</p>
+                
+                <div class="dual-section-features">
+                    <div class="dual-section-feature">
+                        <i class="fas fa-check-circle"></i>
+                        <div>
+                            <h4>Grande variété d'espaces</h4>
+                            <p>Tous types de locaux pour vos activités associatives</p>
+                        </div>
+                    </div>
+                    <div class="dual-section-feature">
+                        <i class="fas fa-check-circle"></i>
+                        <div>
+                            <h4>Tarifs avantageux</h4>
+                            <p>Des prix adaptés aux budgets associatifs</p>
+                        </div>
+                    </div>
+                    <div class="dual-section-feature">
+                        <i class="fas fa-check-circle"></i>
+                        <div>
+                            <h4>Réservation simplifiée</h4>
+                            <p>Créneaux à l'heure, demi-journée ou journée complète</p>
+                        </div>
+                    </div>
+                    <div class="dual-section-feature">
+                        <i class="fas fa-check-circle"></i>
+                        <div>
+                            <h4>Paiement sécurisé</h4>
+                            <p>Transactions 100% sécurisées et sans surprise</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <%= link_to "Trouver un espace", spaces_path(map: true), class: "btn-primary" %>
+            </div>
+            
+            <!-- Section "J'ai un espace qui pourrait intéresser une association" -->
+            <div class="dual-section proprietaire">
+                <div class="icon">
+                    <i class="fas fa-key"></i>
+                </div>
+                <h2>J'ai un espace qui pourrait intéresser une association</h2>
+                <p>Valorisez vos locaux sous-utilisés en les proposant à des associations et générez des revenus complémentaires.</p>
+                
+                <div class="dual-section-features">
+                    <div class="dual-section-feature">
+                        <i class="fas fa-check-circle"></i>
+                        <div>
+                            <h4>Revenus supplémentaires</h4>
+                            <p>Rentabilisez vos espaces disponibles sans effort</p>
+                        </div>
+                    </div>
+                    <div class="dual-section-feature">
+                        <i class="fas fa-check-circle"></i>
+                        <div>
+                            <h4>Vous gardez le contrôle</h4>
+                            <p>Définissez vos disponibilités et conditions</p>
+                        </div>
+                    </div>
+                    <div class="dual-section-feature">
+                        <i class="fas fa-check-circle"></i>
+                        <div>
+                            <h4>Assurance complète</h4>
+                            <p>Protection jusqu'à 1 million d'euros incluse</p>
+                        </div>
+                    </div>
+                    <div class="dual-section-feature">
+                        <i class="fas fa-check-circle"></i>
+                        <div>
+                            <h4>Accompagnement dédié</h4>
+                            <p>Notre équipe vous guide à chaque étape</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <a href="/needs.html" class="btn-secondary">Voir les besoins</a>
+            </div>
+        </div>
     </div>
-  </div>
-</section>
 
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-  // Initialiser la date minimum pour le champ de date au jour actuel
-  const dateInput = document.querySelector('input[type="date"]');
-  if (dateInput) {
-    const today = new Date().toISOString().split('T')[0];
-    dateInput.min = today;
-  }
-  
-  // Gestion des clics sur les cartes de catégorie
-  const categoryCards = document.querySelectorAll('.category-card');
-  categoryCards.forEach(card => {
-    card.addEventListener('click', function() {
-      const category = this.querySelector('h3').textContent;
-      window.location.href = `/spaces/search?category=${encodeURIComponent(category)}`;
-    });
-  });
-});
-</script>
+    <!-- Section avec des catégories d'espaces -->
+    <section class="categories">
+        <div class="container">
+            <h2>Découvrez les espaces qui correspondent à vos activités</h2>
+            <div class="category-grid">
+                <div class="category-card">
+                    <div class="category-img" style="background-image: url('https://images.unsplash.com/photo-1497366754035-f200968a6e72')"></div>
+                    <h3>Salles de réunion</h3>
+                    <p>Idéales pour vos réunions d'équipe et assemblées générales</p>
+                </div>
+                <div class="category-card">
+                    <div class="category-img" style="background-image: url('https://images.unsplash.com/photo-1517245386807-bb43f82c33c4')"></div>
+                    <h3>Espaces événementiels</h3>
+                    <p>Pour vos conférences, expositions et rencontres</p>
+                </div>
+                <div class="category-card">
+                    <div class="category-img" style="background-image: url('https://images.unsplash.com/photo-1574974671999-24b7dfbb0d53')"></div>
+                    <h3>Ateliers créatifs</h3>
+                    <p>Espaces adaptés aux activités artistiques et créatives</p>
+                </div>
+                <div class="category-card">
+                    <div class="category-img" style="background-image: url('https://images.unsplash.com/photo-1526948531399-320e7e40f0ca')"></div>
+                    <h3>Espaces sportifs</h3>
+                    <p>Pour les cours de sport, yoga et activités de bien-être</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section des espaces populaires -->
+    <section class="featured-spaces">
+        <div class="container">
+            <div class="section-header">
+                <h2>Espaces les plus appréciés par les associations</h2>
+                <a href="#" class="view-all">Voir tous les espaces <i class="fas fa-arrow-right"></i></a>
+            </div>
+            <div class="space-grid">
+                <div class="space-card">
+                    <div class="space-img" style="background-image: url('https://images.unsplash.com/photo-1497366814617-c0893dfb1931')"></div>
+                    <div class="space-badge">Populaire</div>
+                    <div class="space-content">
+                        <div class="space-title">
+                            <h3>Espace Créatif Montmartre</h3>
+                            <div class="space-rating">
+                                <i class="fas fa-star"></i>
+                                <span>4.8</span>
+                            </div>
+                        </div>
+                        <p class="space-location"><i class="fas fa-map-marker-alt"></i> Paris 18ème</p>
+                        <p class="space-capacity"><i class="fas fa-users"></i> Jusqu'à 25 personnes</p>
+                        <div class="space-footer">
+                            <p class="space-price">45€ / heure</p>
+                            <a href="#" class="btn-small">Réserver</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="space-card">
+                    <div class="space-img" style="background-image: url('https://images.unsplash.com/photo-1577412647305-991150c7d163')"></div>
+                    <div class="space-content">
+                        <div class="space-title">
+                            <h3>Salle Panoramique République</h3>
+                            <div class="space-rating">
+                                <i class="fas fa-star"></i>
+                                <span>4.7</span>
+                            </div>
+                        </div>
+                        <p class="space-location"><i class="fas fa-map-marker-alt"></i> Paris 11ème</p>
+                        <p class="space-capacity"><i class="fas fa-users"></i> Jusqu'à 40 personnes</p>
+                        <div class="space-footer">
+                            <p class="space-price">60€ / heure</p>
+                            <a href="#" class="btn-small">Réserver</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="space-card">
+                    <div class="space-img" style="background-image: url('https://images.unsplash.com/photo-1519167758481-83f550bb49b3')"></div>
+                    <div class="space-badge">Nouveau</div>
+                    <div class="space-content">
+                        <div class="space-title">
+                            <h3>Atelier Artistique Bastille</h3>
+                            <div class="space-rating">
+                                <i class="fas fa-star"></i>
+                                <span>4.9</span>
+                            </div>
+                        </div>
+                        <p class="space-location"><i class="fas fa-map-marker-alt"></i> Paris 12ème</p>
+                        <p class="space-capacity"><i class="fas fa-users"></i> Jusqu'à 15 personnes</p>
+                        <div class="space-footer">
+                            <p class="space-price">35€ / heure</p>
+                            <a href="#" class="btn-small">Réserver</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section "Comment ça marche ?" -->
+    <section class="how-it-works">
+        <div class="container">
+            <h2>Comment ça fonctionne pour les associations</h2>
+            <div class="steps-container">
+                <div class="step">
+                    <div class="step-icon">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <h3>Recherchez</h3>
+                    <p>Filtrez selon vos critères : lieu, date, capacité et équipements nécessaires</p>
+                </div>
+                
+                <div class="step">
+                    <div class="step-icon">
+                        <i class="fas fa-calendar-check"></i>
+                    </div>
+                    <h3>Réservez</h3>
+                    <p>Sélectionnez votre créneau et confirmez en quelques clics</p>
+                </div>
+                
+                <div class="step">
+                    <div class="step-icon">
+                        <i class="fas fa-smile"></i>
+                    </div>
+                    <h3>Profitez</h3>
+                    <p>Accédez à votre espace et réalisez vos activités en toute sérénité</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section témoignages -->
+    <section class="testimonials">
+        <div class="container">
+            <h2>Témoignages d'utilisateurs satisfaits</h2>
+            <div class="testimonial-cards">
+                <div class="testimonial">
+                    <div class="testimonial-content">
+                        <p>"LeLocal nous a permis de trouver des espaces adaptés à nos ateliers hebdomadaires à des prix abordables. Notre association a pu développer ses activités sans contrainte de local !"</p>
+                    </div>
+                    <div class="testimonial-author">
+                        <img src="https://randomuser.me/api/portraits/women/32.jpg" alt="Sophie Martin">
+                        <div class="author-info">
+                            <h4>Sophie Martin</h4>
+                            <p>Association Arts et Culture</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial">
+                    <div class="testimonial-content">
+                        <p>"En tant que propriétaire, je rentre maintenant dans mes frais pour mon local associatif. LeLocal m'a permis de le partager avec d'autres associations quand je ne l'utilise pas."</p>
+                    </div>
+                    <div class="testimonial-author">
+                        <img src="https://randomuser.me/api/portraits/men/45.jpg" alt="Thomas Dubois">
+                        <div class="author-info">
+                            <h4>Thomas Dubois</h4>
+                            <p>Association sportive & propriétaire</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial">
+                    <div class="testimonial-content">
+                        <p>"Notre mairie a pu optimiser l'utilisation de ses salles municipales grâce à LeLocal. Les associations de la ville sont ravies de pouvoir réserver facilement les espaces disponibles."</p>
+                    </div>
+                    <div class="testimonial-author">
+                        <img src="https://randomuser.me/api/portraits/women/68.jpg" alt="Julie Moreau">
+                        <div class="author-info">
+                            <h4>Julie Moreau</h4>
+                            <p>Service vie associative - Mairie</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div style="text-align: center; margin-top: 40px;">
+                <a href="#" class="btn-primary" style="display: inline-block; padding: 12px 25px; border-radius: 30px; background-color: #4CAF50; color: white; text-decoration: none; font-weight: 500; transition: all 0.3s;">Voir tous les témoignages <i class="fas fa-arrow-right" style="margin-left: 8px;"></i></a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section newsletter -->
+    <section class="newsletter">
+        <div class="container">
+            <div class="newsletter-content">
+                <h2>Restez informés des nouveaux espaces disponibles</h2>
+                <p>Recevez en avant-première les nouveaux espaces ajoutés dans votre ville et les offres spéciales</p>
+                <form class="newsletter-form">
+                    <input type="email" placeholder="Votre adresse email" required>
+                    <button type="submit" class="btn-medium">S'inscrire</button>
+                </form>
+                <p class="small">En vous inscrivant, vous acceptez de recevoir nos communications par email. Vous pourrez vous désinscrire à tout moment.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-columns">
+                <div class="footer-column">
+                    <h3>LeLocal</h3>
+                    <p>La plateforme qui connecte associations et propriétaires d'espaces</p>
+                    <div class="social-icons">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+                <div class="footer-column">
+                    <h4>Liens utiles</h4>
+                    <ul>
+                        <li><a href="#">À propos</a></li>
+                        <li><a href="#">Comment ça marche</a></li>
+                        <li><a href="#">FAQ</a></li>
+                        <li><a href="#">Nos actualités</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h4>Informations légales</h4>
+                    <ul>
+                        <li><a href="#">Conditions d'utilisation</a></li>
+                        <li><a href="#">Politique de confidentialité</a></li>
+                        <li><a href="#">Mentions légales</a></li>
+                        <li><a href="#">Contactez-nous</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h4>Catégories d'espaces</h4>
+                    <ul>
+                        <li><a href="#">Salles de réunion</a></li>
+                        <li><a href="#">Espaces événementiels</a></li>
+                        <li><a href="#">Ateliers créatifs</a></li>
+                        <li><a href="#">Espaces sportifs</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 LeLocal - Tous droits réservés</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Modal de connexion -->
+    <div id="login-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h2>Connexion à LeLocal</h2>
+            <form id="login-form" action="/sessions" method="post">
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Mot de passe</label>
+                    <input type="password" id="password" name="password" required>
+                    <div class="password-helper">
+                        <a href="/password/reset" class="forgot-password">Mot de passe oublié ?</a>
+                    </div>
+                </div>
+                <div class="form-group remember-me">
+                    <input type="checkbox" id="remember_me" name="remember_me">
+                    <label for="remember_me">Se souvenir de moi</label>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn-large primary">Se connecter</button>
+                </div>
+            </form>
+            <div class="modal-footer">
+                <p>Vous n'avez pas de compte ? <a href="/signup" class="signup-link">Créer un compte</a></p>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialisation du modal de connexion
+            const loginButton = document.querySelector('.login-btn');
+            const loginModal = document.getElementById('login-modal');
+            
+            if (loginButton && loginModal) {
+                const closeModal = loginModal.querySelector('.close-modal');
+                const loginForm = document.getElementById('login-form');
+
+                // Ouvrir le modal quand on clique sur le bouton de connexion
+                loginButton.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    loginModal.style.display = 'flex';
+                    document.body.style.overflow = 'hidden'; // Empêcher le défilement de la page
+                });
+
+                // Fermer le modal quand on clique sur le X
+                closeModal.addEventListener('click', function() {
+                    loginModal.style.display = 'none';
+                    document.body.style.overflow = 'auto'; // Réactiver le défilement de la page
+                });
+
+                // Fermer le modal quand on clique en dehors
+                window.addEventListener('click', function(e) {
+                    if (e.target === loginModal) {
+                        loginModal.style.display = 'none';
+                        document.body.style.overflow = 'auto';
+                    }
+                });
+
+                // Gestion des erreurs du formulaire
+                loginForm.addEventListener('submit', function(e) {
+                    e.preventDefault(); // Empêcher la soumission réelle du formulaire pour la démo
+                    
+                    const email = document.getElementById('email').value.trim();
+                    const password = document.getElementById('password').value;
+                    
+                    if (!email || !password) {
+                        // Afficher un message d'erreur
+                        let errorElement = document.querySelector('.form-error');
+                        if (!errorElement) {
+                            errorElement = document.createElement('div');
+                            errorElement.className = 'form-error';
+                            loginForm.insertBefore(errorElement, loginForm.firstChild);
+                        }
+                        
+                        errorElement.textContent = "Veuillez remplir tous les champs";
+                    } else {
+                        alert('Tentative de connexion avec: ' + email);
+                        // En mode démo, on simule juste la connexion
+                        loginModal.style.display = 'none';
+                        document.body.style.overflow = 'auto';
+                    }
+                });
+            }
+            
+            // Initialiser la date minimum pour le champ de date au jour actuel
+            const dateInput = document.querySelector('input[type="date"]');
+            if (dateInput) {
+                const today = new Date().toISOString().split('T')[0];
+                dateInput.min = today;
+            }
+            
+            // Gestion des clics sur les cartes de catégorie
+            const categoryCards = document.querySelectorAll('.category-card');
+            categoryCards.forEach(card => {
+                card.addEventListener('click', function() {
+                    const category = this.querySelector('h3').textContent;
+                    window.location.href = '/spaces?category=' + encodeURIComponent(category);
+                });
+            });
+        });
+    </script>
+</body>
+</html>
