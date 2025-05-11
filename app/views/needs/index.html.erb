@@ -1,8 +1,442 @@
-<h1>Besoin de locaux par des associations</h1>
+<% content_for :title, "LeLocal - Liste complète des besoins des associations" %>
 
-<% @needs.each do |need| %>
-  <div class="border p-4 my-2">
-    <strong><%= link_to need.title, need_path(need) %></strong> - <%= need.city %><br>
-    <%= truncate(need.description, length: 100) %>
-  </div>
+<% content_for :head do %>
+  <!-- Font Awesome pour les icônes -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  
+  <style>
+    /* Styles pour la page de liste complète des besoins */
+    .sub-hero {
+      background-color: #f5f5f5;
+      padding: 80px 0 50px;
+      text-align: center;
+      margin-bottom: 40px;
+      margin-top: 50px;
+    }
+    
+    .sub-hero h1 {
+      font-size: 32px;
+      margin-bottom: 15px;
+      color: #333;
+      font-weight: 600;
+    }
+    
+    .sub-hero p {
+      font-size: 18px;
+      color: #666;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+    
+    .needs-container {
+      max-width: 1200px;
+      margin: 0 auto 60px;
+      padding: 0 15px;
+    }
+    
+    .needs-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+    }
+    
+    .needs-header h2 {
+      font-size: 24px;
+      color: #333;
+      margin: 0;
+    }
+
+    .map-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: #4CAF50;
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.3s;
+    }
+    
+    .map-link:hover {
+      color: #388E3C;
+    }
+    
+    .filtering {
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+      padding: 20px;
+      margin-bottom: 30px;
+    }
+    
+    .filtering h3 {
+      font-size: 18px;
+      margin-top: 0;
+      margin-bottom: 15px;
+      color: #333;
+    }
+    
+    .filter-options {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    
+    .filter-category {
+      padding: 8px 15px;
+      background-color: #f0f0f0;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 14px;
+      border: none;
+      transition: background-color 0.2s, color 0.2s;
+    }
+    
+    .filter-category:hover,
+    .filter-category.active {
+      background-color: #4CAF50;
+      color: white;
+    }
+    
+    .need-card {
+      background-color: white;
+      border-radius: 10px;
+      box-shadow: 0 3px 15px rgba(0, 0, 0, 0.08);
+      overflow: hidden;
+      margin-bottom: 25px;
+      display: flex;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    
+    .need-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+    }
+    
+    .need-image {
+      width: 250px;
+      min-height: 200px;
+      background-size: cover;
+      background-position: center;
+      flex-shrink: 0;
+      position: relative;
+    }
+    
+    .need-badge {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background-color: #FF5722;
+      color: white;
+      font-size: 12px;
+      font-weight: 500;
+      padding: 4px 10px;
+      border-radius: 15px;
+    }
+    
+    .need-badge.new {
+      background-color: #4CAF50;
+    }
+    
+    .need-content {
+      flex: 1;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .need-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 15px;
+    }
+    
+    .need-title {
+      font-size: 20px;
+      font-weight: 600;
+      color: #333;
+      margin: 0 0 5px;
+    }
+    
+    .need-association {
+      color: #4CAF50;
+      font-weight: 500;
+      font-size: 16px;
+      margin: 0;
+    }
+    
+    .need-details {
+      margin-bottom: 20px;
+    }
+    
+    .need-info {
+      display: flex;
+      align-items: center;
+      margin-bottom: 8px;
+      color: #555;
+      font-size: 15px;
+    }
+    
+    .need-info i {
+      width: 20px;
+      text-align: center;
+      margin-right: 10px;
+      color: #777;
+    }
+    
+    .need-description {
+      color: #666;
+      font-size: 15px;
+      margin-bottom: 15px;
+      flex: 1;
+    }
+    
+    .need-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: auto;
+      padding-top: 15px;
+      border-top: 1px solid #eee;
+    }
+    
+    .need-budget {
+      font-size: 18px;
+      color: #666;
+    }
+    
+    .need-budget span {
+      font-weight: 600;
+      color: #333;
+    }
+    
+    .btn-respond {
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 5px;
+      text-decoration: none;
+      font-weight: 500;
+      transition: background-color 0.3s;
+    }
+    
+    .btn-respond:hover {
+      background-color: #388E3C;
+    }
+    
+    .no-needs {
+      text-align: center;
+      padding: 50px 0;
+      color: #666;
+    }
+    
+    .no-needs i {
+      font-size: 48px;
+      color: #ddd;
+      margin-bottom: 20px;
+    }
+    
+    .pagination {
+      display: flex;
+      justify-content: center;
+      margin-top: 40px;
+    }
+    
+    .pagination a,
+    .pagination span {
+      display: inline-block;
+      padding: 8px 16px;
+      margin: 0 4px;
+      border-radius: 4px;
+      text-decoration: none;
+      color: #333;
+    }
+    
+    .pagination a {
+      background-color: #f5f5f5;
+      transition: background-color 0.2s;
+    }
+    
+    .pagination a:hover {
+      background-color: #e0e0e0;
+    }
+    
+    .pagination .current {
+      background-color: #4CAF50;
+      color: white;
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+      .need-card {
+        flex-direction: column;
+      }
+      
+      .need-image {
+        width: 100%;
+        height: 200px;
+      }
+      
+      .filtering {
+        padding: 15px;
+      }
+      
+      .filter-options {
+        flex-wrap: wrap;
+      }
+    }
+  </style>
 <% end %>
+
+<!-- Section titre -->
+<section class="sub-hero">
+  <div class="container">
+    <h1>Liste complète des besoins des associations</h1>
+    <p>Découvrez tous les besoins d'espaces des associations et proposez votre local pour les aider</p>
+    <div class="hero-decoration" style="width: 50px; height: 4px; background-color: #4CAF50; margin: 20px auto 0;"></div>
+  </div>
+</section>
+
+<div class="needs-container">
+  <!-- En-tête avec lien vers la carte -->
+  <div class="needs-header">
+    <h2>Tous les besoins</h2>
+    <a href="/needs/map" class="map-link">
+      <i class="fas fa-map-marked-alt"></i> Voir sur la carte
+    </a>
+  </div>
+  
+  <!-- Section de filtrage -->
+  <div class="filtering">
+    <h3>Filtrer par catégorie</h3>
+    <div class="filter-options">
+      <button class="filter-category active" data-category="all">Tous</button>
+      <% if defined?(Need::CATEGORIES) %>
+        <% Need::CATEGORIES.each do |category| %>
+          <button class="filter-category" data-category="<%= category[1] %>"><%= category[0] %></button>
+        <% end %>
+      <% else %>
+        <button class="filter-category" data-category="reunion">Réunion</button>
+        <button class="filter-category" data-category="atelier">Atelier</button>
+        <button class="filter-category" data-category="evenement">Événement</button>
+        <button class="filter-category" data-category="formation">Formation</button>
+        <button class="filter-category" data-category="sport">Sport</button>
+      <% end %>
+    </div>
+  </div>
+  
+  <!-- Liste des besoins -->
+  <div class="needs-list">
+    <% if @needs.any? %>
+      <% @needs.each do |need| %>
+        <div class="need-card" data-category="<%= need.category %>">
+          <div class="need-image" style="background-image: url('<%= need.respond_to?(:photos) && need.photos.respond_to?(:attached?) && need.photos.attached? ? 
+                                           url_for(need.photos.first) : 
+                                           'https://images.unsplash.com/photo-1517457373958-b7bdd4587205' %>')">
+            <% if need.respond_to?(:urgent?) && need.urgent? %>
+              <span class="need-badge">Urgent</span>
+            <% elsif need.respond_to?(:new_need?) && need.new_need? %>
+              <span class="need-badge new">Nouveau</span>
+            <% end %>
+          </div>
+          
+          <div class="need-content">
+            <div class="need-header">
+              <div>
+                <h3 class="need-title"><%= need.title %></h3>
+                <p class="need-association"><%= need.user.display_name %></p>
+              </div>
+            </div>
+            
+            <div class="need-details">
+              <p class="need-info">
+                <i class="fas fa-map-marker-alt"></i>
+                <%= need.respond_to?(:address_short) ? need.address_short : 
+                    (need.respond_to?(:city) ? "#{need.city}" : need.address.split(",").first) %>
+              </p>
+              <p class="need-info">
+                <i class="fas fa-calendar-alt"></i>
+                <% if need.date_needed.is_a?(String) %>
+                  <%= need.date_needed %>
+                <% else %>
+                  <%= need.date_needed.strftime("%d/%m/%Y") %>
+                <% end %>
+                <% if need.respond_to?(:start_time) && need.start_time.present? %>
+                  à <%= need.start_time.is_a?(String) ? need.start_time : need.start_time.strftime("%H:%M") %>
+                <% end %>
+              </p>
+              <p class="need-info">
+                <i class="fas fa-users"></i>
+                <%= need.respond_to?(:capacity) && need.capacity.present? ? "#{need.capacity} personnes" : "Capacité non spécifiée" %>
+              </p>
+              <p class="need-info">
+                <i class="fas fa-tag"></i>
+                <%= Need::CATEGORIES.find { |c| c[1] == need.category }&.first || need.category %>
+              </p>
+            </div>
+            
+            <p class="need-description">
+              <%= need.respond_to?(:description) && need.description.present? ? 
+                  truncate(need.description, length: 150) : 
+                  "Pas de description disponible." %>
+            </p>
+            
+            <div class="need-footer">
+              <p class="need-budget">
+                <% if need.respond_to?(:budget) && need.budget.present? %>
+                  Budget : <span><%= need.budget %>€</span>
+                <% else %>
+                  Budget non spécifié
+                <% end %>
+              </p>
+              <a href="/needs/<%= need.id %>" class="btn-respond">Proposer mon espace</a>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    <% else %>
+      <div class="no-needs">
+        <i class="fas fa-search"></i>
+        <h3>Aucun besoin trouvé</h3>
+        <p>Il n'y a pas encore de besoins publiés par les associations.</p>
+        <% if user_signed_in? %>
+          <a href="/needs/new" class="btn-respond">Publier un besoin</a>
+        <% else %>
+          <a href="/users/sign_in" class="btn-respond">Se connecter pour publier un besoin</a>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+  
+  <!-- Pagination (à implémenter si nécessaire) -->
+  <% if @needs.respond_to?(:total_pages) && @needs.total_pages > 1 %>
+    <div class="pagination">
+      <%= paginate @needs %>
+    </div>
+  <% end %>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Filtrage par catégorie
+    document.querySelectorAll('.filter-category').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        // Mise à jour de l'état actif des boutons
+        document.querySelectorAll('.filter-category').forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+        
+        var category = this.dataset.category;
+        
+        // Filtrage des cartes
+        document.querySelectorAll('.need-card').forEach(function(card) {
+          if (category === 'all' || card.dataset.category === category) {
+            card.style.display = 'flex';
+          } else {
+            card.style.display = 'none';
+          }
+        });
+      });
+    });
+  });
+</script>

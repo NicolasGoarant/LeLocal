@@ -182,6 +182,7 @@
       display: flex;
       cursor: pointer;
       transition: transform 0.3s, box-shadow 0.3s;
+      position: relative; /* Position relative pour les badges */
     }
     
     .space-item:hover {
@@ -202,6 +203,7 @@
       flex-shrink: 0;
       background-size: cover;
       background-position: center;
+      position: relative; /* Position relative pour les badges à l'intérieur */
     }
     
     .space-item-content {
@@ -304,6 +306,7 @@
       font-weight: 500;
       color: white;
       background-color: #4CAF50;
+      z-index: 5;
     }
     
     /* Styles pour les popups de la carte */
@@ -558,11 +561,11 @@
             <div class="space-item" data-space-id="<%= space.id %>" onclick="highlightMarker('<%= space.id %>')">
               <div class="space-item-img" style="background-image: url('<%= space.respond_to?(:photos) && space.photos.respond_to?(:attached?) && space.photos.attached? ? 
                                                    url_for(space.photos.first) : 
-                                                   'https://images.unsplash.com/photo-1497366754035-f200968a6e72' %>')"></div>
-              
-              <% if space.respond_to?(:new_space?) && space.new_space? %>
-                <div class="space-badge">Nouveau</div>
-              <% end %>
+                                                   'https://images.unsplash.com/photo-1497366754035-f200968a6e72' %>')">
+                <% if space.respond_to?(:new_space?) && space.new_space? %>
+                  <div class="space-badge">Nouveau</div>
+                <% end %>
+              </div>
               
               <div class="space-item-content">
                 <div class="space-item-header">

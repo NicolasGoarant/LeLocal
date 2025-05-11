@@ -369,6 +369,31 @@
       font-size: 16px;
       margin-bottom: 20px;
     }
+
+    /* Style pour le bouton Voir le reste */
+    .view-all-container {
+      text-align: center;
+      margin: 20px 0 40px;
+    }
+
+    .btn-view-all {
+      display: inline-block;
+      background-color: #f5f5f5;
+      color: #4CAF50;
+      border: 2px solid #4CAF50;
+      padding: 10px 20px;
+      border-radius: 4px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.3s ease;
+    }
+
+    .btn-view-all:hover {
+      background-color: #4CAF50;
+      color: white;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
     
     /* Responsive */
     @media (max-width: 968px) {
@@ -512,11 +537,12 @@
       
       <div class="need-list">
         <% if @needs.present? %>
-          <% @needs.each do |need| %>
+          <!-- Afficher seulement les 3 premiers besoins -->
+          <% @needs.first(3).each do |need| %>
             <div class="need-item" data-need-id="<%= need.id %>" onclick="highlightMarker('<%= need.id %>')">
               <div class="need-item-img" style="background-image: url('<%= need.respond_to?(:photos) && need.photos.respond_to?(:attached?) && need.photos.attached? ? 
-                                                   url_for(need.photos.first) : 
-                                                   'https://images.unsplash.com/photo-1517457373958-b7bdd4587205' %>')"></div>
+                                                 url_for(need.photos.first) : 
+                                                 'https://images.unsplash.com/photo-1517457373958-b7bdd4587205' %>')"></div>
               
               <% if need.respond_to?(:urgent?) && need.urgent? %>
                 <div class="need-badge urgent">Urgent</div>
@@ -525,7 +551,6 @@
               <% end %>
               
             
-
               <div class="need-item-content">
                 <div class="need-item-header">
                   <h3 class="need-item-title"><%= need.title %></h3>
@@ -566,6 +591,13 @@
                   <a href="/needs/<%= need.id %>" class="btn-small">Proposer mon espace</a>
                 </div>
               </div>
+            </div>
+          <% end %>
+
+          <!-- Bouton "Voir le reste" si plus de 3 besoins -->
+          <% if @needs.size > 3 %>
+            <div class="view-all-container">
+              <%= link_to "Voir toutes les demandes (#{@needs.size - 3} de plus)", needs_path, class: "btn-view-all" %>
             </div>
           <% end %>
         <% else %>
@@ -698,15 +730,10 @@
         try {
           map.fitBounds(bounds);
         } catch (e) {
-          console.error("Erreur lors de l'ajustement des limites:", e);
-          map.setView([46.603354, 1.888334], 6); // Fallback sur le centre de la France
+          console.error("Erreur lors de l'ajustement des limites de la carte:", e);
+          map.setView([46.603354, 1.888334], 6); // Centre de la France par défaut
         }
       }
-      
-      // Gérer le redimensionnement de la carte
-      setTimeout(function() {
-        map.invalidateSize();
-      }, 100);
     });
   </script>
 <% end %>

@@ -843,7 +843,7 @@ section + section {
               
               <div class="dual-section">
                   <h3>J'ai un espace</h3>
-                  <p>Partagez votre local avec la communauté associative ou découvrez les besoins des associations près de chez vous</p>
+                  <p>Partagez votre local avec une association ou découvrez les besoins des associations près de chez vous</p>
                   <div class="section-buttons">
                       <%= link_to "Je propose mon local", new_host_spaces_path, class: "btn-primary" %>
                       <%= link_to "Je regarde les besoins des associations", map_needs_path, class: "btn-secondary" %>
@@ -950,45 +950,7 @@ section + section {
                   </div>
               </div>
           </div>
-          <a href="<%= spaces_path %>" class="view-all">Voir tous les espaces <i class="fas fa-arrow-right"></i></a>
-      </div>
-  </section>
-
-  <!-- Section "Comment ça marche ?" -->
-  <section class="how-it-works">
-      <div class="container">
-          <div class="section-title">
-              <h2>Comment ça fonctionne pour les associations</h2>
-              <p>Un processus simple pour trouver et réserver l'espace idéal</p>
-          </div>
-          <div class="steps-container">
-              <div class="step">
-                  <div class="step-number">1</div>
-                  <div class="step-icon">
-                      <i class="fas fa-search"></i>
-                  </div>
-                  <h3>Recherchez</h3>
-                  <p>Filtrez selon vos critères : lieu, date, capacité et équipements nécessaires</p>
-              </div>
-              
-              <div class="step">
-                  <div class="step-number">2</div>
-                  <div class="step-icon">
-                      <i class="fas fa-calendar-check"></i>
-                  </div>
-                  <h3>Réservez</h3>
-                  <p>Sélectionnez votre créneau et confirmez en quelques clics</p>
-              </div>
-              
-              <div class="step">
-                  <div class="step-number">3</div>
-                  <div class="step-icon">
-                      <i class="fas fa-smile"></i>
-                  </div>
-                  <h3>Profitez</h3>
-                  <p>Accédez à votre espace et réalisez vos activités en toute sérénité</p>
-              </div>
-          </div>
+          <a href="<%= spaces_path(map: true) %>" class="view-all">Voir tous les espaces <i class="fas fa-arrow-right"></i></a>
       </div>
   </section>
 
@@ -996,7 +958,7 @@ section + section {
   <section class="testimonials">
       <div class="container">
           <div class="section-title">
-              <h2>Témoignages d'utilisateurs satisfaits</h2>
+              <h2>Témoignages d'utilisateurs</h2>
               <p>Ils ont utilisé LeLocal et partagent leur expérience</p>
           </div>
           <div class="testimonial-cards">
