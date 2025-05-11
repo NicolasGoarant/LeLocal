@@ -1,230 +1,635 @@
 <% content_for :title, "LeLocal - Inscription" %>
 
-<section class="signup-section">
-  <div class="container">
-    <div class="signup-container">
-      <h1>Créer un compte</h1>
-      <p class="signup-intro">Rejoignez LeLocal pour réserver des espaces ou partager les vôtres</p>
+<% content_for :head do %>
+<style>
+/* Style pour la page d'inscription */
+.main-content {
+  width: 100%;
+  overflow-x: hidden;
+}
+
+.page-header {
+  background-image: url('https://images.unsplash.com/photo-1542744095-fcf48d80b0fd?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
+  background-size: cover;
+  background-position: center;
+  position: relative;
+  padding: 70px 0;
+  color: white;
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.page-header::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+}
+
+.page-header .container {
+  position: relative;
+  z-index: 2;
+}
+
+.page-header h1 {
+  font-size: 2.5rem;
+  margin-bottom: 15px;
+  font-weight: 700;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.page-header p {
+  font-size: 1.1rem;
+  max-width: 800px;
+  margin: 0 auto;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.signup-container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 40px;
+  max-width: 1100px;
+  margin: 0 auto 60px;
+  padding: 0 20px;
+}
+
+.signup-form-container {
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+  padding: 35px;
+  width: 100%;
+  max-width: 500px;
+}
+
+.signup-info {
+  flex: 1;
+  max-width: 500px;
+}
+
+.signup-info-box {
+  background-color: #f9f9f9;
+  border-radius: 10px;
+  padding: 30px;
+  margin-bottom: 30px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+  border-left: 4px solid #4CAF50;
+}
+
+.signup-info-icon {
+  background-color: rgba(76, 175, 80, 0.1);
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.signup-info-icon i {
+  color: #4CAF50;
+  font-size: 28px;
+}
+
+.signup-info h2 {
+  font-size: 24px;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.signup-info p {
+  color: #666;
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+
+.signup-benefits {
+  margin-top: 30px;
+  padding: 0;
+}
+
+.signup-benefits li {
+  padding-left: 25px;
+  position: relative;
+  margin-bottom: 12px;
+  list-style-type: none;
+  color: #555;
+}
+
+.signup-benefits li::before {
+  content: '\f00c';
+  font-family: 'Font Awesome 5 Free';
+  font-weight: 900;
+  position: absolute;
+  left: 0;
+  color: #4CAF50;
+}
+
+.form-title {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.form-title h2 {
+  font-size: 24px;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.form-title p {
+  color: #666;
+  font-size: 16px;
+}
+
+.form-group {
+  margin-bottom: 25px;
+}
+
+.form-group label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #444;
+}
+
+.form-row {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 25px;
+}
+
+.form-row .form-group {
+  flex: 1;
+  margin-bottom: 0;
+}
+
+.input-field {
+  width: 100%;
+  padding: 12px 15px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 16px;
+  transition: all 0.3s;
+}
+
+.input-field:focus {
+  border-color: #4CAF50;
+  box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.2);
+  outline: none;
+}
+
+.checkbox-group {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 20px;
+}
+
+.checkbox-group input {
+  margin-right: 10px;
+  margin-top: 3px;
+}
+
+.checkbox-group label {
+  font-weight: normal;
+  line-height: 1.5;
+}
+
+.checkbox-group a {
+  color: #4CAF50;
+  text-decoration: none;
+}
+
+.checkbox-group a:hover {
+  text-decoration: underline;
+}
+
+.btn-signup {
+  display: block;
+  width: 100%;
+  padding: 15px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 18px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+  margin-top: 10px;
+  text-align: center;
+  text-decoration: none;
+}
+
+.btn-signup:hover {
+  background-color: #388E3C;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+.login-link {
+  text-align: center;
+  margin-top: 25px;
+  padding-top: 20px;
+  border-top: 1px solid #eee;
+}
+
+.login-link p {
+  color: #666;
+  margin-bottom: 10px;
+}
+
+.btn-login {
+  display: inline-block;
+  padding: 12px 20px;
+  background-color: transparent;
+  color: #4CAF50;
+  border: 2px solid #4CAF50;
+  border-radius: 5px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+  text-decoration: none;
+}
+
+.btn-login:hover {
+  background-color: rgba(76, 175, 80, 0.1);
+  transform: translateY(-2px);
+}
+
+.divider {
+  display: flex;
+  align-items: center;
+  margin: 25px 0;
+  color: #999;
+}
+
+.divider::before,
+.divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background-color: #ddd;
+}
+
+.divider span {
+  padding: 0 15px;
+  font-size: 14px;
+}
+
+.social-signup {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+}
+
+.social-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px;
+  border-radius: 5px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.3s;
+  border: 1px solid #ddd;
+  color: #444;
+}
+
+.social-btn i {
+  margin-right: 10px;
+  font-size: 18px;
+}
+
+.social-btn.facebook {
+  color: #3b5998;
+}
+
+.social-btn.google {
+  color: #dd4b39;
+}
+
+.social-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.form-hint {
+  display: block;
+  margin-top: 5px;
+  font-size: 0.85rem;
+  color: #777;
+}
+
+.form-error {
+  color: #d32f2f;
+  font-size: 0.85rem;
+  margin-top: 5px;
+}
+
+.form-section {
+  margin-bottom: 30px;
+}
+
+.form-section-title {
+  font-size: 18px;
+  color: #333;
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+.account-type {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 25px;
+}
+
+.account-type-option {
+  flex: 1;
+  position: relative;
+}
+
+.account-type-input {
+  position: absolute;
+  opacity: 0;
+  height: 0;
+  width: 0;
+}
+
+.account-type-label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 20px;
+  background-color: #f5f5f5;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.account-type-label:hover {
+  background-color: #eee;
+}
+
+.account-type-input:checked + .account-type-label {
+  border-color: #4CAF50;
+  background-color: rgba(76, 175, 80, 0.05);
+}
+
+.account-type-icon {
+  font-size: 30px;
+  color: #555;
+  margin-bottom: 10px;
+}
+
+.account-type-input:checked + .account-type-label .account-type-icon {
+  color: #4CAF50;
+}
+
+.account-type-label h3 {
+  margin: 0 0 5px;
+  font-size: 16px;
+  color: #333;
+}
+
+.account-type-label p {
+  margin: 0;
+  font-size: 14px;
+  color: #666;
+}
+
+@media (max-width: 900px) {
+  .signup-container {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .signup-form-container, 
+  .signup-info {
+    max-width: 550px;
+    width: 100%;
+  }
+  
+  .signup-info {
+    order: 2;
+  }
+  
+  .form-row {
+    flex-direction: column;
+    gap: 0;
+  }
+  
+  .form-row .form-group {
+    margin-bottom: 25px;
+  }
+}
+
+@media (max-width: 480px) {
+  .signup-form-container,
+  .signup-info-box {
+    padding: 20px;
+  }
+  
+  .social-signup {
+    flex-direction: column;
+  }
+  
+  .account-type {
+    flex-direction: column;
+  }
+}
+</style>
+<% end %>
+
+<div class="main-content">
+  <!-- En-tête de la page -->
+  <div class="page-header">
+    <div class="container">
+      <h1>Rejoignez <span style="color: #fff;">Le</span><span style="color: #4CAF50;">Local</span></h1>
+      <p>Créez un compte pour rejoindre notre communauté et trouver ou partager des espaces pour vos activités</p>
+    </div>
+  </div>
+
+  <div class="signup-container">
+    <div class="signup-form-container">
+      <div class="form-title">
+        <h2>Inscription</h2>
+        <p>Créez votre compte en quelques étapes</p>
+      </div>
       
-      <%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { class: "signup-form" }) do |f| %>
-        <% if resource.errors.any? %>
-          <div class="error-messages">
-            <ul>
-              <% resource.errors.full_messages.each do |message| %>
-                <li><%= message %></li>
-              <% end %>
-            </ul>
+      <%= form_for(resource, as: resource_name, url: registration_path(resource_name)) do |f| %>
+        <%= render "devise/shared/error_messages", resource: resource %>
+        
+        <div class="form-section">
+          <h3 class="form-section-title">Type de compte</h3>
+          <div class="account-type">
+            <div class="account-type-option">
+              <%= f.radio_button :account_type, 'association', class: 'account-type-input', checked: true, id: 'type-association' %>
+              <label for="type-association" class="account-type-label">
+                <span class="account-type-icon"><i class="fas fa-users"></i></span>
+                <h3>Association</h3>
+                <p>Je cherche des espaces</p>
+              </label>
+            </div>
+            <div class="account-type-option">
+              <%= f.radio_button :account_type, 'owner', class: 'account-type-input', id: 'type-owner' %>
+              <label for="type-owner" class="account-type-label">
+                <span class="account-type-icon"><i class="fas fa-building"></i></span>
+                <h3>Propriétaire</h3>
+                <p>Je propose des espaces</p>
+              </label>
+            </div>
           </div>
-        <% end %>
-
-        <div class="form-group">
-          <%= f.label :email, "Adresse email" %>
-          <%= f.email_field :email, autofocus: true, autocomplete: "email", placeholder: "Votre adresse email" %>
         </div>
-
-        <div class="form-row">
-          <div class="form-group half">
-            <%= f.label :first_name, "Prénom" %>
-            <%= f.text_field :first_name, placeholder: "Votre prénom" %>
+        
+        <div class="form-section">
+          <h3 class="form-section-title">Informations personnelles</h3>
+          <div class="form-row">
+            <div class="form-group">
+              <%= f.label :first_name, "Prénom" %>
+              <%= f.text_field :first_name, class: 'input-field', required: true, placeholder: "Votre prénom", autofocus: true %>
+            </div>
+            <div class="form-group">
+              <%= f.label :last_name, "Nom" %>
+              <%= f.text_field :last_name, class: 'input-field', required: true, placeholder: "Votre nom" %>
+            </div>
           </div>
           
-          <div class="form-group half">
-            <%= f.label :last_name, "Nom" %>
-            <%= f.text_field :last_name, placeholder: "Votre nom" %>
+          <div class="form-group">
+            <%= f.label :email, "Email" %>
+            <%= f.email_field :email, class: 'input-field', required: true, placeholder: "Votre adresse email", autocomplete: "email" %>
+            <span class="form-hint">Nous vous enverrons un email de confirmation</span>
+          </div>
+          
+          <div class="form-group">
+            <%= f.label :phone, "Téléphone (optionnel)" %>
+            <%= f.telephone_field :phone, class: 'input-field', placeholder: "Votre numéro de téléphone" %>
           </div>
         </div>
-
+        
+        <div class="form-section">
+          <h3 class="form-section-title">Informations du compte</h3>
+          
+          <div class="form-group">
+            <%= f.label :password, "Mot de passe" %>
+            <%= f.password_field :password, class: 'input-field', required: true, placeholder: "Votre mot de passe", autocomplete: "new-password" %>
+            <span class="form-hint">
+              <% if @minimum_password_length %>
+                <%= @minimum_password_length %> caractères minimum
+              <% else %>
+                8 caractères minimum, incluant une majuscule et un chiffre
+              <% end %>
+            </span>
+          </div>
+          
+          <div class="form-group">
+            <%= f.label :password_confirmation, "Confirmation du mot de passe" %>
+            <%= f.password_field :password_confirmation, class: 'input-field', required: true, placeholder: "Confirmez votre mot de passe", autocomplete: "new-password" %>
+          </div>
+        </div>
+        
         <div class="form-group">
-          <%= f.label :password, "Mot de passe" %>
-          <% if @minimum_password_length %>
-          <span class="password-hint">(minimum <%= @minimum_password_length %> caractères)</span>
-          <% end %>
-          <%= f.password_field :password, autocomplete: "new-password", placeholder: "Votre mot de passe" %>
+          <div class="checkbox-group">
+            <%= f.check_box :terms_accepted, required: true, id: "terms" %>
+            <%= f.label :terms_accepted, for: "terms" do %>
+              J'accepte les <a href="/terms">conditions d'utilisation</a> et la <a href="/privacy">politique de confidentialité</a>
+            <% end %>
+          </div>
+          
+          <div class="checkbox-group">
+            <%= f.check_box :newsletter, id: "newsletter" %>
+            <%= f.label :newsletter, "Je souhaite recevoir la newsletter et les offres spéciales", for: "newsletter" %>
+          </div>
         </div>
-
-        <div class="form-group">
-          <%= f.label :password_confirmation, "Confirmer le mot de passe" %>
-          <%= f.password_field :password_confirmation, autocomplete: "new-password", placeholder: "Répétez votre mot de passe" %>
-        </div>
-
-        <div class="form-checkbox terms-checkbox">
-          <%= check_box_tag :terms_accepted, "1", false, required: true, id: "terms_accepted" %>
-          <label for="terms_accepted">J'accepte les <a href="/terms" target="_blank">conditions générales d'utilisation</a> et la <a href="/privacy" target="_blank">politique de confidentialité</a></label>
-        </div>
-
-        <div class="form-actions">
-          <%= f.submit "S'inscrire", class: "btn-large primary" %>
+        
+        <div class="actions">
+          <%= f.submit "Créer mon compte", class: "btn-signup" %>
         </div>
       <% end %>
-
-      <div class="account-options">
-        <p>Vous avez déjà un compte ? <a href="<%= new_user_session_path %>" class="login-link">Connectez-vous</a></p>
+      
+      <div class="divider">
+        <span>OU</span>
+      </div>
+      
+      <% if devise_mapping.omniauthable? %>
+        <div class="social-signup">
+          <% resource_class.omniauth_providers.each do |provider| %>
+            <% if provider == :facebook %>
+              <%= link_to omniauth_authorize_path(resource_name, provider), class: "social-btn facebook" do %>
+                <i class="fab fa-facebook-f"></i> Facebook
+              <% end %>
+            <% elsif provider == :google_oauth2 %>
+              <%= link_to omniauth_authorize_path(resource_name, provider), class: "social-btn google" do %>
+                <i class="fab fa-google"></i> Google
+              <% end %>
+            <% else %>
+              <%= link_to "S'inscrire avec #{OmniAuth::Utils.camelize(provider)}", omniauth_authorize_path(resource_name, provider), class: "social-btn" %>
+            <% end %>
+          <% end %>
+        </div>
+      <% else %>
+        <div class="social-signup">
+          <a href="#" class="social-btn facebook">
+            <i class="fab fa-facebook-f"></i> Facebook
+          </a>
+          <a href="#" class="social-btn google">
+            <i class="fab fa-google"></i> Google
+          </a>
+        </div>
+      <% end %>
+      
+      <div class="login-link">
+        <p>Vous avez déjà un compte ?</p>
+        <%= link_to "Se connecter", new_session_path(resource_name), class: "btn-login" %>
+      </div>
+    </div>
+    
+    <div class="signup-info">
+      <div class="signup-info-box">
+        <div class="signup-info-icon">
+          <i class="fas fa-star"></i>
+        </div>
+        <h2>Pourquoi s'inscrire ?</h2>
+        <p>En créant un compte sur <span style="color: #000;">Le</span><span style="color: #4CAF50;">Local</span>, vous rejoignez une communauté dynamique dédiée au partage d'espaces pour les associations et activités communautaires.</p>
+        
+        <h3>Avantages de l'inscription :</h3>
+        <ul class="signup-benefits">
+          <li>Découvrez des espaces adaptés à vos activités</li>
+          <li>Publiez vos besoins en locaux</li>
+          <li>Recevez des notifications personnalisées</li>
+          <li>Communiquez directement avec les propriétaires</li>
+          <li>Partagez vos espaces et générez des revenus</li>
+        </ul>
+      </div>
+      
+      <div class="signup-info-box">
+        <div class="signup-info-icon">
+          <i class="fas fa-shield-alt"></i>
+        </div>
+        <h2>Sécurité et confiance</h2>
+        <p>Nous nous engageons à créer une communauté de confiance où chaque membre est vérifié. Vos données personnelles sont protégées et sécurisées.</p>
+        <p>Notre plateforme facilite la mise en relation tout en garantissant une expérience sécurisée pour tous.</p>
+      </div>
+      
+      <div class="signup-info-box">
+        <div class="signup-info-icon">
+          <i class="fas fa-question-circle"></i>
+        </div>
+        <h2>Besoin d'aide ?</h2>
+        <p>Notre équipe est disponible pour vous aider dans votre processus d'inscription ou pour répondre à vos questions.</p>
+        <p>Contactez-nous à <a href="mailto:contact@lelocal.fr" style="color: #4CAF50;">contact@lelocal.fr</a> ou consultez notre <a href="/faq" style="color: #4CAF50;">FAQ</a>.</p>
       </div>
     </div>
   </div>
-</section>
-
-<style>
-  /* Styles pour la page d'inscription */
-  .signup-section {
-    padding: 100px 0 60px;
-    background-color: #f9f9f9;
-  }
-
-  .signup-container {
-    max-width: 600px;
-    margin: 0 auto;
-    background-color: #fff;
-    border-radius: 8px;
-    padding: 40px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  }
-
-  .signup-container h1 {
-    text-align: center;
-    margin-bottom: 10px;
-    color: #333;
-    font-size: 28px;
-  }
-
-  .signup-intro {
-    text-align: center;
-    color: #666;
-    margin-bottom: 30px;
-  }
-
-  .signup-form .form-group {
-    margin-bottom: 20px;
-  }
-
-  .signup-form label {
-    display: block;
-    margin-bottom: 8px;
-    color: #333;
-    font-weight: 500;
-  }
-
-  .signup-form input[type="text"],
-  .signup-form input[type="email"],
-  .signup-form input[type="password"] {
-    width: 100%;
-    padding: 12px 15px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    font-size: 16px;
-  }
-
-  .signup-form input:focus {
-    border-color: #4CAF50;
-    outline: none;
-  }
-
-  .password-hint {
-    font-size: 0.9rem;
-    color: #666;
-    margin-left: 5px;
-  }
-
-  .form-row {
-    display: flex;
-    gap: 20px;
-  }
-
-  .form-group.half {
-    flex: 1;
-  }
-
-  .terms-checkbox {
-    margin-bottom: 25px;
-  }
-
-  .form-checkbox {
-    display: flex;
-    align-items: flex-start;
-    gap: 10px;
-  }
-
-  .form-checkbox input[type="checkbox"] {
-    margin-top: 3px;
-  }
-
-  .form-checkbox label {
-    font-size: 0.95rem;
-    font-weight: normal;
-  }
-
-  .form-checkbox a {
-    color: #4CAF50;
-    text-decoration: underline;
-  }
-
-  .form-actions {
-    margin-top: 30px;
-  }
-
-  .btn-large {
-    width: 100%;
-    padding: 12px;
-    border-radius: 5px;
-    font-size: 1rem;
-    font-weight: 600;
-    text-align: center;
-    cursor: pointer;
-    transition: background-color 0.3s;
-  }
-
-  .btn-large.primary {
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-  }
-
-  .btn-large.primary:hover {
-    background-color: #388E3C;
-  }
-
-  .account-options {
-    margin-top: 25px;
-    text-align: center;
-    padding-top: 20px;
-    border-top: 1px solid #eee;
-  }
-
-  .account-options p {
-    color: #666;
-  }
-
-  .login-link {
-    color: #4CAF50;
-    font-weight: 600;
-  }
-
-  .error-messages {
-    background-color: #ffebee;
-    border: 1px solid #ef5350;
-    border-radius: 5px;
-    padding: 15px;
-    margin-bottom: 20px;
-  }
-
-  .error-messages ul {
-    margin: 0;
-    padding-left: 20px;
-  }
-
-  .error-messages li {
-    color: #d32f2f;
-  }
-
-  /* Responsive */
-  @media (max-width: 768px) {
-    .signup-container {
-      padding: 30px 20px;
-    }
-    
-    .form-row {
-      flex-direction: column;
-      gap: 15px;
-    }
-  }
-</style>
+</div>

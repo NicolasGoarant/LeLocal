@@ -3,7 +3,12 @@ Rails.application.routes.draw do
   root 'home#index'
   
   # Routes pour l'authentification via Devise
-  devise_for :users
+  devise_for :users, controllers: {
+    registrations: 'registrations'
+  }
+  
+  # Route simplifiée pour l'inscription
+  get '/signup', to: 'registrations#new', as: :signup
   
   # Routes pour les espaces
   resources :spaces do
