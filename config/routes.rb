@@ -9,6 +9,7 @@ Rails.application.routes.draw do
   resources :spaces do
     collection do
       get 'map'
+      get 'new_host' # Route pour les hôtes proposant un espace
     end
     member do
       get 'reserve'

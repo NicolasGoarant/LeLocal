@@ -1,6 +1,6 @@
 class NeedsController < ApplicationController
   before_action :set_need, only: [:show, :edit, :update, :destroy]
-  before_action :authenticate_user!, except: [:index, :show, :map]
+  before_action :authenticate_user!, except: [:index, :show, :map, :new]
   
   # GET /needs
   def index
