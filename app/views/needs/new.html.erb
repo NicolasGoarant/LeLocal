@@ -1,486 +1,849 @@
-<% content_for :title, "LeLocal - Indiquer mes besoins en locaux" %>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LeLocal - Indiquer mes besoins en locaux</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* Reset CSS */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-<% content_for :head do %>
-<style>
-/* Style pour la page d'indication des besoins */
-.main-content {
-  width: 100%;
-  overflow-x: hidden;
-}
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f8f9fa;
+            overflow-x: hidden;
+        }
 
-.page-header {
-  background-image: url('https://images.unsplash.com/photo-1542744095-fcf48d80b0fd?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
-  background-size: cover;
-  background-position: center;
-  position: relative;
-  padding: 70px 0;
-  color: white;
-  text-align: center;
-  margin-bottom: 40px;
-}
+        /* Container responsive */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            width: 100%;
+        }
 
-.page-header::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.6);
-}
+        /* Header */
+        .header {
+            background-color: #fff;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+        }
 
-.page-header .container {
-  position: relative;
-  z-index: 2;
-}
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
 
-.page-header h1 {
-  font-size: 2.5rem;
-  margin-bottom: 15px;
-  font-weight: 700;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-}
+        .logo {
+            font-size: 28px;
+            font-weight: 700;
+            text-decoration: none;
+        }
 
-.page-header p {
-  font-size: 1.1rem;
-  max-width: 800px;
-  margin: 0 auto;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-}
+        .logo .le {
+            color: #000;
+        }
 
-.form-container {
-  max-width: 900px;
-  margin: 0 auto 60px;
-  padding: 30px;
-  background-color: #fff;
-  border-radius: 10px;
-  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
-}
+        .logo .local {
+            color: #4CAF50;
+        }
 
-.form-intro {
-  text-align: center;
-  margin-bottom: 30px;
-}
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 30px;
+            align-items: center;
+        }
 
-.form-intro h2 {
-  font-size: 24px;
-  color: #333;
-  margin-bottom: 15px;
-  position: relative;
-  display: inline-block;
-  padding-bottom: 10px;
-}
+        .nav-links a {
+            text-decoration: none;
+            color: #333;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
 
-.form-intro h2::after {
-  content: '';
-  position: absolute;
-  left: 50%;
-  bottom: 0;
-  width: 60px;
-  height: 3px;
-  background-color: #4CAF50;
-  transform: translateX(-50%);
-}
+        .nav-links a:hover {
+            color: #4CAF50;
+        }
 
-.form-intro p {
-  color: #666;
-  max-width: 700px;
-  margin: 0 auto;
-  line-height: 1.5;
-}
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: #333;
+            cursor: pointer;
+        }
 
-.form-section {
-  margin-bottom: 30px;
-  padding-bottom: 25px;
-  border-bottom: 1px solid #eee;
-}
+        /* Page Header */
+        .page-header {
+            background-image: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)),
+                            url('https://images.unsplash.com/photo-1542744095-fcf48d80b0fd?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
+            background-size: cover;
+            background-position: center;
+            padding: 120px 0 80px;
+            color: white;
+            text-align: center;
+            margin-top: 70px;
+        }
 
-.form-section-title {
-  font-size: 20px;
-  color: #333;
-  margin-bottom: 20px;
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-}
+        .page-header h1 {
+            font-size: clamp(2rem, 5vw, 2.8rem);
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
 
-.form-section-title i {
-  color: #4CAF50;
-  margin-right: 12px;
-  font-size: 24px;
-}
+        .page-header p {
+            font-size: clamp(1rem, 2.5vw, 1.2rem);
+            max-width: 700px;
+            margin: 0 auto;
+        }
 
-.form-group {
-  margin-bottom: 25px;
-}
+        /* Main Content */
+        .main-content {
+            padding: 80px 0;
+        }
 
-.form-group label {
-  display: block;
-  font-weight: 600;
-  margin-bottom: 8px;
-  color: #444;
-}
+        .form-container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 50px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+        }
 
-.form-group .help-text {
-  color: #888;
-  font-size: 14px;
-  margin-top: 5px;
-  font-style: italic;
-}
+        .form-intro {
+            text-align: center;
+            margin-bottom: 40px;
+        }
 
-.input-field {
-  width: 100%;
-  padding: 12px 15px;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  font-size: 16px;
-  transition: all 0.3s;
-}
+        .form-intro h2 {
+            font-size: 28px;
+            color: #333;
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
 
-.input-field:focus {
-  border-color: #4CAF50;
-  box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.2);
-  outline: none;
-}
+        .form-intro p {
+            color: #666;
+            font-size: 16px;
+            line-height: 1.6;
+        }
 
-.input-field.is-invalid {
-  border-color: #e74c3c;
-}
+        /* Form Sections */
+        .form-section {
+            margin-bottom: 40px;
+            padding-bottom: 30px;
+            border-bottom: 1px solid #eee;
+        }
 
-.error-message {
-  color: #e74c3c;
-  font-size: 14px;
-  margin-top: 5px;
-}
+        .form-section:last-child {
+            border-bottom: none;
+        }
 
-.textarea-field {
-  min-height: 120px;
-  resize: vertical;
-}
+        .form-section-title {
+            font-size: 20px;
+            color: #333;
+            margin-bottom: 25px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
 
-.form-row {
-  display: flex;
-  gap: 20px;
-  margin-bottom: 20px;
-}
+        .form-section-title i {
+            color: #4CAF50;
+            font-size: 24px;
+        }
 
-.form-col {
-  flex: 1;
-}
+        .form-group {
+            margin-bottom: 25px;
+        }
 
-.checkbox-group {
-  margin-top: 15px;
-}
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 25px;
+        }
 
-.checkbox-item {
-  display: flex;
-  align-items: center;
-  margin-bottom: 12px;
-}
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #333;
+        }
 
-.checkbox-item input[type="checkbox"] {
-  margin-right: 10px;
-  transform: scale(1.2);
-}
+        .required::after {
+            content: ' *';
+            color: #e74c3c;
+        }
 
-.radio-group {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 15px;
-  margin-top: 10px;
-}
+        .input-field {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s;
+            background-color: #fff;
+        }
 
-.radio-item {
-  display: flex;
-  align-items: center;
-}
+        .input-field:focus {
+            border-color: #4CAF50;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
+        }
 
-.radio-item input[type="radio"] {
-  margin-right: 8px;
-}
+        .textarea-field {
+            min-height: 120px;
+            resize: vertical;
+        }
 
-.btn-submit {
-  display: block;
-  width: 100%;
-  padding: 15px;
-  background-color: #4CAF50;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  font-size: 18px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s;
-  margin-top: 20px;
-  text-align: center;
-}
+        .help-text {
+            display: block;
+            margin-top: 5px;
+            font-size: 14px;
+            color: #666;
+            font-style: italic;
+        }
 
-.btn-submit:hover {
-  background-color: #388E3C;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
-}
+        /* Radio Groups */
+        .radio-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
 
-.required-label::after {
-  content: ' *';
-  color: #e74c3c;
-}
+        .radio-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
 
-@media (max-width: 768px) {
-  .form-row {
-    flex-direction: column;
-    gap: 10px;
-  }
-  
-  .form-section-title {
-    font-size: 18px;
-  }
-  
-  .form-container {
-    padding: 20px;
-  }
-}
-</style>
-<% end %>
+        .radio-item:hover {
+            border-color: #4CAF50;
+            background-color: rgba(76, 175, 80, 0.05);
+        }
 
-<div class="main-content">
-  <!-- En-tête de la page -->
-  <div class="page-header">
-    <div class="container">
-      <h1>Indiquez vos besoins en locaux</h1>
-      <p>Décrivez précisément l'espace dont votre association a besoin, et les propriétaires pourront vous contacter directement</p>
+        .radio-item input[type="radio"] {
+            width: 18px;
+            height: 18px;
+            accent-color: #4CAF50;
+        }
+
+        .radio-item label {
+            margin: 0;
+            font-weight: normal;
+            cursor: pointer;
+            flex: 1;
+        }
+
+        .radio-item input[type="radio"]:checked + label {
+            font-weight: 600;
+            color: #4CAF50;
+        }
+
+        /* Checkbox Groups */
+        .checkbox-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 15px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .checkbox-item:hover {
+            background-color: #f8f9fa;
+            border-color: #4CAF50;
+        }
+
+        .checkbox-item input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: #4CAF50;
+        }
+
+        .checkbox-item label {
+            margin: 0;
+            font-weight: normal;
+            cursor: pointer;
+            flex: 1;
+        }
+
+        /* Budget Section */
+        .budget-container {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 15px;
+            align-items: end;
+        }
+
+        .budget-input {
+            position: relative;
+        }
+
+        .budget-input::after {
+            content: '€';
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #666;
+            font-weight: 600;
+        }
+
+        /* Category Select */
+        .category-select {
+            position: relative;
+        }
+
+        .category-select::after {
+            content: '\f107';
+            font-family: 'Font Awesome 5 Free';
+            font-weight: 900;
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #666;
+            pointer-events: none;
+        }
+
+        .category-select select {
+            appearance: none;
+            background-color: white;
+        }
+
+        /* Submit Button */
+        .btn-submit {
+            display: block;
+            width: 100%;
+            padding: 18px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 30px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 30px;
+        }
+
+        .btn-submit:hover {
+            background-color: #388E3C;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(76, 175, 80, 0.3);
+        }
+
+        /* Alert Messages */
+        .alert {
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+
+        .alert-danger {
+            background-color: #ffeaea;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+
+        .alert h4 {
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+
+        .alert ul {
+            margin: 0;
+            padding-left: 20px;
+        }
+
+        .alert li {
+            margin-bottom: 5px;
+        }
+
+        /* Tips Section */
+        .tips-section {
+            background-color: rgba(76, 175, 80, 0.05);
+            border: 1px solid rgba(76, 175, 80, 0.2);
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+
+        .tips-section h3 {
+            color: #4CAF50;
+            margin-bottom: 15px;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .tips-section ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .tips-section li {
+            margin-bottom: 10px;
+            padding-left: 25px;
+            position: relative;
+            color: #555;
+        }
+
+        .tips-section li::before {
+            content: '\f058';
+            font-family: 'Font Awesome 5 Free';
+            font-weight: 900;
+            position: absolute;
+            left: 0;
+            color: #4CAF50;
+            font-size: 14px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .form-container {
+                padding: 40px 30px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .page-header {
+                padding: 100px 0 60px;
+            }
+
+            .main-content {
+                padding: 60px 0;
+            }
+
+            .form-container {
+                padding: 30px 25px;
+                margin: 0 15px;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+                gap: 0;
+            }
+
+            .budget-container {
+                grid-template-columns: 1fr;
+            }
+
+            .radio-group {
+                grid-template-columns: 1fr;
+            }
+
+            .checkbox-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-intro h2 {
+                font-size: 24px;
+            }
+
+            .form-section-title {
+                font-size: 18px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .nav-container {
+                padding: 10px 15px;
+            }
+
+            .page-header {
+                padding: 90px 0 50px;
+            }
+
+            .form-container {
+                padding: 25px 20px;
+            }
+
+            .form-intro h2 {
+                font-size: 22px;
+            }
+
+            .form-section-title {
+                font-size: 16px;
+            }
+
+            .input-field {
+                padding: 12px;
+            }
+
+            .btn-submit {
+                padding: 15px;
+                font-size: 16px;
+            }
+
+            .tips-section {
+                padding: 20px;
+            }
+
+            .radio-item,
+            .checkbox-item {
+                padding: 10px 12px;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .container {
+                padding: 0 10px;
+            }
+
+            .form-container {
+                padding: 20px 15px;
+                margin: 0 10px;
+            }
+
+            .form-intro h2 {
+                font-size: 20px;
+            }
+
+            .form-section-title {
+                font-size: 16px;
+                flex-direction: column;
+                text-align: center;
+                gap: 8px;
+            }
+
+            .input-field {
+                padding: 10px;
+                font-size: 16px;
+            }
+
+            .btn-submit {
+                padding: 12px;
+                font-size: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="nav-container">
+            <a href="#" class="logo">
+                <span class="le">Le</span><span class="local">Local</span>
+            </a>
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="#">Rechercher</a></li>
+                    <li><a href="#">Proposer</a></li>
+                    <li><a href="#">À propos</a></li>
+                    <li><a href="#">Connexion</a></li>
+                    <li><a href="#" class="btn-signup">Inscription</a></li>
+                </ul>
+            </nav>
+            <button class="mobile-menu-btn">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="container">
+            <h1>Indiquez vos besoins en locaux</h1>
+            <p>Décrivez précisément l'espace dont votre association a besoin, et les propriétaires pourront vous contacter directement</p>
+        </div>
     </div>
-  </div>
 
-  <div class="container">
-    <div class="form-container">
-      <div class="form-intro">
-        <h2>Détaillez votre recherche</h2>
-        <p>Plus votre description sera précise, plus vous aurez de chances de trouver un espace qui correspond parfaitement à vos besoins. Les propriétaires pourront consulter votre annonce et vous contacter s'ils ont un local adapté.</p>
-      </div>
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="container">
+            <div class="form-container">
+                <div class="form-intro">
+                    <h2>Détaillez votre recherche</h2>
+                    <p>Plus votre description sera précise, plus vous aurez de chances de trouver un espace qui correspond parfaitement à vos besoins. Les propriétaires pourront consulter votre annonce et vous contacter s'ils ont un local adapté.</p>
+                </div>
 
-      <%= form_with(model: @need, local: true) do |form| %>
-        <% if @need.errors.any? %>
-          <div class="alert alert-danger">
-            <h4>Le formulaire contient <%= @need.errors.count %> erreur(s) :</h4>
-            <ul>
-              <% @need.errors.full_messages.each do |message| %>
-                <li><%= message %></li>
-              <% end %>
-            </ul>
-          </div>
-        <% end %>
+                <div class="tips-section">
+                    <h3><i class="fas fa-lightbulb"></i> Conseils pour une recherche efficace</h3>
+                    <ul>
+                        <li>Décrivez précisément votre activité et vos contraintes</li>
+                        <li>Indiquez vos dates de préférence et votre flexibilité</li>
+                        <li>Mentionnez les équipements indispensables</li>
+                        <li>Soyez réaliste sur votre budget</li>
+                    </ul>
+                </div>
 
-        <!-- Section Informations générales -->
-        <div class="form-section">
-          <h3 class="form-section-title"><i class="fas fa-info-circle"></i> Informations générales</h3>
-          
-          <div class="form-group">
-            <%= form.label :title, "Titre de votre besoin", class: "required-label" %>
-            <%= form.text_field :title, class: "input-field", placeholder: "Ex: Salle pour atelier de musique hebdomadaire", required: true %>
-            <p class="help-text">Un titre clair qui résume votre besoin principal</p>
-          </div>
-          
-          <div class="form-group">
-            <%= form.label :description, "Description détaillée", class: "required-label" %>
-            <%= form.text_area :description, class: "input-field textarea-field", placeholder: "Décrivez votre activité, le type d'espace recherché et vos contraintes spécifiques...", required: true %>
-            <p class="help-text">Donnez un maximum de détails sur votre besoin en espace et l'activité prévue</p>
-          </div>
-          
-          <div class="form-group">
-            <%= form.label :category, "Catégorie de besoin", class: "required-label" %>
-            <%= form.select :category, Need::CATEGORIES, { include_blank: "Sélectionnez une catégorie" }, { class: "input-field", required: true } %>
-          </div>
+                <form action="/needs" method="post">
+                    <!-- Section Informations générales -->
+                    <div class="form-section">
+                        <h3 class="form-section-title">
+                            <i class="fas fa-info-circle"></i>
+                            Informations générales
+                        </h3>
+                        
+                        <div class="form-group">
+                            <label for="title" class="required">Titre de votre besoin</label>
+                            <input type="text" id="title" name="need[title]" class="input-field" required placeholder="Ex: Salle pour atelier de musique hebdomadaire">
+                            <span class="help-text">Un titre clair qui résume votre besoin principal</span>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="description" class="required">Description détaillée</label>
+                            <textarea id="description" name="need[description]" class="input-field textarea-field" required placeholder="Décrivez votre activité, le type d'espace recherché et vos contraintes spécifiques..."></textarea>
+                            <span class="help-text">Donnez un maximum de détails sur votre besoin en espace et l'activité prévue</span>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="category" class="required">Catégorie de besoin</label>
+                            <div class="category-select">
+                                <select id="category" name="need[category]" class="input-field" required>
+                                    <option value="">Sélectionnez une catégorie</option>
+                                    <option value="meeting">Réunion/Assemblée</option>
+                                    <option value="workshop">Atelier/Formation</option>
+                                    <option value="event">Événement/Spectacle</option>
+                                    <option value="sports">Activité sportive</option>
+                                    <option value="cultural">Activité culturelle</option>
+                                    <option value="social">Activité sociale</option>
+                                    <option value="other">Autre</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Section Localisation -->
+                    <div class="form-section">
+                        <h3 class="form-section-title">
+                            <i class="fas fa-map-marker-alt"></i>
+                            Localisation
+                        </h3>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="city" class="required">Ville</label>
+                                <input type="text" id="city" name="need[city]" class="input-field" required placeholder="Ex: Paris">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="postal_code" class="required">Code postal</label>
+                                <input type="text" id="postal_code" name="need[postal_code]" class="input-field" required placeholder="Ex: 75011">
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="address">Adresse ou quartier souhaité (optionnel)</label>
+                            <input type="text" id="address" name="need[address]" class="input-field" placeholder="Ex: 10 rue du Commerce ou Quartier République">
+                            <span class="help-text">Précisez si vous recherchez un quartier spécifique</span>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="radius">Rayon de recherche (en km)</label>
+                            <select id="radius" name="need[radius]" class="input-field">
+                                <option value="5" selected>5 km</option>
+                                <option value="10">10 km</option>
+                                <option value="15">15 km</option>
+                                <option value="20">20 km</option>
+                                <option value="30">30 km</option>
+                                <option value="50">50 km</option>
+                            </select>
+                            <span class="help-text">Distance maximale par rapport à l'adresse ou au centre de la ville indiquée</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Section Caractéristiques -->
+                    <div class="form-section">
+                        <h3 class="form-section-title">
+                            <i class="fas fa-building"></i>
+                            Caractéristiques de l'espace
+                        </h3>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="capacity" class="required">Capacité minimale (nombre de personnes)</label>
+                                <input type="number" id="capacity" name="need[capacity]" class="input-field" min="1" required placeholder="Ex: 25">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="surface">Surface minimale souhaitée (m²)</label>
+                                <input type="number" id="surface" name="need[surface]" class="input-field" min="1" placeholder="Ex: 50">
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Équipements nécessaires</label>
+                            <div class="checkbox-grid">
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="wifi_needed" name="need[wifi_needed]" value="1">
+                                    <label for="wifi_needed">Connexion WiFi</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="projector_needed" name="need[projector_needed]" value="1">
+                                    <label for="projector_needed">Vidéoprojecteur</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="sound_system_needed" name="need[sound_system_needed]" value="1">
+                                    <label for="sound_system_needed">Système de sonorisation</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="kitchen_needed" name="need[kitchen_needed]" value="1">
+                                    <label for="kitchen_needed">Cuisine/Espace traiteur</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="accessibility_needed" name="need[accessibility_needed]" value="1">
+                                    <label for="accessibility_needed">Accessibilité PMR</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" id="parking_needed" name="need[parking_needed]" value="1">
+                                    <label for="parking_needed">Parking disponible</label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="additional_equipment">Autres équipements (précisez)</label>
+                            <textarea id="additional_equipment" name="need[additional_equipment]" class="input-field" rows="3" placeholder="Ex: tables et chaises pour 20 personnes, tableau blanc, piano..."></textarea>
+                        </div>
+                    </div>
+                    
+                    <!-- Section Budget et disponibilité -->
+                    <div class="form-section">
+                        <h3 class="form-section-title">
+                            <i class="fas fa-calendar-alt"></i>
+                            Budget et disponibilité
+                        </h3>
+                        
+                        <div class="form-group">
+                            <label for="budget" class="required">Budget maximum</label>
+                            <div class="budget-container">
+                                <div class="budget-input">
+                                    <input type="number" id="budget" name="need[budget]" class="input-field" min="1" required placeholder="Ex: 200">
+                                </div>
+                                <select name="need[budget_period]" class="input-field">
+                                    <option value="hour">par heure</option>
+                                    <option value="day">par jour</option>
+                                    <option value="month">par mois</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Fréquence d'utilisation</label>
+                            <div class="radio-group">
+                                <div class="radio-item">
+                                    <input type="radio" name="need[frequency]" id="one_time" value="one_time">
+                                    <label for="one_time">Ponctuel (une seule fois)</label>
+                                </div>
+                                <div class="radio-item">
+                                    <input type="radio" name="need[frequency]" id="weekly" value="weekly">
+                                    <label for="weekly">Hebdomadaire</label>
+                                </div>
+                                <div class="radio-item">
+                                    <input type="radio" name="need[frequency]" id="monthly" value="monthly">
+                                    <label for="monthly">Mensuel</label>
+                                </div>
+                                <div class="radio-item">
+                                    <input type="radio" name="need[frequency]" id="permanent" value="permanent">
+                                    <label for="permanent">Permanent</label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="availability_start_date" class="required">Date de début souhaitée</label>
+                                <input type="date" id="availability_start_date" name="need[availability_start_date]" class="input-field" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="availability_end_date">Date de fin (si applicable)</label>
+                                <input type="date" id="availability_end_date" name="need[availability_end_date]" class="input-field">
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="preferred_times">Créneaux horaires préférés</label>
+                            <textarea id="preferred_times" name="need[preferred_times]" class="input-field" rows="3" placeholder="Ex: Tous les mercredis de 18h à 20h, ou week-ends après-midi..."></textarea>
+                            <span class="help-text">Indiquez vos préférences en termes d'horaires et de jours</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Section Contact -->
+                    <div class="form-section">
+                        <h3 class="form-section-title">
+                            <i class="fas fa-user"></i>
+                            Informations de contact
+                        </h3>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="contact_name" class="required">Nom du contact</label>
+                                <input type="text" id="contact_name" name="need[contact_name]" class="input-field" required placeholder="Prénom et nom">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="contact_email" class="required">Email de contact</label>
+                                <input type="email" id="contact_email" name="need[contact_email]" class="input-field" required placeholder="contact@association.fr">
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="contact_phone">Téléphone (optionnel)</label>
+                                <input type="tel" id="contact_phone" name="need[contact_phone]" class="input-field" placeholder="06 12 34 56 78">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="organization_name">Nom de l'association</label>
+                                <input type="text" id="organization_name" name="need[organization_name]" class="input-field" placeholder="Nom de votre association">
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn-submit">
+                        <i class="fas fa-paper-plane" style="margin-right: 10px;"></i>
+                        Publier mon besoin
+                    </button>
+                </form>
+            </div>
         </div>
-        
-        <!-- Section Localisation -->
-        <div class="form-section">
-          <h3 class="form-section-title"><i class="fas fa-map-marker-alt"></i> Localisation</h3>
-          
-          <div class="form-row">
-            <div class="form-col">
-              <div class="form-group">
-                <%= form.label :city, "Ville", class: "required-label" %>
-                <%= form.text_field :city, class: "input-field", placeholder: "Ex: Paris", required: true %>
-              </div>
-            </div>
-            
-            <div class="form-col">
-              <div class="form-group">
-                <%= form.label :postal_code, "Code postal", class: "required-label" %>
-                <%= form.text_field :postal_code, class: "input-field", placeholder: "Ex: 75011", required: true %>
-              </div>
-            </div>
-          </div>
-          
-          <div class="form-group">
-            <%= form.label :address, "Adresse (optionnelle)" %>
-            <%= form.text_field :address, class: "input-field", placeholder: "Ex: 10 rue du Commerce" %>
-            <p class="help-text">Précisez si vous recherchez un quartier spécifique</p>
-          </div>
-          
-          <div class="form-group">
-            <%= form.label :radius, "Rayon de recherche (en km)" %>
-            <%= form.number_field :radius, class: "input-field", min: 1, max: 50, value: 5 %>
-            <p class="help-text">Distance maximale par rapport à l'adresse ou au centre de la ville indiquée</p>
-          </div>
-        </div>
-        
-        <!-- Section Caractéristiques -->
-        <div class="form-section">
-          <h3 class="form-section-title"><i class="fas fa-building"></i> Caractéristiques de l'espace</h3>
-          
-          <div class="form-row">
-            <div class="form-col">
-              <div class="form-group">
-                <%= form.label :capacity, "Capacité minimale (nombre de personnes)", class: "required-label" %>
-                <%= form.number_field :capacity, class: "input-field", min: 1, required: true %>
-              </div>
-            </div>
-            
-            <div class="form-col">
-              <div class="form-group">
-                <%= form.label :surface, "Surface minimale souhaitée (m²)" %>
-                <%= form.number_field :surface, class: "input-field", min: 1 %>
-              </div>
-            </div>
-          </div>
-          
-          <div class="form-group">
-            <%= form.label :equipment_needed, "Équipements nécessaires" %>
-            <div class="checkbox-group">
-              <div class="checkbox-item">
-                <%= form.check_box :wifi_needed, id: "wifi_needed" %>
-                <%= form.label :wifi_needed, "Connexion WiFi", for: "wifi_needed" %>
-              </div>
-              <div class="checkbox-item">
-                <%= form.check_box :projector_needed, id: "projector_needed" %>
-                <%= form.label :projector_needed, "Vidéoprojecteur", for: "projector_needed" %>
-              </div>
-              <div class="checkbox-item">
-                <%= form.check_box :sound_system_needed, id: "sound_system_needed" %>
-                <%= form.label :sound_system_needed, "Système de sonorisation", for: "sound_system_needed" %>
-              </div>
-              <div class="checkbox-item">
-                <%= form.check_box :kitchen_needed, id: "kitchen_needed" %>
-                <%= form.label :kitchen_needed, "Cuisine/Espace traiteur", for: "kitchen_needed" %>
-              </div>
-              <div class="checkbox-item">
-                <%= form.check_box :accessibility_needed, id: "accessibility_needed" %>
-                <%= form.label :accessibility_needed, "Accessibilité PMR", for: "accessibility_needed" %>
-              </div>
-            </div>
-          </div>
-          
-          <div class="form-group">
-            <%= form.label :additional_equipment, "Autres équipements (précisez)" %>
-            <%= form.text_area :additional_equipment, class: "input-field", rows: 3, placeholder: "Ex: tables et chaises pour 20 personnes, tableau blanc..." %>
-          </div>
-        </div>
-        
-        <!-- Section Budget et disponibilité -->
-        <div class="form-section">
-          <h3 class="form-section-title"><i class="fas fa-calendar-alt"></i> Budget et disponibilité</h3>
-          
-          <div class="form-group">
-            <%= form.label :budget, "Budget maximum (€)", class: "required-label" %>
-            <div class="form-row">
-              <div class="form-col">
-                <%= form.number_field :budget, class: "input-field", min: 1, required: true, placeholder: "Ex: 200" %>
-              </div>
-              <div class="form-col">
-                <%= form.select :budget_period, [["par heure", "hour"], ["par jour", "day"], ["par mois", "month"]], {}, { class: "input-field" } %>
-              </div>
-            </div>
-          </div>
-          
-          <div class="form-group">
-            <%= form.label :frequency, "Fréquence d'utilisation" %>
-            <div class="radio-group">
-              <div class="radio-item">
-                <%= form.radio_button :frequency, "one_time", id: "one_time" %>
-                <%= form.label :frequency_one_time, "Ponctuel (une seule fois)", for: "one_time" %>
-              </div>
-              <div class="radio-item">
-                <%= form.radio_button :frequency, "weekly", id: "weekly" %>
-                <%= form.label :frequency_weekly, "Hebdomadaire", for: "weekly" %>
-              </div>
-              <div class="radio-item">
-                <%= form.radio_button :frequency, "monthly", id: "monthly" %>
-                <%= form.label :frequency_monthly, "Mensuel", for: "monthly" %>
-              </div>
-              <div class="radio-item">
-                <%= form.radio_button :frequency, "permanent", id: "permanent" %>
-                <%= form.label :frequency_permanent, "Permanent", for: "permanent" %>
-              </div>
-            </div>
-          </div>
-          
-          <div class="form-group">
-            <%= form.label :availability_start_date, "Date de début souhaitée", class: "required-label" %>
-            <%= form.date_field :availability_start_date, class: "input-field", required: true, min: Date.today %>
-          </div>
-          
-          <div class="form-group">
-            <%= form.label :availability_end_date, "Date de fin (si applicable)" %>
-            <%= form.date_field :availability_end_date, class: "input-field", min: Date.today %>
-            <p class="help-text">Laissez vide si votre besoin est permanent ou à durée indéterminée</p>
-          </div>
-          
-          <div class="form-group">
-            <%= form.label :preferred_hours, "Horaires préférés" %>
-            <%= form.text_field :preferred_hours, class: "input-field", placeholder: "Ex: Soirs de semaine après 18h, week-ends..." %>
-          </div>
-        </div>
-        
-        <!-- Section Coordonnées et contact -->
-        <div class="form-section">
-          <h3 class="form-section-title"><i class="fas fa-user"></i> Coordonnées et contact</h3>
-          
-          <div class="form-row">
-            <div class="form-col">
-              <div class="form-group">
-                <%= form.label :association_name, "Nom de l'association", class: "required-label" %>
-                <%= form.text_field :association_name, class: "input-field", required: true %>
-              </div>
-            </div>
-            
-            <div class="form-col">
-              <div class="form-group">
-                <%= form.label :contact_name, "Nom du contact", class: "required-label" %>
-                <%= form.text_field :contact_name, class: "input-field", required: true %>
-              </div>
-            </div>
-          </div>
-          
-          <div class="form-row">
-            <div class="form-col">
-              <div class="form-group">
-                <%= form.label :contact_email, "Email", class: "required-label" %>
-                <%= form.email_field :contact_email, class: "input-field", required: true %>
-              </div>
-            </div>
-            
-            <div class="form-col">
-              <div class="form-group">
-                <%= form.label :contact_phone, "Téléphone", class: "required-label" %>
-                <%= form.telephone_field :contact_phone, class: "input-field", required: true %>
-              </div>
-            </div>
-          </div>
-          
-          <div class="form-group">
-            <div class="checkbox-item">
-              <%= form.check_box :public_contact, id: "public_contact" %>
-              <%= form.label :public_contact, "J'accepte que mes coordonnées soient visibles par les propriétaires d'espaces", for: "public_contact" %>
-            </div>
-          </div>
-        </div>
-        
-        <div class="form-group">
-          <%= form.submit "Publier mon besoin", class: "btn-submit" %>
-        </div>
-      <% end %>
     </div>
-  </div>
-</div>
+</body>
+</html>
