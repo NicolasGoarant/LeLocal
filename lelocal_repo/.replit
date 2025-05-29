@@ -1,0 +1,26 @@
+run = "bundle exec rails server -h 0.0.0.0 -p 5000"
+language = "ruby"
+
+[env]
+PATH = "/home/runner/$REPL_SLUG/.config/bin"
+
+[gitHubImport]
+requiredFiles = [".replit", "replit.nix"]
+
+[languages.ruby]
+pattern = "**/*.rb"
+syntax = "ruby"
+
+[languages.ruby.languageServer]
+start = ["solargraph", "stdio"]
+
+[deployment]
+run = ["sh", "-c", "bundle exec rails server -h 0.0.0.0 -p 5000"]
+deploymentTarget = "cloudrun"
+
+[packager]
+language = "ruby"
+
+[packager.features]
+packageSearch = true
+guessImports = true
