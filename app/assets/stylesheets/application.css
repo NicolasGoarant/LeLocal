@@ -56,13 +56,14 @@ img {
 
 /* Barre de navigation */
 .navbar {
-    background-color: var(--white);
     box-shadow: var(--shadow);
     padding: 15px 0;
     position: fixed;
     width: 100%;
     top: 0;
     z-index: 1000;
+    background-color: rgba(255, 255, 255, 0.95); /* Blanc semi-opaque */
+    backdrop-filter: blur(10px); /* Flou derrière la navbar */
 }
 
 .navbar .container {

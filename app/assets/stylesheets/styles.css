@@ -7,11 +7,12 @@
     --text-color: #333;
     --light-text: #777;
     --lighter-text: #999;
-    --white: #fff;
+    --white: #fffff;
     --light-bg: #f8f9fa;
     --border-color: #e5e5e5;
     --shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     --radius: 8px;
+    --shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
 /* Réinitialisation et styles de base */
