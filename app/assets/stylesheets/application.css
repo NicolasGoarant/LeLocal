@@ -284,6 +284,10 @@ img {
     background-color: var(--light-bg);
 }
 
+.logo-text .highlight {
+    color: var(--primary-color) !important;
+  }
+  
 .section-header {
     display: flex;
     justify-content: space-between;
