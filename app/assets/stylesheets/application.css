@@ -780,7 +780,7 @@ img {
 
 /* Highlight class pour les éléments mis en évidence */
 .highlight {
-    color: var(--primary-color);
+    color: var(--primary-color) !important;
 }
 
 /* Utilitaires */
