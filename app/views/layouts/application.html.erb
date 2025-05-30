@@ -221,26 +221,20 @@
 </head>
 <body>
   <!-- Navbar -->
-  <!-- Header -->
-  <header class="header">
-      <div class="nav-container">
-          <a href="#" class="logo">
-              <span class="le">Le</span><span class="local">Local</span>
-          </a>
-          <nav>
-              <ul class="nav-links">
-                  <li><a href="#">Rechercher</a></li>
-                  <li><a href="#">Proposer</a></li>
-                  <li><a href="#">À propos</a></li>
-                  <li><a href="#">Connexion</a></li>
-                  <li><a href="#" class="btn-signup">Inscription</a></li>
-              </ul>
-          </nav>
-          <button class="mobile-menu-btn">
-              <i class="fas fa-bars"></i>
-          </button>
+  <nav class="navbar">
+    <div class="container">
+      <div class="logo">
+        <a href="/">
+          <span class="logo-text">Le<span class="highlight">Local</span></span>
+        </a>
       </div>
-  </header>
+      <div class="menu">
+        <a href="/spaces/new_host" class="host-link">Proposer un espace</a>
+        <a href="#" class="login-btn">Connexion</a>
+        <a href="<%= signup_path %>" class="signup-btn">Inscription</a>
+      </div>
+    </div>
+  </nav>
 
   <%= yield %>
 
