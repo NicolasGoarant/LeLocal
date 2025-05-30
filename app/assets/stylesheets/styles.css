@@ -546,6 +546,10 @@ img {
     box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
 }
 
+.logo-text .highlight {
+    color: var(--primary-color) !important;
+}
+
 .testimonial::before {
     content: '\f10d';
     font-family: 'Font Awesome 5 Free';
