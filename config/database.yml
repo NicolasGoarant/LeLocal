@@ -20,4 +20,7 @@ production:
   username: <%= ENV["DB_USERNAME"] %>
   password: <%= ENV["DB_PASSWORD"] %>
 
+cable:
+  <<: *default
+  url: <%= ENV['DATABASE_URL'] %>
 
