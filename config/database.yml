@@ -1,21 +1,23 @@
 default: &default
   adapter: postgresql
   encoding: unicode
-  pool: 5
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS", 5) %>
+  username: postgres
+  password: postgres123
+  host: localhost
+
+development:
+  <<: *default
+  database: lelocal_development
+
+test:
+  <<: *default
+  database: lelocal_test
 
 production:
   <<: *default
-  url: <%= ENV['DATABASE_URL'] %>
+  database: lelocal_production
+  username: <%= ENV["DB_USERNAME"] %>
+  password: <%= ENV["DB_PASSWORD"] %>
 
-cable:
-  <<: *default
-  url: <%= ENV['DATABASE_URL'] %>
-
-queue:
-  <<: *default
-  url: <%= ENV['DATABASE_URL'] %>
-
-cache:
-  <<: *default
-  url: <%= ENV['DATABASE_URL'] %>
 
