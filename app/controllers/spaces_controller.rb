@@ -7,7 +7,7 @@ class SpacesController < ApplicationController
     @spaces = Space.all
     # Combiner les espaces de la BD avec les espaces simulés
     @spaces = (@spaces + simulated_spaces).sort_by(&:created_at).reverse
-
+  
     # Appliquer les filtres si présents
     @spaces = filter_by_location(@spaces, params[:location]) if params[:location].present?
     @spaces = filter_by_date_and_time(@spaces, params[:date], params[:start_time], params[:end_time]) if params[:date].present?
@@ -15,12 +15,11 @@ class SpacesController < ApplicationController
     @spaces = filter_by_price(@spaces, params[:min_price], params[:max_price]) if params[:min_price].present? || params[:max_price].present?
     @spaces = filter_by_categories(@spaces, params[:categories]) if params[:categories].present?
     @spaces = filter_by_amenities(@spaces, params[:amenities]) if params[:amenities].present?
-
-    # Si le paramètre map est présent, utiliser la vue carte
-    if params[:map].present? && params[:map] == "true"
-      render :map
-    end
+  
+    # 👉 Toujours rendre la carte, même sans paramètre `?map=true`
+    render :map
   end
+  
   
   def show
     id = params[:id]

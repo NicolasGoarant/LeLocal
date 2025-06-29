@@ -552,59 +552,42 @@
     </div>
     
     <!-- Section avec la carte et les résultats -->
-    <div class="map-results">
-      <div id="map"></div>
-      
-      <div class="space-list">
-        <% if @spaces.present? %>
-          <% @spaces.each do |space| %>
-            <div class="space-item" data-space-id="<%= space.id %>" onclick="highlightMarker('<%= space.id %>')">
-              <div class="space-item-img" style="background-image: url('<%= space.respond_to?(:photos) && space.photos.respond_to?(:attached?) && space.photos.attached? ? 
-                                                   url_for(space.photos.first) : 
-                                                   'https://images.unsplash.com/photo-1497366754035-f200968a6e72' %>')">
-                <% if space.respond_to?(:new_space?) && space.new_space? %>
-                  <div class="space-badge">Nouveau</div>
-                <% end %>
-              </div>
-              
-              <div class="space-item-content">
-                <div class="space-item-header">
-                  <h3 class="space-item-title"><%= space.name %></h3>
-                  <div class="space-item-rating">
-                    <i class="fas fa-star"></i>
-                    <span><%= space.respond_to?(:average_rating) ? space.average_rating : (space.respond_to?(:rating) ? space.rating : 0) %></span>
-                  </div>
-                </div>
-                
-                <div class="space-item-details">
-                  <p class="space-item-location">
-                    <i class="fas fa-map-marker-alt"></i> 
-                    <%= space.respond_to?(:address_short) ? space.address_short : 
-                        (space.respond_to?(:city) ? "#{space.city}" : space.address.split(",").first) %>
-                  </p>
-                  <p class="space-item-capacity">
-                    <i class="fas fa-users"></i> 
-                    Jusqu'à <%= space.respond_to?(:capacity) ? space.capacity : "?" %> personnes
-                  </p>
-                </div>
-                
-                <div class="space-item-footer">
-                  <p class="space-item-price">
-                    <span><%= space.respond_to?(:hourly_price) ? space.hourly_price : 
-                            (space.respond_to?(:price_per_hour) ? space.price_per_hour : "?") %>€</span> / heure
-                  </p>
-                  <a href="/spaces/<%= space.id %>" class="btn-small">Voir détails</a>
-                </div>
-              </div>
-            </div>
-          <% end %>
-        <% else %>
-          <div class="no-results">
-            <p>Aucun espace ne correspond à vos critères. Essayez d'élargir votre recherche.</p>
-          </div>
-        <% end %>
-      </div>
-    </div>
+    <h2 class="text-xl font-bold mb-4">Carte des espaces disponibles</h2>
+
+    <!-- Conteneur de la carte -->
+    <div id="map" style="height: 600px; width: 100%;"></div>
+    
+    <!-- Initialisation de la carte -->
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        // Initialisation de la carte centrée sur Paris
+        var map = L.map('map').setView([48.8566, 2.3522], 12);
+    
+        // Tuiles OpenStreetMap
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          maxZoom: 19,
+          attribution: '© OpenStreetMap'
+        }).addTo(map);
+    
+        // Exemple de marqueurs (tu pourras les remplacer dynamiquement ensuite)
+        var spaces = <%= raw @spaces.map { |space| 
+          {
+            lat: space.latitude, 
+            lng: space.longitude, 
+            name: space.name.gsub("'", "\\\\'")
+          } 
+        }.to_json %>;
+    
+        spaces.forEach(function(space) {
+          if (space.lat && space.lng) {
+            L.marker([space.lat, space.lng])
+              .addTo(map)
+              .bindPopup('<strong>' + space.name + '</strong>');
+          }
+        });
+      });
+    </script>
+    
   </div>
 </div>
 

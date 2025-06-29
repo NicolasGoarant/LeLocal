@@ -1,33 +1,30 @@
 class NeedsController < ApplicationController
   before_action :set_need, only: [:show, :edit, :update, :destroy]
-  before_action :authenticate_user!, except: [:index, :show, :map, :new]
-  
+  before_action :authenticate_user!, except: [:index, :show, :map]
+
   # GET /needs
   def index
     @needs = Need.all
-   
-    # Si le paramètre map est présent, rediriger vers l'action map
-    if params[:map] == "true"
-      redirect_to map_needs_path
-      return
-    end
+
+    # Redirige vers la carte si ?map=true
+    redirect_to map_needs_path if params[:map] == "true"
   end
-  
+
   # GET /needs/map
   def map
     @needs = Need.all
 
-    # Préparation des données pour la carte
-    if @needs.any? && @needs.first.respond_to?(:latitude) && @needs.first.respond_to?(:longitude)
-      @center_coords = [@needs.first.latitude, @needs.first.longitude]
-    else
-      @center_coords = [46.603354, 1.888334] # Centre de la France par défaut
-    end
+    # Centrer la carte soit sur le premier besoin géolocalisé, soit sur la France
+    first_located = @needs.find { |n| n.latitude.present? && n.longitude.present? }
+    @center_coords = if first_located
+                       [first_located.latitude, first_located.longitude]
+                     else
+                       [46.603354, 1.888334] # Centre de la France
+                     end
   end
 
-  # GET /needs/1
+  # GET /needs/:id
   def show
-    # Préparer les données pour la carte si besoin
     @marker = {
       lat: @need.latitude,
       lng: @need.longitude,
@@ -40,10 +37,9 @@ class NeedsController < ApplicationController
   def new
     @need = Need.new
   end
-  
-  # GET /needs/1/edit
-  def edit
-  end
+
+  # GET /needs/:id/edit
+  def edit; end
 
   # POST /needs
   def create
@@ -56,8 +52,8 @@ class NeedsController < ApplicationController
       render :new
     end
   end
-  
-  # PATCH/PUT /needs/1
+
+  # PATCH/PUT /needs/:id
   def update
     if @need.update(need_params)
       redirect_to @need, notice: 'Votre besoin a été mis à jour avec succès.'
@@ -65,25 +61,24 @@ class NeedsController < ApplicationController
       render :edit
     end
   end
-  
-  # DELETE /needs/1
+
+  # DELETE /needs/:id
   def destroy
     @need.destroy
     redirect_to needs_path, notice: 'Votre besoin a été supprimé avec succès.'
   end
 
   private
-    # Fonction pour récupérer le besoin à partir de l'ID
-    def set_need
-      @need = Need.find(params[:id])
-    end
 
-    # Paramètres autorisés pour les besoins
-    def need_params
-      params.require(:need).permit(
-        :title, :description, :category, :address, :city, :postal_code, :country,
-        :capacity, :date_needed, :start_time, :end_time, :budget, :recurrence,
-        :latitude, :longitude, photos: [], equipment_needs: []
-      )
-    end
+  def set_need
+    @need = Need.find(params[:id])
+  end
+
+  def need_params
+    params.require(:need).permit(
+      :title, :description, :category, :address, :city, :postal_code, :country,
+      :capacity, :date_needed, :start_time, :end_time, :budget, :recurrence,
+      :latitude, :longitude, photos: [], equipment_needs: []
+    )
+  end
 end

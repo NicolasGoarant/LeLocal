@@ -1,264 +1,144 @@
 <!DOCTYPE html>
-<html lang="fr">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title><%= content_for?(:title) ? yield(:title) : "LeLocal - La plateforme de réservation de locaux associatifs" %></title>
-  <%= csrf_meta_tags %>
-  <%= csp_meta_tag %>
+<html>
+<%= stylesheet_link_tag "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" %>
+<%= javascript_include_tag "https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" %>
+
+  <head>
   
-  <%= stylesheet_link_tag 'application', media: 'all', 'data-turbolinks-track': 'reload' %>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>
-  
-  <!-- Ajouter le yield pour le contenu head supplémentaire -->
-  <%= yield :head %>
-  
-  <style>
-    /* Style de la barre de recherche amélioré */
-    .search-form {
-      display: flex;
-      align-items: center;
-      background-color: #f5f5f5;
-      border-radius: 24px;
-      padding: 0 15px;
-      max-width: 300px;
-      width: 100%;
-      box-shadow: none;
-      border: 1px solid #e0e0e0;
-    }
+    <title><%= content_for?(:title) ? yield(:title) : "LeLocal" %></title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+    <%= yield :head %>
 
-    .search-form input {
-      background: transparent;
-      border: none;
-      height: 36px;
-      flex: 1;
-      padding: 0 8px;
-      font-size: 14px;
-      color: #333;
-      outline: none;
-    }
+    <!-- FontAwesome for icons -->
+    <script src="https://kit.fontawesome.com/a1a1a1a1a1.js" crossorigin="anonymous"></script>
 
-    .search-form button {
-      background: transparent;
-      border: none;
-      padding: 0 5px;
-      color: #666;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      height: 36px;
-    }
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
 
-    .search-form button:hover {
-      color: #4CAF50;
-    }
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        line-height: 1.6;
+        color: #333;
+        background-color: #fff;
+      }
 
-    /* Styles pour le modal de connexion */
-    .modal {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(0, 0, 0, 0.5);
-      align-items: center;
-      justify-content: center;
-      z-index: 1100;
-      overflow: auto;
-    }
+      header {
+        background-color: #fff;
+        padding: 20px;
+        border-bottom: 1px solid #eee;
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+      }
 
-    .modal-content {
-      background-color: white;
-      border-radius: 10px;
-      padding: 30px;
-      width: 100%;
-      max-width: 450px;
-      position: relative;
-      animation: modalAppear 0.3s ease-out;
-      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
-    }
+      .navbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 20px;
+      }
 
-    @keyframes modalAppear {
-      from { opacity: 0; transform: translateY(-20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
+      .navbar-brand a {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: black;
+        text-decoration: none;
+      }
 
-    .close-modal {
-      position: absolute;
-      top: 15px;
-      right: 20px;
-      font-size: 28px;
-      color: #aaa;
-      cursor: pointer;
-      transition: color 0.2s;
-    }
+      .navbar-brand a span {
+        color: #4CAF50;
+      }
 
-    .close-modal:hover {
-      color: #555;
-    }
+      .navbar-links {
+        display: flex;
+        gap: 20px;
+      }
 
-    .modal h2 {
-      margin-bottom: 20px;
-      color: #333;
-      text-align: center;
-      font-size: 1.5rem;
-    }
+      .navbar-links a {
+        text-decoration: none;
+        color: black;
+        font-size: 0.95rem;
+        transition: color 0.3s ease;
+      }
 
-    .modal .form-group {
-      margin-bottom: 20px;
-    }
+      .navbar-links a:hover {
+        color: #4CAF50;
+      }
 
-    .modal .form-group label {
-      display: block;
-      margin-bottom: 5px;
-      color: #555;
-      font-weight: 500;
-    }
+      .burger {
+        display: none;
+        flex-direction: column;
+        cursor: pointer;
+      }
 
-    .modal .form-group input[type="email"],
-    .modal .form-group input[type="password"] {
-      width: 100%;
-      padding: 10px 15px;
-      border: 1px solid #ddd;
-      border-radius: 5px;
-      font-size: 1rem;
-      transition: border-color 0.3s;
-    }
+      .burger div {
+        width: 25px;
+        height: 3px;
+        background-color: black;
+        margin: 4px;
+        transition: all 0.3s ease;
+      }
 
-    .modal .form-group input:focus {
-      border-color: #4CAF50;
-      outline: none;
-    }
+      @media (max-width: 768px) {
+        .navbar-links {
+          display: none;
+          flex-direction: column;
+          background-color: white;
+          position: absolute;
+          top: 60px;
+          right: 20px;
+          box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+          padding: 10px 20px;
+          border-radius: 8px;
+        }
 
-    .password-helper {
-      display: flex;
-      justify-content: flex-end;
-      margin-top: 5px;
-    }
+        .navbar-links.active {
+          display: flex;
+        }
 
-    .forgot-password {
-      color: #777;
-      font-size: 0.9rem;
-      text-decoration: none;
-      transition: color 0.2s;
-    }
+        .burger {
+          display: flex;
+        }
+      }
+    </style>
+  </head>
 
-    .forgot-password:hover {
-      color: #4CAF50;
-      text-decoration: underline;
-    }
+  <body>
+    <header>
+      <nav class="navbar">
+        <div class="navbar-brand">
+          <%= link_to "Le<span>Local</span>".html_safe, root_path %>
+        </div>
+        <div class="burger" onclick="toggleMenu()">
+          <div></div>
+          <div></div>
+          <div></div>
+        </div>
+        <div class="navbar-links" id="nav-links">
+          <%= link_to "Rechercher", spaces_path(map: true) %>
+          <%= link_to "Proposer", new_host_spaces_path %>
+          <%= link_to "Connexion", new_user_session_path %>
+          <%= link_to "Inscription", new_user_registration_path %>
+        </div>
+      </nav>
+    </header>
 
-    .remember-me {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
+    <%= yield %>
 
-    .remember-me input[type="checkbox"] {
-      width: auto;
-    }
-
-    .remember-me label {
-      margin-bottom: 0;
-      color: #666;
-      font-weight: normal;
-    }
-
-    .btn-large.primary {
-      background-color: #4CAF50;
-      color: white;
-      padding: 12px 25px;
-      border-radius: 5px;
-      font-size: 1rem;
-      font-weight: 500;
-      border: none;
-      cursor: pointer;
-      transition: background-color 0.3s;
-      display: inline-block;
-      text-align: center;
-      width: 100%;
-    }
-
-    .btn-large.primary:hover {
-      background-color: #3d8b3d;
-    }
-
-    .modal-footer {
-      margin-top: 20px;
-      text-align: center;
-      color: #666;
-      font-size: 0.95rem;
-    }
-
-    .signup-link {
-      color: #4CAF50;
-      text-decoration: none;
-      font-weight: 500;
-      transition: color 0.2s;
-    }
-
-    .signup-link:hover {
-      text-decoration: underline;
-    }
-
-    .form-error {
-      background-color: #fff5f5;
-      border: 1px solid #ffc8c8;
-      border-radius: 5px;
-      padding: 10px 15px;
-      margin-bottom: 15px;
-      color: #d32f2f;
-      font-size: 0.9rem;
-    }
-
-    .form-actions {
-      margin-top: 20px;
-    }
-  </style>
-</head>
-<body>
-  <!-- Navbar -->
-  <nav class="navbar">
-    <div class="container">
-      <div class="logo">
-        <a href="/">
-          <span class="logo-text">Le<span class="highlight">Local</span></span>
-        </a>
-      </div>
-      <div class="menu">
-        <a href="/spaces/new_host" class="host-link">Proposer un espace</a>
-        <a href="#" class="login-btn">Connexion</a>
-        <a href="<%= signup_path %>" class="signup-btn">Inscription</a>
-      </div>
-    </div>
-  </nav>
-
-  <%= yield %>
-
-  <!-- Footer -->
-  <footer class="footer">…</footer>
-
-  <!-- Modal de connexion -->
-  <div id="login-modal" class="modal">
-    <div class="modal-content">
-      <span class="close-modal">&times;</span>
-      <h2>Connexion à LeLocal</h2>
-      <%= form_with url: user_session_path, method: :post, id: "login-form", local: true do |f| %>
-        <!-- Champs du formulaire -->
-      <% end %>
-      <div class="modal-footer">
-        <p>Vous n'avez pas de compte ? <%= link_to "Créer un compte", new_user_registration_path, class: "signup-link" %></p>
-      </div>
-    </div>
-  </div>
-
-  <script>
-    // Script JS
-  </script>
-
-  <%= yield :scripts %>
-</body>
+    <script>
+      function toggleMenu() {
+        const nav = document.getElementById("nav-links");
+        nav.classList.toggle("active");
+      }
+    </script>
+  </body>
 </html>
+

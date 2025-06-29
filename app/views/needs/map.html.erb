@@ -533,81 +533,41 @@
     
     <!-- Section avec la carte et les résultats -->
     <div class="map-results">
-      <div id="map"></div>
-      
-      <div class="need-list">
-        <% if @needs.present? %>
-          <!-- Afficher seulement les 3 premiers besoins -->
-          <% @needs.first(3).each do |need| %>
-            <div class="need-item" data-need-id="<%= need.id %>" onclick="highlightMarker('<%= need.id %>')">
-              <div class="need-item-img" style="background-image: url('<%= need.respond_to?(:photos) && need.photos.respond_to?(:attached?) && need.photos.attached? ? 
-                                                 url_for(need.photos.first) : 
-                                                 'https://images.unsplash.com/photo-1517457373958-b7bdd4587205' %>')"></div>
-              
-              <% if need.respond_to?(:urgent?) && need.urgent? %>
-                <div class="need-badge urgent">Urgent</div>
-              <% elsif need.respond_to?(:new_need?) && need.new_need? %>
-                <div class="need-badge new">Nouveau</div>
-              <% end %>
-              
-            
-              <div class="need-item-content">
-                <div class="need-item-header">
-                  <h3 class="need-item-title"><%= need.title %></h3>
-                  <div class="need-item-date">
-                    <i class="far fa-calendar-alt"></i>
-                    <%= need.date_needed.strftime("%d/%m/%Y") %>
-                  </div>
-                </div>
-                
-                <div class="need-item-details">
-                  <p class="need-item-location">
-                    <i class="fas fa-map-marker-alt"></i> 
-                    <%= need.respond_to?(:address_short) ? need.address_short : 
-                        (need.respond_to?(:city) ? "#{need.city}" : need.address.split(",").first) %>
-                  </p>
-                  <p class="need-item-capacity">
-                    <i class="fas fa-users"></i> 
-                    <%= need.respond_to?(:capacity) && need.capacity.present? ? "#{need.capacity} personnes" : "Capacité non spécifiée" %>
-                  </p>
+    <h2 class="text-xl font-bold mb-4">Carte des espaces disponibles</h2>
 
-                  <p class="need-item-category">
-                    <i class="fas fa-tag"></i>
-                    <%= Need::CATEGORIES.find { |c| c[1] == need.category }&.first || need.category %>
-                    <p class="need-item-association" style="font-size: 16px; font-weight: 600; color: #2c3e50;">
-                    <i class="fas fa-user"></i>
-                    Association : <%= need.user.display_name %>
-                    </p>
-                </div>
-                
-                <div class="need-item-footer">
-                  <p class="need-item-budget">
-                    <% if need.respond_to?(:budget) && need.budget.present? %>
-                      Budget : <span><%= need.budget %>€</span>
-                    <% else %>
-                      Budget non spécifié
-                    <% end %>
-                  </p>
-                  <a href="/needs/<%= need.id %>" class="btn-small">Proposer mon espace</a>
-                </div>
-              </div>
-            </div>
-          <% end %>
+    <!-- Conteneur de la carte -->
+    <div id="map" style="height: 500px; width: 100%;"></div>
 
-          <!-- Bouton "Voir le reste" si plus de 3 besoins -->
-          <% if @needs.size > 3 %>
-            <div class="view-all-container">
-              <%= link_to "Voir toutes les demandes (#{@needs.size - 3} de plus)", needs_path, class: "btn-view-all" %>
-            </div>
-          <% end %>
-        <% else %>
-          <div class="no-results">
-            <p>Aucun besoin ne correspond à vos critères actuellement.</p>
-            <a href="/needs/new" class="btn-primary" style="display: inline-block; padding: 10px 20px; background-color: #4CAF50; color: white; text-decoration: none; border-radius: 5px;">Publier un besoin</a>
-          </div>
-        <% end %>
-      </div>
-    </div>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        // Initialisation de la carte centrée
+        var map = L.map('map').setView([<%= @center_coords[0] %>, <%= @center_coords[1] %>], 12);
+    
+        // Ajouter le fond de carte OpenStreetMap
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+    
+        // Ajouter les marqueurs des besoins
+        var needs = <%= raw @needs.map { |need|
+          {
+            lat: need.latitude,
+            lng: need.longitude,
+            info: need.title,
+            id: need.id
+          }
+        }.to_json %>;
+    
+        needs.forEach(function (need) {
+          if (need.lat && need.lng) {
+            L.marker([need.lat, need.lng])
+              .addTo(map)
+              .bindPopup(`<strong>${need.info}</strong><br><a href="/needs/${need.id}">Voir le besoin</a>`);
+          }
+        });
+      });
+    </script>
+    
   </div>
 </div>
 
