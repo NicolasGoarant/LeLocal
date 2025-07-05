@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+    <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
 <%= stylesheet_link_tag "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" %>
 <%= javascript_include_tag "https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" %>
 
@@ -111,7 +112,8 @@
     </style>
   </head>
 
-  <body>
+  <body class="<%= yield(:body_class) %>">
+
     <header>
       <nav class="navbar">
         <div class="navbar-brand">
