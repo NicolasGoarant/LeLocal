@@ -641,6 +641,8 @@ section + section {
   }
 }
 
+
+
 /* Footer */
 .footer {
   background-color: #333;
@@ -820,6 +822,100 @@ section + section {
   
   .btn-primary, .btn-secondary {
     width: 100%;
+  }
+}
+
+/* Correction marge navbar mobile */
+@media (max-width: 768px) {
+  body {
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  
+  header {
+    margin-bottom: 0 !important;
+  }
+  
+  .hero {
+    margin-top: -20px !important;
+    padding-top: 80px !important;
+  }
+  
+  .choice-section {
+    margin-top: -80px !important;
+  }
+}
+
+/* Corrections pour mobile après réduction du padding navbar */
+@media (max-width: 768px) {
+  .hero {
+    padding: 80px 0 100px !important; /* Réduit le padding */
+    margin-bottom: 0 !important;
+  }
+  
+  .choice-section {
+    margin-top: -40px !important; /* Réduit la marge négative de -60px à -40px */
+    padding: 20px 0 40px !important;
+  }
+  
+  .dual-sections {
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  .dual-section {
+    padding: 25px;
+  }
+  
+  .hero h1 {
+    font-size: 2.2rem !important;
+  }
+  
+  .hero p {
+    font-size: 1.1rem !important;
+  }
+  
+  .category-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+  
+  .space-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  
+  .steps-container {
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  .testimonial-cards {
+    flex-direction: column;
+    gap: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero {
+    padding: 60px 0 80px !important;
+  }
+  
+  .choice-section {
+    margin-top: -30px !important; /* Encore plus réduit */
+    padding: 15px 0 30px !important;
+  }
+  
+  .dual-section {
+    padding: 20px;
+  }
+  
+  .hero h1 {
+    font-size: 1.8rem !important;
+  }
+  
+  .category-grid {
+    grid-template-columns: 1fr;
   }
 }
 </style>

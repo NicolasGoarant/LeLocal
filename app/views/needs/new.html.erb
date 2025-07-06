@@ -1,92 +1,13 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LeLocal - Indiquer mes besoins en locaux</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <style>
-        /* Reset CSS */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+<% content_for :title, "LeLocal - Indiquer mes besoins en locaux" %>
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            line-height: 1.6;
-            color: #333;
-            background-color: #f8f9fa;
-            overflow-x: hidden;
-        }
-
+<% content_for :head do %>
+<style>
         /* Container responsive */
         .container {
             max-width: 1200px;
             margin: 0 auto;
             padding: 0 20px;
             width: 100%;
-        }
-
-        /* Header */
-        .header {
-            background-color: #fff;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            position: fixed;
-            top: 0;
-            width: 100%;
-            z-index: 1000;
-        }
-
-        .nav-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px 20px;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .logo {
-            font-size: 28px;
-            font-weight: 700;
-            text-decoration: none;
-        }
-
-        .logo .le {
-            color: #000;
-        }
-
-        .logo .local {
-            color: #4CAF50;
-        }
-
-        .nav-links {
-            display: flex;
-            list-style: none;
-            gap: 30px;
-            align-items: center;
-        }
-
-        .nav-links a {
-            text-decoration: none;
-            color: #333;
-            font-weight: 500;
-            transition: color 0.3s;
-        }
-
-        .nav-links a:hover {
-            color: #4CAF50;
-        }
-
-        .mobile-menu-btn {
-            display: none;
-            background: none;
-            border: none;
-            font-size: 24px;
-            color: #333;
-            cursor: pointer;
         }
 
         /* Page Header */
@@ -98,7 +19,6 @@
             padding: 120px 0 80px;
             color: white;
             text-align: center;
-            margin-top: 70px;
         }
 
         .page-header h1 {
@@ -443,16 +363,9 @@
         }
 
         @media (max-width: 768px) {
-            .mobile-menu-btn {
-                display: block;
-            }
-
-            .nav-links {
-                display: none;
-            }
-
             .page-header {
-                padding: 100px 0 60px;
+                padding: 80px 0 60px !important; /* Réduit le padding-top */
+                margin-top: -20px !important; /* Remonte la section */
             }
 
             .main-content {
@@ -491,16 +404,14 @@
         }
 
         @media (max-width: 480px) {
-            .nav-container {
-                padding: 10px 15px;
-            }
-
             .page-header {
-                padding: 90px 0 50px;
+                padding: 70px 0 50px !important; /* Encore plus réduit */
+                margin-top: -30px !important; /* Remonte encore plus */
             }
 
             .form-container {
                 padding: 25px 20px;
+                margin: 0 10px;
             }
 
             .form-intro h2 {
@@ -510,340 +421,245 @@
             .form-section-title {
                 font-size: 16px;
             }
-
-            .input-field {
-                padding: 12px;
-            }
-
-            .btn-submit {
-                padding: 15px;
-                font-size: 16px;
-            }
-
-            .tips-section {
-                padding: 20px;
-            }
-
-            .radio-item,
-            .checkbox-item {
-                padding: 10px 12px;
-            }
         }
+</style>
+<% end %>
 
-        @media (max-width: 360px) {
-            .container {
-                padding: 0 10px;
-            }
-
-            .form-container {
-                padding: 20px 15px;
-                margin: 0 10px;
-            }
-
-            .form-intro h2 {
-                font-size: 20px;
-            }
-
-            .form-section-title {
-                font-size: 16px;
-                flex-direction: column;
-                text-align: center;
-                gap: 8px;
-            }
-
-            .input-field {
-                padding: 10px;
-                font-size: 16px;
-            }
-
-            .btn-submit {
-                padding: 12px;
-                font-size: 15px;
-            }
-        }
-    </style>
-</head>
-<body>
-    <!-- Header -->
-    <header class="header">
-        <div class="nav-container">
-            <a href="#" class="logo">
-                <span class="le">Le</span><span class="local">Local</span>
-            </a>
-            <nav>
-                <ul class="nav-links">
-                    <li><a href="#">Rechercher</a></li>
-                    <li><a href="#">Proposer</a></li>
-                    <li><a href="#">À propos</a></li>
-                    <li><a href="#">Connexion</a></li>
-                    <li><a href="#" class="btn-signup">Inscription</a></li>
-                </ul>
-            </nav>
-            <button class="mobile-menu-btn">
-                <i class="fas fa-bars"></i>
-            </button>
-        </div>
-    </header>
-
-    <!-- Page Header -->
-    <div class="page-header">
-        <div class="container">
-            <h1>Indiquez vos besoins en locaux</h1>
-            <p>Décrivez précisément l'espace dont votre association a besoin, et les propriétaires pourront vous contacter directement</p>
-        </div>
+<!-- Page Header -->
+<div class="page-header">
+    <div class="container">
+        <h1>Indiquer mes besoins en locaux</h1>
+        <p>Décrivez vos besoins détaillés et nous vous aiderons à trouver l'espace parfait pour votre projet ou événement.</p>
     </div>
+</div>
 
-    <!-- Main Content -->
-    <div class="main-content">
-        <div class="container">
-            <div class="form-container">
-                <div class="form-intro">
-                    <h2>Détaillez votre recherche</h2>
-                    <p>Plus votre description sera précise, plus vous aurez de chances de trouver un espace qui correspond parfaitement à vos besoins. Les propriétaires pourront consulter votre annonce et vous contacter s'ils ont un local adapté.</p>
-                </div>
+<!-- Main Content -->
+<div class="main-content">
+    <div class="container">
+        <div class="form-container">
+            <!-- Form Introduction -->
+            <div class="form-intro">
+                <h2>Partagez vos besoins avec nous</h2>
+                <p>Plus vous nous donnerez d'informations, mieux nous pourrons vous aider à trouver l'espace idéal qui correspond à vos attentes et à votre budget.</p>
+            </div>
 
-                <div class="tips-section">
-                    <h3><i class="fas fa-lightbulb"></i> Conseils pour une recherche efficace</h3>
+            <!-- Conseils pratiques -->
+            <div class="tips-section">
+                <h3><i class="fas fa-lightbulb"></i> Conseils pour bien remplir le formulaire</h3>
+                <ul>
+                    <li>Décrivez précisément le type d'événement ou d'activité prévue</li>
+                    <li>Indiquez le nombre approximatif de participants</li>
+                    <li>Précisez vos dates et horaires préférés</li>
+                    <li>Mentionnez les équipements indispensables</li>
+                    <li>N'hésitez pas à détailler vos besoins spécifiques</li>
+                </ul>
+            </div>
+
+            <!-- Affichage des erreurs -->
+            <% if @need && @need.errors.any? %>
+                <div class="alert alert-danger">
+                    <h4><%= pluralize(@need.errors.count, "erreur") %> <%= @need.errors.count == 1 ? "a empêché" : "ont empêché" %> l'enregistrement :</h4>
                     <ul>
-                        <li>Décrivez précisément votre activité et vos contraintes</li>
-                        <li>Indiquez vos dates de préférence et votre flexibilité</li>
-                        <li>Mentionnez les équipements indispensables</li>
-                        <li>Soyez réaliste sur votre budget</li>
+                        <% @need.errors.full_messages.each do |message| %>
+                            <li><%= message %></li>
+                        <% end %>
                     </ul>
                 </div>
+            <% end %>
 
-                <form action="/needs" method="post">
-                    <!-- Section Informations générales -->
-                    <div class="form-section">
-                        <h3 class="form-section-title">
-                            <i class="fas fa-info-circle"></i>
-                            Informations générales
-                        </h3>
-                        
-                        <div class="form-group">
-                            <label for="title" class="required">Titre de votre besoin</label>
-                            <input type="text" id="title" name="need[title]" class="input-field" required placeholder="Ex: Salle pour atelier de musique hebdomadaire">
-                            <span class="help-text">Un titre clair qui résume votre besoin principal</span>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="description" class="required">Description détaillée</label>
-                            <textarea id="description" name="need[description]" class="input-field textarea-field" required placeholder="Décrivez votre activité, le type d'espace recherché et vos contraintes spécifiques..."></textarea>
-                            <span class="help-text">Donnez un maximum de détails sur votre besoin en espace et l'activité prévue</span>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="category" class="required">Catégorie de besoin</label>
-                            <div class="category-select">
-                                <select id="category" name="need[category]" class="input-field" required>
-                                    <option value="">Sélectionnez une catégorie</option>
-                                    <option value="meeting">Réunion/Assemblée</option>
-                                    <option value="workshop">Atelier/Formation</option>
-                                    <option value="event">Événement/Spectacle</option>
-                                    <option value="sports">Activité sportive</option>
-                                    <option value="cultural">Activité culturelle</option>
-                                    <option value="social">Activité sociale</option>
-                                    <option value="other">Autre</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
+            <!-- Formulaire -->
+            <%= form_with(model: @need, local: true, html: { class: 'needs-form' }) do |form| %>
+                
+                <!-- Section 1: Informations de base -->
+                <div class="form-section">
+                    <h3 class="form-section-title">
+                        <i class="fas fa-info-circle"></i>
+                        Informations de base
+                    </h3>
                     
-                    <!-- Section Localisation -->
-                    <div class="form-section">
-                        <h3 class="form-section-title">
-                            <i class="fas fa-map-marker-alt"></i>
-                            Localisation
-                        </h3>
-                        
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="city" class="required">Ville</label>
-                                <input type="text" id="city" name="need[city]" class="input-field" required placeholder="Ex: Paris">
-                            </div>
-                            
-                            <div class="form-group">
-                                <label for="postal_code" class="required">Code postal</label>
-                                <input type="text" id="postal_code" name="need[postal_code]" class="input-field" required placeholder="Ex: 75011">
-                            </div>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="address">Adresse ou quartier souhaité (optionnel)</label>
-                            <input type="text" id="address" name="need[address]" class="input-field" placeholder="Ex: 10 rue du Commerce ou Quartier République">
-                            <span class="help-text">Précisez si vous recherchez un quartier spécifique</span>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="radius">Rayon de recherche (en km)</label>
-                            <select id="radius" name="need[radius]" class="input-field">
-                                <option value="5" selected>5 km</option>
-                                <option value="10">10 km</option>
-                                <option value="15">15 km</option>
-                                <option value="20">20 km</option>
-                                <option value="30">30 km</option>
-                                <option value="50">50 km</option>
-                            </select>
-                            <span class="help-text">Distance maximale par rapport à l'adresse ou au centre de la ville indiquée</span>
-                        </div>
+                    <div class="form-group">
+                        <%= form.label :title, "Titre de votre demande", class: "required" %>
+                        <%= form.text_field :title, class: "input-field", placeholder: "Ex: Recherche salle pour conférence sur l'innovation" %>
+                        <small class="help-text">Résumez en quelques mots le type d'espace recherché</small>
                     </div>
-                    
-                    <!-- Section Caractéristiques -->
-                    <div class="form-section">
-                        <h3 class="form-section-title">
-                            <i class="fas fa-building"></i>
-                            Caractéristiques de l'espace
-                        </h3>
-                        
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="capacity" class="required">Capacité minimale (nombre de personnes)</label>
-                                <input type="number" id="capacity" name="need[capacity]" class="input-field" min="1" required placeholder="Ex: 25">
-                            </div>
-                            
-                            <div class="form-group">
-                                <label for="surface">Surface minimale souhaitée (m²)</label>
-                                <input type="number" id="surface" name="need[surface]" class="input-field" min="1" placeholder="Ex: 50">
-                            </div>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label>Équipements nécessaires</label>
-                            <div class="checkbox-grid">
-                                <div class="checkbox-item">
-                                    <input type="checkbox" id="wifi_needed" name="need[wifi_needed]" value="1">
-                                    <label for="wifi_needed">Connexion WiFi</label>
-                                </div>
-                                <div class="checkbox-item">
-                                    <input type="checkbox" id="projector_needed" name="need[projector_needed]" value="1">
-                                    <label for="projector_needed">Vidéoprojecteur</label>
-                                </div>
-                                <div class="checkbox-item">
-                                    <input type="checkbox" id="sound_system_needed" name="need[sound_system_needed]" value="1">
-                                    <label for="sound_system_needed">Système de sonorisation</label>
-                                </div>
-                                <div class="checkbox-item">
-                                    <input type="checkbox" id="kitchen_needed" name="need[kitchen_needed]" value="1">
-                                    <label for="kitchen_needed">Cuisine/Espace traiteur</label>
-                                </div>
-                                <div class="checkbox-item">
-                                    <input type="checkbox" id="accessibility_needed" name="need[accessibility_needed]" value="1">
-                                    <label for="accessibility_needed">Accessibilité PMR</label>
-                                </div>
-                                <div class="checkbox-item">
-                                    <input type="checkbox" id="parking_needed" name="need[parking_needed]" value="1">
-                                    <label for="parking_needed">Parking disponible</label>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="additional_equipment">Autres équipements (précisez)</label>
-                            <textarea id="additional_equipment" name="need[additional_equipment]" class="input-field" rows="3" placeholder="Ex: tables et chaises pour 20 personnes, tableau blanc, piano..."></textarea>
-                        </div>
+
+                    <div class="form-group">
+                        <%= form.label :description, "Description détaillée", class: "required" %>
+                        <%= form.text_area :description, class: "input-field textarea-field", placeholder: "Décrivez votre projet, le type d'événement, l'ambiance recherchée..." %>
+                        <small class="help-text">Plus vous êtes précis, mieux nous pourrons vous aider</small>
                     </div>
+                </div>
+
+                <!-- Section 2: Localisation et capacité -->
+                <div class="form-section">
+                    <h3 class="form-section-title">
+                        <i class="fas fa-map-marker-alt"></i>
+                        Localisation et capacité
+                    </h3>
                     
-                    <!-- Section Budget et disponibilité -->
-                    <div class="form-section">
-                        <h3 class="form-section-title">
-                            <i class="fas fa-calendar-alt"></i>
-                            Budget et disponibilité
-                        </h3>
-                        
+                    <div class="form-row">
                         <div class="form-group">
-                            <label for="budget" class="required">Budget maximum</label>
-                            <div class="budget-container">
-                                <div class="budget-input">
-                                    <input type="number" id="budget" name="need[budget]" class="input-field" min="1" required placeholder="Ex: 200">
-                                </div>
-                                <select name="need[budget_period]" class="input-field">
-                                    <option value="hour">par heure</option>
-                                    <option value="day">par jour</option>
-                                    <option value="month">par mois</option>
-                                </select>
-                            </div>
+                            <%= form.label :city, "Ville souhaitée", class: "required" %>
+                            <%= form.text_field :city, class: "input-field", placeholder: "Ex: Paris, Lyon, Marseille..." %>
+                            <small class="help-text">Ville ou zone géographique</small>
                         </div>
                         
                         <div class="form-group">
-                            <label>Fréquence d'utilisation</label>
-                            <div class="radio-group">
-                                <div class="radio-item">
-                                    <input type="radio" name="need[frequency]" id="one_time" value="one_time">
-                                    <label for="one_time">Ponctuel (une seule fois)</label>
-                                </div>
-                                <div class="radio-item">
-                                    <input type="radio" name="need[frequency]" id="weekly" value="weekly">
-                                    <label for="weekly">Hebdomadaire</label>
-                                </div>
-                                <div class="radio-item">
-                                    <input type="radio" name="need[frequency]" id="monthly" value="monthly">
-                                    <label for="monthly">Mensuel</label>
-                                </div>
-                                <div class="radio-item">
-                                    <input type="radio" name="need[frequency]" id="permanent" value="permanent">
-                                    <label for="permanent">Permanent</label>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="availability_start_date" class="required">Date de début souhaitée</label>
-                                <input type="date" id="availability_start_date" name="need[availability_start_date]" class="input-field" required>
-                            </div>
-                            
-                            <div class="form-group">
-                                <label for="availability_end_date">Date de fin (si applicable)</label>
-                                <input type="date" id="availability_end_date" name="need[availability_end_date]" class="input-field">
-                            </div>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="preferred_times">Créneaux horaires préférés</label>
-                            <textarea id="preferred_times" name="need[preferred_times]" class="input-field" rows="3" placeholder="Ex: Tous les mercredis de 18h à 20h, ou week-ends après-midi..."></textarea>
-                            <span class="help-text">Indiquez vos préférences en termes d'horaires et de jours</span>
-                        </div>
-                    </div>
-                    
-                    <!-- Section Contact -->
-                    <div class="form-section">
-                        <h3 class="form-section-title">
-                            <i class="fas fa-user"></i>
-                            Informations de contact
-                        </h3>
-                        
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="contact_name" class="required">Nom du contact</label>
-                                <input type="text" id="contact_name" name="need[contact_name]" class="input-field" required placeholder="Prénom et nom">
-                            </div>
-                            
-                            <div class="form-group">
-                                <label for="contact_email" class="required">Email de contact</label>
-                                <input type="email" id="contact_email" name="need[contact_email]" class="input-field" required placeholder="contact@association.fr">
-                            </div>
-                        </div>
-                        
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="contact_phone">Téléphone (optionnel)</label>
-                                <input type="tel" id="contact_phone" name="need[contact_phone]" class="input-field" placeholder="06 12 34 56 78">
-                            </div>
-                            
-                            <div class="form-group">
-                                <label for="organization_name">Nom de l'association</label>
-                                <input type="text" id="organization_name" name="need[organization_name]" class="input-field" placeholder="Nom de votre association">
-                            </div>
+                            <%= form.label :capacity, "Nombre de personnes", class: "required" %>
+                            <%= form.number_field :capacity, class: "input-field", min: 1, placeholder: "Ex: 50" %>
+                            <small class="help-text">Nombre approximatif de participants</small>
                         </div>
                     </div>
 
-                    <button type="submit" class="btn-submit">
-                        <i class="fas fa-paper-plane" style="margin-right: 10px;"></i>
-                        Publier mon besoin
-                    </button>
-                </form>
-            </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <%= form.label :address, "Adresse ou quartier" %>
+                            <%= form.text_field :address, class: "input-field", placeholder: "Ex: Centre-ville, Quartier Montmartre..." %>
+                            <small class="help-text">Adresse approximative ou quartier préféré</small>
+                        </div>
+                        
+                        <div class="form-group">
+                            <%= form.label :postal_code, "Code postal" %>
+                            <%= form.text_field :postal_code, class: "input-field", placeholder: "Ex: 75001" %>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 3: Dates et horaires -->
+                <div class="form-section">
+                    <h3 class="form-section-title">
+                        <i class="fas fa-calendar-alt"></i>
+                        Dates et horaires
+                    </h3>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <%= form.label :date_needed, "Date souhaitée", class: "required" %>
+                            <%= form.date_field :date_needed, class: "input-field" %>
+                        </div>
+                        
+                        <div class="form-group">
+                            <%= form.label :duration, "Durée (en heures)" %>
+                            <%= form.number_field :duration, class: "input-field", min: 1, step: 0.5, placeholder: "Ex: 4" %>
+                            <small class="help-text">Durée approximative de l'événement</small>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <%= form.label :start_time, "Heure de début" %>
+                            <%= form.time_field :start_time, class: "input-field" %>
+                        </div>
+                        
+                        <div class="form-group">
+                            <%= form.label :end_time, "Heure de fin" %>
+                            <%= form.time_field :end_time, class: "input-field" %>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <%= form.label :recurrence, "Récurrence" %>
+                        <div class="category-select">
+                            <%= form.select :recurrence, 
+                                options_for_select([
+                                    ['Événement unique', 'once'],
+                                    ['Hebdomadaire', 'weekly'],
+                                    ['Mensuel', 'monthly'],
+                                    ['Autre', 'other']
+                                ], @need&.recurrence), 
+                                { prompt: 'Sélectionnez...' }, 
+                                { class: "input-field" } %>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 4: Budget et surface -->
+                <div class="form-section">
+                    <h3 class="form-section-title">
+                        <i class="fas fa-euro-sign"></i>
+                        Budget et surface
+                    </h3>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <%= form.label :budget, "Budget maximum" %>
+                            <div class="budget-input">
+                                <%= form.number_field :budget, class: "input-field", min: 0, step: 10, placeholder: "Ex: 500" %>
+                            </div>
+                            <small class="help-text">Budget total pour la location</small>
+                        </div>
+                        
+                        <div class="form-group">
+                            <%= form.label :surface_min, "Surface minimale (m²)" %>
+                            <%= form.number_field :surface_min, class: "input-field", min: 0, placeholder: "Ex: 100" %>
+                            <small class="help-text">Surface minimale souhaitée</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 5: Catégorie -->
+                <div class="form-section">
+                    <h3 class="form-section-title">
+                        <i class="fas fa-building"></i>
+                        Catégorie d'espace recherché
+                    </h3>
+                    
+                    <div class="form-group">
+                        <%= form.label :category, "Type d'espace" %>
+                        <div class="category-select">
+                            <%= form.select :category, 
+                                options_for_select([
+                                    ['Salle de réunion', 'meeting_room'],
+                                    ['Espace événementiel', 'event_space'],
+                                    ['Atelier/Formation', 'workshop'],
+                                    ['Espace coworking', 'coworking'],
+                                    ['Espace d\'exposition', 'exhibition'],
+                                    ['Salle de sport', 'sport'],
+                                    ['Autre', 'other']
+                                ], @need&.category), 
+                                { prompt: 'Sélectionnez...' }, 
+                                { class: "input-field" } %>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 6: Équipements requis -->
+                <div class="form-section">
+                    <h3 class="form-section-title">
+                        <i class="fas fa-tools"></i>
+                        Équipements requis
+                    </h3>
+                    
+                    <div class="form-group">
+                        <%= form.label :equipment_needs, "Équipements souhaités" %>
+                        <div class="checkbox-grid">
+                            <% equipment_options = [
+                                ['Projecteur/Écran', 'projector'],
+                                ['Système audio', 'sound'],
+                                ['WiFi haut débit', 'wifi'],
+                                ['Espace traiteur', 'catering'],
+                                ['Parking', 'parking'],
+                                ['Accessibilité PMR', 'accessibility'],
+                                ['Cuisine équipée', 'kitchen'],
+                                ['Espace de stockage', 'storage']
+                            ] %>
+                            
+                            <% equipment_options.each do |label, value| %>
+                                <div class="checkbox-item">
+                                    <%= check_box_tag "need[equipment_needs][]", value, 
+                                        (@need&.equipment_needs&.include?(value) || false), 
+                                        { id: "need_equipment_needs_#{value}" } %>
+                                    <%= label_tag "need_equipment_needs_#{value}", label %>
+                                </div>
+                            <% end %>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bouton de soumission -->
+                <%= form.submit "Envoyer ma demande", class: "btn-submit" %>
+                
+            <% end %>
         </div>
     </div>
-</body>
-</html>
+</div>

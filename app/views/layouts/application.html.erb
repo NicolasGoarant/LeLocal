@@ -1,11 +1,10 @@
 <!DOCTYPE html>
 <html>
-    <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
-<%= stylesheet_link_tag "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" %>
-<%= javascript_include_tag "https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" %>
-
   <head>
-  
+    <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+    <%= stylesheet_link_tag "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" %>
+    <%= javascript_include_tag "https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" %>
+
     <title><%= content_for?(:title) ? yield(:title) : "LeLocal" %></title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <%= csrf_meta_tags %>
@@ -27,11 +26,12 @@
         line-height: 1.6;
         color: #333;
         background-color: #fff;
+        padding-top: 90px; /* Ajusté pour la navbar plus large */
       }
 
       header {
         background-color: #fff;
-        padding: 20px;
+        padding: 30px 0; /* Augmenté de 20px à 30px */
         border-bottom: 1px solid #eee;
         position: sticky;
         top: 0;
@@ -44,7 +44,8 @@
         align-items: center;
         max-width: 1200px;
         margin: 0 auto;
-        padding: 0 20px;
+        padding: 0 24px;
+        height: 60px; /* Hauteur fixe pour plus de consistance */
       }
 
       .navbar-brand a {
@@ -89,12 +90,20 @@
       }
 
       @media (max-width: 768px) {
+        body {
+          padding-top: 80px !important; /* RÉDUIT de 110px à 80px */
+        }
+
+        header {
+          padding: 20px 0 !important; /* RÉDUIT de 25px à 20px */
+        }
+
         .navbar-links {
           display: none;
           flex-direction: column;
           background-color: white;
           position: absolute;
-          top: 60px;
+          top: 70px; /* Ajusté pour la navbar réduite */
           right: 20px;
           box-shadow: 0 4px 12px rgba(0,0,0,0.1);
           padding: 10px 20px;
@@ -119,14 +128,12 @@
         <div class="navbar-brand">
           <%= link_to "Le<span>Local</span>".html_safe, root_path %>
         </div>
-        <div class="burger" onclick="toggleMenu()">
+        <div class="burger" onclick="toggleMenu()" id="burger-menu">
           <div></div>
           <div></div>
           <div></div>
         </div>
         <div class="navbar-links" id="nav-links">
-          <%= link_to "Rechercher", spaces_path(map: true) %>
-          <%= link_to "Proposer", new_host_spaces_path %>
           <%= link_to "Connexion", new_user_session_path %>
           <%= link_to "Inscription", new_user_registration_path %>
         </div>
@@ -140,6 +147,30 @@
         const nav = document.getElementById("nav-links");
         nav.classList.toggle("active");
       }
+
+      // Fermer le menu quand on clique à côté
+      document.addEventListener('click', function(event) {
+        const nav = document.getElementById("nav-links");
+        const burger = document.getElementById("burger-menu");
+        
+        // Si le menu est ouvert et qu'on clique en dehors du menu et du burger
+        if (nav.classList.contains('active') && 
+            !nav.contains(event.target) && 
+            !burger.contains(event.target)) {
+          nav.classList.remove('active');
+        }
+      });
+
+      // Fermer le menu quand on clique sur un lien
+      document.addEventListener('DOMContentLoaded', function() {
+        const navLinks = document.querySelectorAll('.navbar-links a');
+        navLinks.forEach(link => {
+          link.addEventListener('click', function() {
+            const nav = document.getElementById("nav-links");
+            nav.classList.remove('active');
+          });
+        });
+      });
     </script>
   </body>
 </html>

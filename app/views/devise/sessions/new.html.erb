@@ -1,144 +1,173 @@
-<!DOCTYPE html>
-<html lang="fr">
-  <head>
-    <meta charset="UTF-8">
-    <title>Connexion à LeLocal</title>
-    <style>
-      body {
-        font-family: Arial, sans-serif;
-        background-color: #f9fafb;
-        margin: 0;
-        padding: 0;
-        display: flex;
-        justify-content: center;
+<% content_for :head do %>
+  <style>
+    /* Override complet pour cette page */
+    html, body {
+      margin: 0 !important;
+      padding: 0 !important;
+      height: 100% !important;
+      background-color: #f9fafb !important;
+    }
+
+    /* Forcer la navbar à être en position fixe */
+    header {
+      position: fixed !important;
+      top: 0 !important;
+      left: 0 !important;
+      right: 0 !important;
+      z-index: 1000 !important;
+      margin: 0 !important;
+      padding: 20px !important;
+      background-color: #fff !important;
+      border-bottom: 1px solid #eee !important;
+    }
+
+    /* Contenu principal qui prend toute la page */
+    .login-page {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #f9fafb;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      padding-top: 100px; /* Espace pour la navbar */
+      box-sizing: border-box;
+    }
+
+    .login-container {
+      background-color: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+      max-width: 400px;
+      width: 100%;
+      padding: 30px 20px;
+      box-sizing: border-box;
+    }
+
+    .login-title {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    .login-title h2 {
+      font-size: 24px;
+      margin: 0;
+      color: #111827;
+    }
+
+    .login-title span {
+      font-weight: bold;
+      color: #10b981;
+    }
+
+    .login-container label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 600;
+      color: #374151;
+    }
+
+    .login-container input[type="email"],
+    .login-container input[type="password"] {
+      width: 100%;
+      padding: 10px 12px;
+      margin-bottom: 16px;
+      border: 1px solid #d1d5db;
+      border-radius: 6px;
+      font-size: 14px;
+      box-sizing: border-box;
+    }
+
+    .login-container input[type="submit"] {
+      width: 100%;
+      background-color: #16a34a;
+      color: white;
+      font-weight: bold;
+      padding: 10px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    .login-container input[type="submit"]:hover {
+      background-color: #15803d;
+    }
+
+    .remember-me {
+      display: flex;
+      align-items: center;
+      margin-bottom: 16px;
+      font-size: 14px;
+      color: #374151;
+    }
+
+    .remember-me input {
+      margin-right: 6px;
+    }
+
+    .links {
+      text-align: center;
+      margin-top: 16px;
+    }
+
+    .links a {
+      display: block;
+      margin-top: 8px;
+      font-size: 14px;
+      color: #10b981;
+      text-decoration: none;
+    }
+
+    .links a:hover {
+      text-decoration: underline;
+    }
+
+    /* Ajustement pour mobile */
+    @media (max-width: 768px) {
+      .login-page {
+        padding-top: 80px;
       }
+    }
+  </style>
+<% end %>
 
-      .login-container {
-        background-color: white;
-        border-radius: 12px;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-        max-width: 400px;
-        width: 100%;
-        margin: 80px 20px;
-        padding: 30px 20px;
-        box-sizing: border-box;
-      }
-
-      .login-title {
-        text-align: center;
-        margin-bottom: 24px;
-      }
-
-      .login-title h2 {
-        font-size: 24px;
-        margin: 0;
-        color: #111827;
-      }
-
-      .login-title span {
-        font-weight: bold;
-        color: #10b981; /* vert */
-      }
-
-      label {
-        display: block;
-        margin-bottom: 6px;
-        font-weight: 600;
-        color: #374151;
-      }
-
-      input[type="email"],
-      input[type="password"] {
-        width: 100%;
-        padding: 10px 12px;
-        margin-bottom: 16px;
-        border: 1px solid #d1d5db;
-        border-radius: 6px;
-        font-size: 14px;
-        box-sizing: border-box;
-      }
-
-      input[type="submit"] {
-        width: 100%;
-        background-color: #16a34a;
-        color: white;
-        font-weight: bold;
-        padding: 10px;
-        border: none;
-        border-radius: 6px;
-        cursor: pointer;
-        margin-top: 10px;
-      }
-
-      input[type="submit"]:hover {
-        background-color: #15803d;
-      }
-
-      .remember-me {
-        display: flex;
-        align-items: center;
-        margin-bottom: 16px;
-        font-size: 14px;
-        color: #374151;
-      }
-
-      .remember-me input {
-        margin-right: 6px;
-      }
-
-      .links {
-        text-align: center;
-        margin-top: 16px;
-      }
-
-      .links a {
-        display: block;
-        margin-top: 8px;
-        font-size: 14px;
-        color: #10b981;
-        text-decoration: none;
-      }
-
-      .links a:hover {
-        text-decoration: underline;
-      }
-    </style>
-  </head>
-
-  <body>
-    <div class="login-container">
-      <div class="login-title">
-        <h2>Connexion à <span>LeLocal</span></h2>
-      </div>
-
-      <%= form_with scope: :user, url: session_path(:user), local: true do |f| %>
-        <div>
-          <label for="user_email">Email</label>
-          <%= f.email_field :email, autofocus: true, autocomplete: "email" %>
-        </div>
-
-        <div>
-          <label for="user_password">Password</label>
-          <%= f.password_field :password, autocomplete: "current-password" %>
-        </div>
-
-        <div class="remember-me">
-          <%= f.check_box :remember_me %>
-          <%= f.label :remember_me %>
-        </div>
-
-        <div>
-          <%= f.submit "Connexion" %>
-        </div>
-      <% end %>
-
-      <div class="links">
-        <%= link_to "Mot de passe oublié ?", new_password_path(resource_name) %>
-        <%= link_to "Créer un compte", new_registration_path(resource_name) %>
-      </div>
+<div class="login-page">
+  <div class="login-container">
+    <div class="login-title">
+      <h2>Connexion à <span>LeLocal</span></h2>
     </div>
-  </body>
-</html>
+
+    <%= form_with scope: :user, url: session_path(:user), local: true do |f| %>
+      <div>
+        <label for="user_email">Email</label>
+        <%= f.email_field :email, autofocus: true, autocomplete: "email" %>
+      </div>
+
+      <div>
+        <label for="user_password">Password</label>
+        <%= f.password_field :password, autocomplete: "current-password" %>
+      </div>
+
+      <div class="remember-me">
+        <%= f.check_box :remember_me %>
+        <%= f.label :remember_me %>
+      </div>
+
+      <div>
+        <%= f.submit "Connexion" %>
+      </div>
+    <% end %>
+
+    <div class="links">
+      <%= link_to "Mot de passe oublié ?", new_password_path(resource_name) %>
+      <%= link_to "Créer un compte", new_registration_path(resource_name) %>
+    </div>
+  </div>
+</div>
 
 
 
