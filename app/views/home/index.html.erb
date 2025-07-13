@@ -198,7 +198,7 @@ section + section {
 
 .category-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   gap: 25px;
   margin-top: 40px;
 }
@@ -959,101 +959,108 @@ section + section {
 
   <!-- Section avec des catégories d'espaces -->
   <section class="categories">
-      <div class="container">
-          <div class="section-title">
-              <h2>Découvrez les espaces qui correspondent à vos activités</h2>
-              <p>Des espaces variés et adaptés à tous types d'activités associatives</p>
-          </div>
-          <div class="category-grid">
-              <div class="category-card">
-                  <div class="category-img" style="background-image: url('https://images.unsplash.com/photo-1497366754035-f200968a6e72')"></div>
-                  <h3>Salles de réunion</h3>
-                  <p>Idéales pour vos réunions d'équipe et assemblées générales</p>
-              </div>
-              <div class="category-card">
-                  <div class="category-img" style="background-image: url('https://images.unsplash.com/photo-1517245386807-bb43f82c33c4')"></div>
-                  <h3>Espaces événementiels</h3>
-                  <p>Pour vos conférences, expositions et rencontres</p>
-              </div>
-              <div class="category-card">
-                  <div class="category-img" style="background-image: url('https://images.unsplash.com/photo-1574974671999-24b7dfbb0d53')"></div>
-                  <h3>Ateliers créatifs</h3>
-                  <p>Espaces adaptés aux activités artistiques et créatives</p>
-              </div>
-              <div class="category-card">
-                  <div class="category-img" style="background-image: url('https://images.unsplash.com/photo-1526948531399-320e7e40f0ca')"></div>
-                  <h3>Espaces sportifs</h3>
-                  <p>Pour les cours de sport, yoga et activités de bien-être</p>
-              </div>
-          </div>
+  <div class="container">
+    <div class="section-title">
+      <h2>Découvrez les espaces qui correspondent à vos activités</h2>
+      <p>Des espaces variés et adaptés à tous types d'activités associatives</p>
+    </div>
+    <div class="category-grid">
+      <div class="category-card">
+        <div class="category-img" style="background-image: url('https://images.unsplash.com/photo-1497366754035-f200968a6e72')"></div>
+        <h3>Salles de réunion</h3>
+        <p>Idéales pour vos réunions d'équipe et assemblées générales</p>
       </div>
-  </section>
+      <div class="category-card">
+        <div class="category-img" style="background-image: url('https://images.unsplash.com/photo-1517245386807-bb43f82c33c4')"></div>
+        <h3>Espaces événementiels</h3>
+        <p>Pour vos conférences, expositions et rencontres</p>
+      </div>
+      <div class="category-card">
+      <div class="category-img" style="background-image: url('<%= asset_path("artisanat.jpeg") %>')"></div>
+      <h3>Ateliers créatifs</h3>
+      <p>Espaces adaptés aux activités artistiques et artisanales</p>
+    </div>
+          <div class="category-card">
+        <div class="category-img" style="background-image: url('https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b')"></div>
+        <h3>Espaces sportifs</h3>
+        <p>Pour les cours de sport, yoga et activités de bien-être</p>
+      </div>
+    </div>
+  </div>
+</section>
 
-  <!-- Section des espaces populaires -->
-  <section class="featured-spaces">
-      <div class="container">
-          <div class="section-title">
-              <h2>Espaces les plus appréciés par les associations</h2>
-              <p>Découvrez les espaces plébiscités par notre communauté</p>
-          </div>
-          <div class="space-grid">
-              <div class="space-card">
-                  <div class="space-img" style="background-image: url('https://images.unsplash.com/photo-1497366814617-c0893dfb1931')"></div>
-                  <div class="space-badge">Populaire</div>
-                  <div class="space-content">
-                      <div class="space-title">
+              <!-- Section des espaces populaires -->
+              <section class="featured-spaces">
+                  <div class="container">
+                      <div class="section-title">
+                          <h2>Espaces les plus appréciés par les associations</h2>
+                          <p>Découvrez les espaces plébiscités par notre communauté</p>
+                      </div>
+                      <div class="space-grid">
+                      <div class="space-card">
+                      <div class="space-img" style="background-image: url('<%= asset_path("atelier1.jpeg") %>');"></div>
+                      <div class="space-badge">Populaire</div>
+                      <div class="space-content">
+                        <div class="space-title">
                           <h3>Espace Créatif Montmartre</h3>
                           <div class="space-rating">
-                              <i class="fas fa-star"></i>
-                              <span>4.8</span>
+                            <i class="fas fa-star"></i>
+                            <span>4.8</span>
                           </div>
-                      </div>
-                      <p class="space-location"><i class="fas fa-map-marker-alt"></i> Paris 18ème</p>
-                      <p class="space-capacity"><i class="fas fa-users"></i> Jusqu'à 25 personnes</p>
-                      <div class="space-footer">
+                        </div>
+                        <p class="space-location"><i class="fas fa-map-marker-alt"></i> Paris 18ème</p>
+                        <p class="space-capacity"><i class="fas fa-users"></i> Jusqu'à 25 personnes</p>
+                        <div class="space-footer">
                           <p class="space-price">45€ / heure</p>
                           <a href="#" class="btn-small">Réserver</a>
+                        </div>
                       </div>
-                  </div>
+                    </div>
+                    
+                  
+
+        
+          <div class="space-card">
+            <div class="space-img" style="background-image: url('<%= image_path("atelier2.jpeg") %>')"></div>
+            <div class="space-badge">Nouveau</div>
+            <div class="space-content">
+              <div class="space-title">
+                <h3>Atelier Artistique Bastille</h3>
+                <div class="space-rating">
+                  <i class="fas fa-star"></i>
+                  <span>4.9</span>
+                </div>
               </div>
-              <div class="space-card">
-                  <div class="space-img" style="background-image: url('https://images.unsplash.com/photo-1577412647305-991150c7d163')"></div>
-                  <div class="space-content">
-                      <div class="space-title">
-                          <h3>Salle Panoramique République</h3>
-                          <div class="space-rating">
-                              <i class="fas fa-star"></i>
-                              <span>4.7</span>
-                          </div>
-                      </div>
-                      <p class="space-location"><i class="fas fa-map-marker-alt"></i> Paris 11ème</p>
-                      <p class="space-capacity"><i class="fas fa-users"></i> Jusqu'à 40 personnes</p>
-                      <div class="space-footer">
-                          <p class="space-price">60€ / heure</p>
-                          <a href="#" class="btn-small">Réserver</a>
-                      </div>
-                  </div>
+              <p class="space-location"><i class="fas fa-map-marker-alt"></i> Paris 12ème</p>
+              <p class="space-capacity"><i class="fas fa-users"></i> Jusqu'à 15 personnes</p>
+              <div class="space-footer">
+                <p class="space-price">35€ / heure</p>
+                <a href="#" class="btn-small">Réserver</a>
               </div>
-              <div class="space-card">
-                  <div class="space-img" style="background-image: url('https://images.unsplash.com/photo-1519167758481-83f550bb49b3')"></div>
-                  <div class="space-badge">Nouveau</div>
-                  <div class="space-content">
-                      <div class="space-title">
-                          <h3>Atelier Artistique Bastille</h3>
-                          <div class="space-rating">
-                              <i class="fas fa-star"></i>
-                              <span>4.9</span>
-                          </div>
-                      </div>
-                      <p class="space-location"><i class="fas fa-map-marker-alt"></i> Paris 12ème</p>
-                      <p class="space-capacity"><i class="fas fa-users"></i> Jusqu'à 15 personnes</p>
-                      <div class="space-footer">
-                          <p class="space-price">35€ / heure</p>
-                          <a href="#" class="btn-small">Réserver</a>
-                      </div>
-                  </div>
-              </div>
+            </div>
           </div>
+        
+          <div class="space-card">
+            <div class="space-img" style="background-image: url('https://images.unsplash.com/photo-1577412647305-991150c7d163')"></div>
+            <div class="space-content">
+              <div class="space-title">
+                <h3>Salle Panoramique République</h3>
+                <div class="space-rating">
+                  <i class="fas fa-star"></i>
+                  <span>4.7</span>
+                </div>
+              </div>
+              <p class="space-location"><i class="fas fa-map-marker-alt"></i> Paris 11ème</p>
+              <p class="space-capacity"><i class="fas fa-users"></i> Jusqu'à 40 personnes</p>
+              <div class="space-footer">
+                <p class="space-price">60€ / heure</p>
+                <a href="#" class="btn-small">Réserver</a>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        
           <a href="<%= spaces_path(map: true) %>" class="view-all">Voir tous les espaces <i class="fas fa-arrow-right"></i></a>
       </div>
   </section>
