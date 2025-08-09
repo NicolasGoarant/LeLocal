@@ -116,7 +116,7 @@
 
         /* Benefits Section */
         .benefits-section {
-            padding: 80px 0;
+            padding: 80px 0 40px 0; /* 80px en haut, 40px en bas au lieu de 80px */
             background: white;
         }
 
@@ -188,9 +188,9 @@
             line-height: 1.6;
         }
 
-        /* Form Section */
+        /* Form Section - MARGE RÉDUITE */
         .form-section {
-            padding: 80px 0;
+            padding: 10px 0 40px 0; /* 10px en haut, 40px en bas */
             background: #f8f9fa;
         }
 
@@ -332,7 +332,7 @@
             cursor: pointer;
         }
 
-        /* Image Upload */
+        /* Image Upload - FONCTIONNEL */
         .upload-area {
             border: 2px dashed #ddd;
             border-radius: 10px;
@@ -341,11 +341,17 @@
             background-color: #f8f9fa;
             transition: all 0.3s;
             cursor: pointer;
+            position: relative;
         }
 
         .upload-area:hover {
             border-color: #4CAF50;
             background-color: rgba(76, 175, 80, 0.05);
+        }
+
+        .upload-area.dragover {
+            border-color: #4CAF50;
+            background-color: rgba(76, 175, 80, 0.1);
         }
 
         .upload-area i {
@@ -368,7 +374,41 @@
             display: none;
         }
 
-        /* Availability Section */
+        .image-preview-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .image-preview {
+            position: relative;
+            border-radius: 8px;
+            overflow: hidden;
+            aspect-ratio: 1;
+        }
+
+        .image-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .remove-image {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: rgba(255, 0, 0, 0.8);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 25px;
+            height: 25px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        /* Availability Section - TOUS LES JOURS */
         .availability-container {
             border: 1px solid #e0e0e0;
             border-radius: 10px;
@@ -439,6 +479,12 @@
             display: flex;
             align-items: center;
             gap: 10px;
+            opacity: 0.5;
+            transition: opacity 0.3s;
+        }
+
+        .time-range.active {
+            opacity: 1;
         }
 
         .time-select {
@@ -447,6 +493,71 @@
             border: 1px solid #ddd;
             border-radius: 5px;
             font-size: 14px;
+        }
+
+        /* Preview Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.8);
+        }
+
+        .modal-content {
+            background-color: #fff;
+            margin: 2% auto;
+            padding: 30px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover {
+            color: #000;
+        }
+
+        .preview-section {
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .preview-section:last-child {
+            border-bottom: none;
+        }
+
+        .preview-section h3 {
+            color: #4CAF50;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+
+        .preview-images {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .preview-images img {
+            width: 100%;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 5px;
         }
 
         /* Buttons */
@@ -499,33 +610,17 @@
         }
 
         /* Responsive Design */
-        @media (max-width: 1024px) {
-            .benefits-grid {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 30px;
-            }
-        }
-
         @media (max-width: 768px) {
-            .mobile-menu-btn {
-                display: block;
-            }
-
             .nav-links {
                 display: none;
             }
 
-            .page-header {
-                padding: 100px 0 60px;
-            }
-
-            .benefits-grid {
-                grid-template-columns: 1fr;
-                gap: 30px;
+            .mobile-menu-btn {
+                display: block;
             }
 
             .form-container {
-                padding: 30px 25px;
+                padding: 30px 20px;
                 margin: 0 15px;
             }
 
@@ -540,7 +635,7 @@
 
             .availability-day {
                 grid-template-columns: 1fr;
-                gap: 15px;
+                gap: 10px;
                 text-align: center;
             }
 
@@ -553,132 +648,66 @@
                 align-items: center;
             }
 
-            .btn-primary,
-            .btn-secondary {
+            .btn-primary, .btn-secondary {
                 width: 100%;
                 max-width: 300px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .nav-container {
-                padding: 10px 15px;
-            }
-
-            .page-header {
-                padding: 90px 0 50px;
-            }
-
-            .benefits-section,
-            .form-section {
-                padding: 60px 0;
-            }
-
-            .form-container {
-                padding: 25px 20px;
-            }
-
-            .benefit-card {
-                padding: 30px 20px;
-            }
-
-            .form-header h2 {
-                font-size: 24px;
-            }
-
-            .step-title {
-                font-size: 18px;
-            }
-
-            .input-field {
-                padding: 12px;
-            }
-
-            .upload-area {
-                padding: 30px 15px;
-            }
-
-            .upload-area i {
-                font-size: 36px;
-            }
-
-            .btn-primary,
-            .btn-secondary {
-                padding: 15px 30px;
-                font-size: 16px;
-            }
-        }
-
-        @media (max-width: 360px) {
-            .container {
-                padding: 0 10px;
-            }
-
-            .form-container {
-                padding: 20px 15px;
-                margin: 0 10px;
-            }
-
-            .benefit-card {
-                padding: 25px 15px;
-            }
-
-            .form-header h2 {
-                font-size: 22px;
-            }
-
-            .step-title {
-                font-size: 16px;
-            }
-
-            .input-field {
-                padding: 10px;
-                font-size: 16px;
             }
         }
     </style>
 </head>
 <body>
     <!-- Header -->
+    <header class="header">
+        <div class="nav-container">
+            <a href="#" class="logo">
+                <span class="le">Le</span><span class="local">Local</span>
+            </a>
+            <nav class="nav-links">
+                <a href="#">Connexion</a>
+                <a href="#">Inscription</a>
+            </nav>
+            <button class="mobile-menu-btn">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </header>
+
     <!-- Page Header -->
-    <div class="page-header">
+    <section class="page-header">
         <div class="container">
             <h1>Proposez votre espace</h1>
             <p>Partagez votre espace avec la communauté et générez des revenus supplémentaires</p>
         </div>
-    </div>
+    </section>
 
     <!-- Benefits Section -->
     <section class="benefits-section">
         <div class="container">
             <div class="section-title">
                 <h2>Pourquoi proposer votre espace ?</h2>
-                <p>Découvrez les avantages de partager votre local avec des associations</p>
+                <p>Découvrez les avantages de partager votre local avec notre communauté</p>
             </div>
-            
             <div class="benefits-grid">
                 <div class="benefit-card">
                     <div class="benefit-icon">
                         <i class="fas fa-euro-sign"></i>
                     </div>
                     <h3>Générez des revenus</h3>
-                    <p>Rentabilisez votre espace en le louant lorsque vous ne l'utilisez pas</p>
+                    <p>Rentabilisez votre espace en le louant pendant les périodes où vous ne l'utilisez pas</p>
                 </div>
-                
                 <div class="benefit-card">
                     <div class="benefit-icon">
-                        <i class="fas fa-calendar-alt"></i>
+                        <i class="fas fa-users"></i>
                     </div>
                     <h3>Flexibilité totale</h3>
-                    <p>Définissez vos propres disponibilités et tarifs selon vos besoins</p>
+                    <p>Définissez vos propres disponibilités et tarifs selon vos contraintes</p>
                 </div>
-                
                 <div class="benefit-card">
                     <div class="benefit-icon">
                         <i class="fas fa-shield-alt"></i>
                     </div>
                     <h3>Sécurité garantie</h3>
-                    <p>Nos utilisateurs sont vérifiés et notre assurance couvre les locaux</p>
+                    <p>Tous les locataires sont vérifiés et votre espace est assuré durant la location</p>
                 </div>
             </div>
         </div>
@@ -690,11 +719,11 @@
             <div class="form-container">
                 <div class="form-header">
                     <h2>Décrivez votre espace</h2>
-                    <p>Complétez ce formulaire pour mettre votre espace en ligne</p>
+                    <p>Remplissez les informations pour mettre votre espace en ligne</p>
                 </div>
 
-                <form action="/spaces" method="post" enctype="multipart/form-data">
-                    <!-- Step 1: Basic Information -->
+                <form id="hostForm" action="mailto:nicolas.goarant@hotmail.fr" method="post" enctype="text/plain">
+                    <!-- Étape 1: Informations générales -->
                     <div class="form-step">
                         <h3 class="step-title">
                             <i class="fas fa-info-circle"></i>
@@ -702,38 +731,41 @@
                         </h3>
                         
                         <div class="form-group">
-                            <label for="space_name" class="required">Nom de votre espace</label>
-                            <input type="text" id="space_name" name="space[name]" class="input-field" required placeholder="Ex: Salle polyvalente du centre communautaire">
+                            <label for="spaceName" class="required">Nom de votre espace</label>
+                            <input type="text" id="spaceName" name="spaceName" class="input-field" placeholder="Ex: Salle de conférence moderne" required>
+                            <small class="help-text">Donnez un nom attractif à votre espace</small>
                         </div>
-                        
+
                         <div class="form-group">
-                            <label for="space_description" class="required">Description</label>
-                            <textarea id="space_description" name="space[description]" class="input-field textarea-field" required placeholder="Décrivez votre espace, son ambiance, ses particularités..."></textarea>
-                            <span class="help-text">Une description détaillée aidera les associations à mieux comprendre votre offre</span>
+                            <label for="description" class="required">Description</label>
+                            <textarea id="description" name="description" class="input-field textarea-field" placeholder="Décrivez votre espace, son ambiance, ses atouts..." required></textarea>
+                            <small class="help-text">Décrivez précisément votre espace pour attirer les locataires</small>
                         </div>
-                        
+
                         <div class="form-row">
                             <div class="form-group">
-                                <label for="space_category" class="required">Catégorie</label>
-                                <select id="space_category" name="space[category]" class="input-field" required>
+                                <label for="category" class="required">Catégorie</label>
+                                <select id="category" name="category" class="input-field" required>
                                     <option value="">Sélectionnez une catégorie</option>
                                     <option value="meeting_room">Salle de réunion</option>
                                     <option value="event_space">Espace événementiel</option>
-                                    <option value="workshop">Atelier créatif</option>
-                                    <option value="sports_space">Espace sportif</option>
-                                    <option value="coworking">Espace de coworking</option>
+                                    <option value="workshop">Atelier/Formation</option>
+                                    <option value="coworking">Espace coworking</option>
+                                    <option value="exhibition">Espace d'exposition</option>
+                                    <option value="sport">Salle de sport</option>
                                     <option value="other">Autre</option>
                                 </select>
                             </div>
                             
                             <div class="form-group">
-                                <label for="space_capacity" class="required">Capacité maximale</label>
-                                <input type="number" id="space_capacity" name="space[capacity]" class="input-field" required min="1" placeholder="Ex: 50">
+                                <label for="capacity" class="required">Capacité maximale</label>
+                                <input type="number" id="capacity" name="capacity" class="input-field" min="1" placeholder="Ex: 50" required>
+                                <small class="help-text">Nombre maximum de personnes</small>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Step 2: Location -->
+                    <!-- Étape 2: Localisation -->
                     <div class="form-step">
                         <h3 class="step-title">
                             <i class="fas fa-map-marker-alt"></i>
@@ -741,24 +773,24 @@
                         </h3>
                         
                         <div class="form-group">
-                            <label for="space_address" class="required">Adresse complète</label>
-                            <input type="text" id="space_address" name="space[address]" class="input-field" required placeholder="Ex: 123 rue de la République">
+                            <label for="address" class="required">Adresse complète</label>
+                            <input type="text" id="address" name="address" class="input-field" placeholder="Ex: 123 rue de la République" required>
                         </div>
-                        
+
                         <div class="form-row">
                             <div class="form-group">
-                                <label for="space_city" class="required">Ville</label>
-                                <input type="text" id="space_city" name="space[city]" class="input-field" required placeholder="Ex: Paris">
+                                <label for="city" class="required">Ville</label>
+                                <input type="text" id="city" name="city" class="input-field" placeholder="Ex: Paris" required>
                             </div>
                             
                             <div class="form-group">
-                                <label for="space_postal_code" class="required">Code postal</label>
-                                <input type="text" id="space_postal_code" name="space[postal_code]" class="input-field" required placeholder="Ex: 75011">
+                                <label for="postalCode" class="required">Code postal</label>
+                                <input type="text" id="postalCode" name="postalCode" class="input-field" placeholder="Ex: 75001" required>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Step 3: Pricing -->
+                    <!-- Étape 3: Tarification -->
                     <div class="form-step">
                         <h3 class="step-title">
                             <i class="fas fa-euro-sign"></i>
@@ -767,135 +799,607 @@
                         
                         <div class="form-row">
                             <div class="form-group">
-                                <label for="space_price_hour" class="required">Prix par heure (€)</label>
-                                <input type="number" id="space_price_hour" name="space[price_hour]" class="input-field" required min="1" step="0.01" placeholder="Ex: 25.00">
+                                <label for="pricePerHour" class="required">Prix par heure (€)</label>
+                                <input type="number" id="pricePerHour" name="pricePerHour" class="input-field" min="1" step="0.01" placeholder="Ex: 50" required>
                             </div>
                             
                             <div class="form-group">
-                                <label for="space_price_day">Prix par jour (€)</label>
-                                <input type="number" id="space_price_day" name="space[price_day]" class="input-field" min="1" step="0.01" placeholder="Ex: 150.00">
+                                <label for="pricePerDay">Prix par jour (€)</label>
+                                <input type="number" id="pricePerDay" name="pricePerDay" class="input-field" min="1" step="0.01" placeholder="Ex: 300">
+                                <small class="help-text">Optionnel - pour les locations longues</small>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Step 4: Amenities -->
+                    <!-- Étape 4: Équipements disponibles -->
                     <div class="form-step">
                         <h3 class="step-title">
-                            <i class="fas fa-cogs"></i>
+                            <i class="fas fa-tools"></i>
                             Équipements disponibles
                         </h3>
                         
                         <div class="checkbox-grid">
                             <div class="checkbox-item">
-                                <input type="checkbox" id="wifi" name="space[amenities][]" value="wifi">
+                                <input type="checkbox" id="wifi" name="equipment[]" value="wifi">
                                 <label for="wifi">WiFi gratuit</label>
                             </div>
                             <div class="checkbox-item">
-                                <input type="checkbox" id="projector" name="space[amenities][]" value="projector">
+                                <input type="checkbox" id="projector" name="equipment[]" value="projector">
                                 <label for="projector">Vidéoprojecteur</label>
                             </div>
                             <div class="checkbox-item">
-                                <input type="checkbox" id="sound_system" name="space[amenities][]" value="sound_system">
-                                <label for="sound_system">Système audio</label>
+                                <input type="checkbox" id="sound" name="equipment[]" value="sound">
+                                <label for="sound">Système audio</label>
                             </div>
                             <div class="checkbox-item">
-                                <input type="checkbox" id="kitchen" name="space[amenities][]" value="kitchen">
-                                <label for="kitchen">Cuisine équipée</label>
+                                <input type="checkbox" id="whiteboard" name="equipment[]" value="whiteboard">
+                                <label for="whiteboard">Tableau blanc</label>
                             </div>
                             <div class="checkbox-item">
-                                <input type="checkbox" id="parking" name="space[amenities][]" value="parking">
+                                <input type="checkbox" id="parking" name="equipment[]" value="parking">
                                 <label for="parking">Parking disponible</label>
                             </div>
                             <div class="checkbox-item">
-                                <input type="checkbox" id="accessibility" name="space[amenities][]" value="accessibility">
+                                <input type="checkbox" id="catering" name="equipment[]" value="catering">
+                                <label for="catering">Espace traiteur</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="ac" name="equipment[]" value="ac">
+                                <label for="ac">Climatisation</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="accessibility" name="equipment[]" value="accessibility">
                                 <label for="accessibility">Accès PMR</label>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Step 5: Images -->
+                    <!-- Étape 5: Photos de votre espace -->
                     <div class="form-step">
                         <h3 class="step-title">
                             <i class="fas fa-camera"></i>
                             Photos de votre espace
                         </h3>
                         
-                        <div class="upload-area" onclick="document.getElementById('images').click()">
+                        <div class="upload-area" onclick="document.getElementById('imageUpload').click()">
                             <i class="fas fa-cloud-upload-alt"></i>
-                            <h3>Ajoutez des photos</h3>
-                            <p>Glissez-déposez vos images ou cliquez pour sélectionner</p>
-                            <p class="help-text">Format acceptés: JPG, PNG (max 5MB par image)</p>
+                            <h3>Ajouter des photos</h3>
+                            <p>Cliquez ici ou glissez-déposez vos images (JPG, PNG - max 5MB chacune)</p>
+                            <input type="file" id="imageUpload" name="images" class="file-input" multiple accept="image/*">
                         </div>
-                        <input type="file" id="images" name="space[images][]" class="file-input" multiple accept="image/*">
+                        <div id="imagePreviewContainer" class="image-preview-container"></div>
                     </div>
 
-                    <!-- Step 6: Availability -->
+                    <!-- Étape 6: Disponibilités - TOUS LES JOURS -->
                     <div class="form-step">
                         <h3 class="step-title">
-                            <i class="fas fa-clock"></i>
-                            Disponibilités
+                            <i class="fas fa-calendar-alt"></i>
+                            Définissez vos disponibilités
                         </h3>
                         
                         <div class="availability-container">
                             <div class="availability-header">
-                                Définissez vos créneaux de disponibilité
+                                Sélectionnez vos créneaux de disponibilité
                             </div>
                             
                             <div class="availability-day">
-                                <div class="day-name">Lundi</div>
-                                <div>
-                                    <input type="checkbox" id="monday_available" name="availability[monday][available]" class="toggle-input">
-                                    <label for="monday_available" class="toggle-switch"></label>
-                                </div>
-                                <div class="time-range">
+                                <span class="day-name">Lundi</span>
+                                <label>
+                                    <input type="checkbox" class="toggle-input" name="availability[monday][active]" value="1" onchange="toggleTimeRange(this, 'monday')">
+                                    <span class="toggle-switch"></span>
+                                </label>
+                                <div class="time-range" id="monday-time">
                                     <select name="availability[monday][start]" class="time-select">
                                         <option value="08:00">08:00</option>
                                         <option value="09:00">09:00</option>
                                         <option value="10:00">10:00</option>
-                                        <!-- Add more options -->
+                                        <option value="11:00">11:00</option>
+                                        <option value="12:00">12:00</option>
+                                        <option value="13:00">13:00</option>
+                                        <option value="14:00">14:00</option>
+                                        <option value="15:00">15:00</option>
+                                        <option value="16:00">16:00</option>
+                                        <option value="17:00">17:00</option>
+                                        <option value="18:00">18:00</option>
                                     </select>
                                     <span>à</span>
                                     <select name="availability[monday][end]" class="time-select">
+                                        <option value="09:00">09:00</option>
+                                        <option value="10:00">10:00</option>
+                                        <option value="11:00">11:00</option>
+                                        <option value="12:00">12:00</option>
+                                        <option value="13:00">13:00</option>
+                                        <option value="14:00">14:00</option>
+                                        <option value="15:00">15:00</option>
+                                        <option value="16:00">16:00</option>
                                         <option value="17:00">17:00</option>
-                                        <option value="18:00">18:00</option>
+                                        <option value="18:00" selected>18:00</option>
                                         <option value="19:00">19:00</option>
-                                        <!-- Add more options -->
+                                        <option value="20:00">20:00</option>
                                     </select>
                                 </div>
                             </div>
                             
-                            <!-- Repeat for other days -->
                             <div class="availability-day">
-                                <div class="day-name">Mardi</div>
-                                <div>
-                                    <input type="checkbox" id="tuesday_available" name="availability[tuesday][available]" class="toggle-input">
-                                    <label for="tuesday_available" class="toggle-switch"></label>
-                                </div>
-                                <div class="time-range">
+                                <span class="day-name">Mardi</span>
+                                <label>
+                                    <input type="checkbox" class="toggle-input" name="availability[tuesday][active]" value="1" onchange="toggleTimeRange(this, 'tuesday')">
+                                    <span class="toggle-switch"></span>
+                                </label>
+                                <div class="time-range" id="tuesday-time">
                                     <select name="availability[tuesday][start]" class="time-select">
                                         <option value="08:00">08:00</option>
                                         <option value="09:00">09:00</option>
                                         <option value="10:00">10:00</option>
+                                        <option value="11:00">11:00</option>
+                                        <option value="12:00">12:00</option>
+                                        <option value="13:00">13:00</option>
+                                        <option value="14:00">14:00</option>
+                                        <option value="15:00">15:00</option>
+                                        <option value="16:00">16:00</option>
+                                        <option value="17:00">17:00</option>
+                                        <option value="18:00">18:00</option>
                                     </select>
                                     <span>à</span>
                                     <select name="availability[tuesday][end]" class="time-select">
+                                        <option value="09:00">09:00</option>
+                                        <option value="10:00">10:00</option>
+                                        <option value="11:00">11:00</option>
+                                        <option value="12:00">12:00</option>
+                                        <option value="13:00">13:00</option>
+                                        <option value="14:00">14:00</option>
+                                        <option value="15:00">15:00</option>
+                                        <option value="16:00">16:00</option>
+                                        <option value="17:00">17:00</option>
+                                        <option value="18:00" selected>18:00</option>
+                                        <option value="19:00">19:00</option>
+                                        <option value="20:00">20:00</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div class="availability-day">
+                                <span class="day-name">Mercredi</span>
+                                <label>
+                                    <input type="checkbox" class="toggle-input" name="availability[wednesday][active]" value="1" onchange="toggleTimeRange(this, 'wednesday')">
+                                    <span class="toggle-switch"></span>
+                                </label>
+                                <div class="time-range" id="wednesday-time">
+                                    <select name="availability[wednesday][start]" class="time-select">
+                                        <option value="08:00">08:00</option>
+                                        <option value="09:00">09:00</option>
+                                        <option value="10:00">10:00</option>
+                                        <option value="11:00">11:00</option>
+                                        <option value="12:00">12:00</option>
+                                        <option value="13:00">13:00</option>
+                                        <option value="14:00">14:00</option>
+                                        <option value="15:00">15:00</option>
+                                        <option value="16:00">16:00</option>
                                         <option value="17:00">17:00</option>
                                         <option value="18:00">18:00</option>
+                                    </select>
+                                    <span>à</span>
+                                    <select name="availability[wednesday][end]" class="time-select">
+                                        <option value="09:00">09:00</option>
+                                        <option value="10:00">10:00</option>
+                                        <option value="11:00">11:00</option>
+                                        <option value="12:00">12:00</option>
+                                        <option value="13:00">13:00</option>
+                                        <option value="14:00">14:00</option>
+                                        <option value="15:00">15:00</option>
+                                        <option value="16:00">16:00</option>
+                                        <option value="17:00">17:00</option>
+                                        <option value="18:00" selected>18:00</option>
                                         <option value="19:00">19:00</option>
+                                        <option value="20:00">20:00</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div class="availability-day">
+                                <span class="day-name">Jeudi</span>
+                                <label>
+                                    <input type="checkbox" class="toggle-input" name="availability[thursday][active]" value="1" onchange="toggleTimeRange(this, 'thursday')">
+                                    <span class="toggle-switch"></span>
+                                </label>
+                                <div class="time-range" id="thursday-time">
+                                    <select name="availability[thursday][start]" class="time-select">
+                                        <option value="08:00">08:00</option>
+                                        <option value="09:00">09:00</option>
+                                        <option value="10:00">10:00</option>
+                                        <option value="11:00">11:00</option>
+                                        <option value="12:00">12:00</option>
+                                        <option value="13:00">13:00</option>
+                                        <option value="14:00">14:00</option>
+                                        <option value="15:00">15:00</option>
+                                        <option value="16:00">16:00</option>
+                                        <option value="17:00">17:00</option>
+                                        <option value="18:00">18:00</option>
+                                    </select>
+                                    <span>à</span>
+                                    <select name="availability[thursday][end]" class="time-select">
+                                        <option value="09:00">09:00</option>
+                                        <option value="10:00">10:00</option>
+                                        <option value="11:00">11:00</option>
+                                        <option value="12:00">12:00</option>
+                                        <option value="13:00">13:00</option>
+                                        <option value="14:00">14:00</option>
+                                        <option value="15:00">15:00</option>
+                                        <option value="16:00">16:00</option>
+                                        <option value="17:00">17:00</option>
+                                        <option value="18:00" selected>18:00</option>
+                                        <option value="19:00">19:00</option>
+                                        <option value="20:00">20:00</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div class="availability-day">
+                                <span class="day-name">Vendredi</span>
+                                <label>
+                                    <input type="checkbox" class="toggle-input" name="availability[friday][active]" value="1" onchange="toggleTimeRange(this, 'friday')">
+                                    <span class="toggle-switch"></span>
+                                </label>
+                                <div class="time-range" id="friday-time">
+                                    <select name="availability[friday][start]" class="time-select">
+                                        <option value="08:00">08:00</option>
+                                        <option value="09:00">09:00</option>
+                                        <option value="10:00">10:00</option>
+                                        <option value="11:00">11:00</option>
+                                        <option value="12:00">12:00</option>
+                                        <option value="13:00">13:00</option>
+                                        <option value="14:00">14:00</option>
+                                        <option value="15:00">15:00</option>
+                                        <option value="16:00">16:00</option>
+                                        <option value="17:00">17:00</option>
+                                        <option value="18:00">18:00</option>
+                                    </select>
+                                    <span>à</span>
+                                    <select name="availability[friday][end]" class="time-select">
+                                        <option value="09:00">09:00</option>
+                                        <option value="10:00">10:00</option>
+                                        <option value="11:00">11:00</option>
+                                        <option value="12:00">12:00</option>
+                                        <option value="13:00">13:00</option>
+                                        <option value="14:00">14:00</option>
+                                        <option value="15:00">15:00</option>
+                                        <option value="16:00">16:00</option>
+                                        <option value="17:00">17:00</option>
+                                        <option value="18:00" selected>18:00</option>
+                                        <option value="19:00">19:00</option>
+                                        <option value="20:00">20:00</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div class="availability-day">
+                                <span class="day-name">Samedi</span>
+                                <label>
+                                    <input type="checkbox" class="toggle-input" name="availability[saturday][active]" value="1" onchange="toggleTimeRange(this, 'saturday')">
+                                    <span class="toggle-switch"></span>
+                                </label>
+                                <div class="time-range" id="saturday-time">
+                                    <select name="availability[saturday][start]" class="time-select">
+                                        <option value="08:00">08:00</option>
+                                        <option value="09:00">09:00</option>
+                                        <option value="10:00">10:00</option>
+                                        <option value="11:00">11:00</option>
+                                        <option value="12:00">12:00</option>
+                                        <option value="13:00">13:00</option>
+                                        <option value="14:00">14:00</option>
+                                        <option value="15:00">15:00</option>
+                                        <option value="16:00">16:00</option>
+                                        <option value="17:00">17:00</option>
+                                        <option value="18:00">18:00</option>
+                                    </select>
+                                    <span>à</span>
+                                    <select name="availability[saturday][end]" class="time-select">
+                                        <option value="09:00">09:00</option>
+                                        <option value="10:00">10:00</option>
+                                        <option value="11:00">11:00</option>
+                                        <option value="12:00">12:00</option>
+                                        <option value="13:00">13:00</option>
+                                        <option value="14:00">14:00</option>
+                                        <option value="15:00">15:00</option>
+                                        <option value="16:00">16:00</option>
+                                        <option value="17:00">17:00</option>
+                                        <option value="18:00" selected>18:00</option>
+                                        <option value="19:00">19:00</option>
+                                        <option value="20:00">20:00</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div class="availability-day">
+                                <span class="day-name">Dimanche</span>
+                                <label>
+                                    <input type="checkbox" class="toggle-input" name="availability[sunday][active]" value="1" onchange="toggleTimeRange(this, 'sunday')">
+                                    <span class="toggle-switch"></span>
+                                </label>
+                                <div class="time-range" id="sunday-time">
+                                    <select name="availability[sunday][start]" class="time-select">
+                                        <option value="08:00">08:00</option>
+                                        <option value="09:00">09:00</option>
+                                        <option value="10:00">10:00</option>
+                                        <option value="11:00">11:00</option>
+                                        <option value="12:00">12:00</option>
+                                        <option value="13:00">13:00</option>
+                                        <option value="14:00">14:00</option>
+                                        <option value="15:00">15:00</option>
+                                        <option value="16:00">16:00</option>
+                                        <option value="17:00">17:00</option>
+                                        <option value="18:00">18:00</option>
+                                    </select>
+                                    <span>à</span>
+                                    <select name="availability[sunday][end]" class="time-select">
+                                        <option value="09:00">09:00</option>
+                                        <option value="10:00">10:00</option>
+                                        <option value="11:00">11:00</option>
+                                        <option value="12:00">12:00</option>
+                                        <option value="13:00">13:00</option>
+                                        <option value="14:00">14:00</option>
+                                        <option value="15:00">15:00</option>
+                                        <option value="16:00">16:00</option>
+                                        <option value="17:00">17:00</option>
+                                        <option value="18:00" selected>18:00</option>
+                                        <option value="19:00">19:00</option>
+                                        <option value="20:00">20:00</option>
                                     </select>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Submit Actions -->
+                    <!-- Actions -->
                     <div class="form-actions">
+                        <button type="button" class="btn-secondary" onclick="showPreview()">Prévisualiser</button>
                         <button type="submit" class="btn-primary">Publier mon espace</button>
-                        <a href="#" class="btn-secondary">Prévisualiser</a>
                     </div>
                 </form>
             </div>
         </div>
     </section>
+
+    <!-- Modal Preview -->
+    <div id="previewModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closePreview()">&times;</span>
+            <h2>Aperçu de votre espace</h2>
+            <div id="previewContent"></div>
+        </div>
+    </div>
+
+    <script>
+        // Toggle availability time range
+        function toggleTimeRange(checkbox, day) {
+            const timeRange = document.getElementById(day + '-time');
+            if (checkbox.checked) {
+                timeRange.classList.add('active');
+            } else {
+                timeRange.classList.remove('active');
+            }
+        }
+
+        // Image upload functionality
+        document.getElementById('imageUpload').addEventListener('change', function(e) {
+            const files = e.target.files;
+            const container = document.getElementById('imagePreviewContainer');
+            
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                if (file.type.startsWith('image/')) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const preview = document.createElement('div');
+                        preview.className = 'image-preview';
+                        preview.innerHTML = `
+                            <img src="${e.target.result}" alt="Preview">
+                            <button type="button" class="remove-image" onclick="removeImage(this)">×</button>
+                        `;
+                        container.appendChild(preview);
+                    };
+                    reader.readAsDataURL(file);
+                }
+            }
+        });
+
+        // Remove image
+        function removeImage(button) {
+            button.parentElement.remove();
+        }
+
+        // Drag and drop functionality
+        const uploadArea = document.querySelector('.upload-area');
+        
+        uploadArea.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+        
+        uploadArea.addEventListener('dragleave', function(e) {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+        });
+        
+        uploadArea.addEventListener('drop', function(e) {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            
+            const files = e.dataTransfer.files;
+            const container = document.getElementById('imagePreviewContainer');
+            
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                if (file.type.startsWith('image/')) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const preview = document.createElement('div');
+                        preview.className = 'image-preview';
+                        preview.innerHTML = `
+                            <img src="${e.target.result}" alt="Preview">
+                            <button type="button" class="remove-image" onclick="removeImage(this)">×</button>
+                        `;
+                        container.appendChild(preview);
+                    };
+                    reader.readAsDataURL(file);
+                }
+            }
+        });
+
+        // Preview functionality
+        function showPreview() {
+            const form = document.getElementById('hostForm');
+            const formData = new FormData(form);
+            
+            let previewHTML = '';
+            
+            // Basic info
+            previewHTML += `
+                <div class="preview-section">
+                    <h3>Informations générales</h3>
+                    <p><strong>Nom:</strong> ${formData.get('spaceName') || 'Non renseigné'}</p>
+                    <p><strong>Description:</strong> ${formData.get('description') || 'Non renseigné'}</p>
+                    <p><strong>Catégorie:</strong> ${formData.get('category') || 'Non renseigné'}</p>
+                    <p><strong>Capacité:</strong> ${formData.get('capacity') || 'Non renseigné'} personnes</p>
+                </div>
+            `;
+            
+            // Location
+            previewHTML += `
+                <div class="preview-section">
+                    <h3>Localisation</h3>
+                    <p><strong>Adresse:</strong> ${formData.get('address') || 'Non renseigné'}</p>
+                    <p><strong>Ville:</strong> ${formData.get('city') || 'Non renseigné'}</p>
+                    <p><strong>Code postal:</strong> ${formData.get('postalCode') || 'Non renseigné'}</p>
+                </div>
+            `;
+            
+            // Pricing
+            previewHTML += `
+                <div class="preview-section">
+                    <h3>Tarification</h3>
+                    <p><strong>Prix par heure:</strong> ${formData.get('pricePerHour') || 'Non renseigné'}€</p>
+                    <p><strong>Prix par jour:</strong> ${formData.get('pricePerDay') || 'Non renseigné'}€</p>
+                </div>
+            `;
+            
+            // Equipment
+            const equipment = formData.getAll('equipment[]');
+            previewHTML += `
+                <div class="preview-section">
+                    <h3>Équipements</h3>
+                    <p>${equipment.length > 0 ? equipment.join(', ') : 'Aucun équipement sélectionné'}</p>
+                </div>
+            `;
+            
+            // Images
+            const images = document.querySelectorAll('.image-preview img');
+            if (images.length > 0) {
+                previewHTML += `
+                    <div class="preview-section">
+                        <h3>Photos</h3>
+                        <div class="preview-images">
+                `;
+                images.forEach(img => {
+                    previewHTML += `<img src="${img.src}" alt="Preview">`;
+                });
+                previewHTML += `</div></div>`;
+            }
+            
+            // Availability
+            const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+            const dayNames = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'];
+            let availabilityHTML = '';
+            
+            days.forEach((day, index) => {
+                const active = formData.get(`availability[${day}][active]`);
+                if (active) {
+                    const start = formData.get(`availability[${day}][start]`);
+                    const end = formData.get(`availability[${day}][end]`);
+                    availabilityHTML += `<p><strong>${dayNames[index]}:</strong> ${start} - ${end}</p>`;
+                }
+            });
+            
+            previewHTML += `
+                <div class="preview-section">
+                    <h3>Disponibilités</h3>
+                    ${availabilityHTML || '<p>Aucune disponibilité sélectionnée</p>'}
+                </div>
+            `;
+            
+            document.getElementById('previewContent').innerHTML = previewHTML;
+            document.getElementById('previewModal').style.display = 'block';
+        }
+
+        // Close preview
+        function closePreview() {
+            document.getElementById('previewModal').style.display = 'none';
+        }
+
+        // Close modal when clicking outside
+        window.addEventListener('click', function(e) {
+            const modal = document.getElementById('previewModal');
+            if (e.target === modal) {
+                modal.style.display = 'none';
+            }
+        });
+
+        // Form submission
+        document.getElementById('hostForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Collect all form data
+            const formData = new FormData(this);
+            let emailBody = 'Nouvelle demande d\'espace LeLocal:\n\n';
+            
+            // Basic info
+            emailBody += 'INFORMATIONS GÉNÉRALES:\n';
+            emailBody += `Nom de l'espace: ${formData.get('spaceName')}\n`;
+            emailBody += `Description: ${formData.get('description')}\n`;
+            emailBody += `Catégorie: ${formData.get('category')}\n`;
+            emailBody += `Capacité: ${formData.get('capacity')} personnes\n\n`;
+            
+            // Location
+            emailBody += 'LOCALISATION:\n';
+            emailBody += `Adresse: ${formData.get('address')}\n`;
+            emailBody += `Ville: ${formData.get('city')}\n`;
+            emailBody += `Code postal: ${formData.get('postalCode')}\n\n`;
+            
+            // Pricing
+            emailBody += 'TARIFICATION:\n';
+            emailBody += `Prix par heure: ${formData.get('pricePerHour')}€\n`;
+            emailBody += `Prix par jour: ${formData.get('pricePerDay')}€\n\n`;
+            
+            // Equipment
+            const equipment = formData.getAll('equipment[]');
+            emailBody += 'ÉQUIPEMENTS:\n';
+            emailBody += equipment.join(', ') + '\n\n';
+            
+            // Availability
+            const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+            const dayNames = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'];
+            emailBody += 'DISPONIBILITÉS:\n';
+            
+            days.forEach((day, index) => {
+                const active = formData.get(`availability[${day}][active]`);
+                if (active) {
+                    const start = formData.get(`availability[${day}][start]`);
+                    const end = formData.get(`availability[${day}][end]`);
+                    emailBody += `${dayNames[index]}: ${start} - ${end}\n`;
+                }
+            });
+            
+            // Create mailto link
+            const subject = encodeURIComponent('Nouvelle demande espace LeLocal');
+            const body = encodeURIComponent(emailBody);
+            const mailtoLink = `mailto:nicolas.goarant@hotmail.fr?subject=${subject}&body=${body}`;
+            
+            // Open email client
+            window.location.href = mailtoLink;
+            
+            // Show confirmation
+            alert('Votre demande va être envoyée par email. Merci !');
+        });
+    </script>
 </body>
 </html>
