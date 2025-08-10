@@ -1,38 +1,46 @@
-Rails.application.routes.draw do
   # Besoins (form + page carte)
   get 'needs', to: redirect('/needs/new')
   resources :needs, only: [:new, :create] do
-    collection { get :map }   # => map_needs_path
+    collection { get :map }
+  end
+Rails.application.routes.draw do
+  # Needs (formulaire + carte)
+  get 'needs', to: redirect('/needs/map')
+  get 'needs/new', to: 'needs#new', as: :needs_new
+  resources :needs, only: [:new, :create] do
+    collection do
+      get :map
+    end
   end
 
   # Page d'accueil
   root 'home#index'
-
+  
   # Auth Devise
   devise_for :users, controllers: { registrations: 'registrations' }
   get '/signup', to: 'registrations#new', as: :signup
-
-  # Espaces
+  
+  # Spaces
   resources :spaces do
     collection do
-      get  'map'
-      get  'new_host'
+      get 'map'
+      get 'new_host'
       post 'submit_host'
     end
     member do
-      get  'reserve'
+      get 'reserve'
       post 'book'
     end
   end
 
-  # Pages statiques
+  # Static
   get 'about',   to: 'static_pages#about'
   get 'contact', to: 'static_pages#contact'
   get 'terms',   to: 'static_pages#terms'
   get 'privacy', to: 'static_pages#privacy'
   get 'faq',     to: 'static_pages#faq'
-
-  # Réservations
+  
+  # Bookings
   resources :bookings do
     member do
       patch 'confirm'
@@ -40,16 +48,16 @@ Rails.application.routes.draw do
       patch 'complete'
     end
   end
-
-  # Avis
+  
+  # Reviews
   resources :reviews, only: [:create, :edit, :update, :destroy]
-
-  # Recherche
+  
+  # Search
   get 'search', to: 'search#index'
-
-  # Profil
+  
+  # Profile
   resource :profile, only: [:show, :edit, :update]
-
+  
   # Dashboard
   namespace :dashboard do
     root to: 'overview#index'
@@ -58,7 +66,7 @@ Rails.application.routes.draw do
     resources :bookings
     resources :notifications, only: [:index, :show, :update]
   end
-
+  
   # API
   namespace :api, defaults: { format: :json } do
     namespace :v1 do
@@ -67,3 +75,5 @@ Rails.application.routes.draw do
     end
   end
 end
+
+
