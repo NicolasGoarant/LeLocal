@@ -1,83 +1,75 @@
+require "ostruct"
+
 class NeedsController < ApplicationController
-  before_action :set_need, only: [:show, :edit, :update, :destroy]
+  skip_before_action :authenticate_user!, only: [:new, :create] rescue nil
 
-  # GET /needs
-  def index
-    @needs = Need.all
-
-    # Redirige vers la carte si ?map=true
-    redirect_to map_needs_path if params[:map] == "true"
-  end
-
-  # GET /needs/map
-  def map
-    @needs = Need.all
-
-    # Centrer la carte soit sur le premier besoin géolocalisé, soit sur la France
-    first_located = @needs.find { |n| n.latitude.present? && n.longitude.present? }
-    @center_coords = if first_located
-                       [first_located.latitude, first_located.longitude]
-                     else
-                       [46.603354, 1.888334] # Centre de la France
-                     end
-  end
-
-  # GET /needs/:id
-  def show
-    @marker = {
-      lat: @need.latitude,
-      lng: @need.longitude,
-      info: @need.title,
-      id: @need.id
-    }
-  end
-
-  # GET /needs/new
   def new
-    @need = Need.new
+    @need = OpenStruct.new
   end
 
-  # GET /needs/:id/edit
-  def edit; end
-
-  # POST /needs
   def create
-    @need = Need.new(need_params)
-    @need.user = current_user
+    raw    = need_params.to_h
+    errors = []
 
-    if @need.save
-      redirect_to @need, notice: 'Votre besoin a été publié avec succès.'
-    else
-      render :new
+    # Champs requis minimaux
+    %i[city date_needed contact_email contact_phone].each do |k|
+      errors << "Le champ « #{label_for(k)} » est requis." if raw[k].blank?
     end
-  end
 
-  # PATCH/PUT /needs/:id
-  def update
-    if @need.update(need_params)
-      redirect_to @need, notice: 'Votre besoin a été mis à jour avec succès.'
-    else
-      render :edit
+    # Vérifs de forme
+    if raw[:contact_email].present? && (raw[:contact_email] !~ /\A[^@\s]+@[^@\s]+\.[^@\s]+\z/)
+      errors << "Adresse email invalide."
     end
-  end
+    if raw[:contact_phone].present? && (raw[:contact_phone].gsub(/\D/, '').size < 6)
+      errors << "Numéro de téléphone invalide."
+    end
 
-  # DELETE /needs/:id
-  def destroy
-    @need.destroy
-    redirect_to needs_path, notice: 'Votre besoin a été supprimé avec succès.'
+    if errors.any?
+      @need = OpenStruct.new(raw)
+      @need.define_singleton_method(:errors) do
+        OpenStruct.new(full_messages: errors, any?: errors.any?, count: errors.size)
+      end
+      render :new, status: :unprocessable_entity and return
+    end
+
+    # Envoi email
+    NeedMailer.with(
+      need: OpenStruct.new(raw),
+      raw_params: raw
+    ).notify_admin.deliver_now
+
+    respond_to do |format|
+      format.html { redirect_to root_path, notice: "✅ Votre demande a bien été réceptionnée. Merci !" }
+      format.json { render json: { ok: true }, status: :ok }
+    end
+  rescue => e
+    Rails.logger.error "[NEEDS_CREATE] #{e.class}: #{e.message}"
+    @need = OpenStruct.new(raw || {})
+    @need.define_singleton_method(:errors) do
+      OpenStruct.new(full_messages: [e.message], any?: true, count: 1)
+    end
+    render :new, status: :internal_server_error
   end
 
   private
 
-  def set_need
-    @need = Need.find(params[:id])
-  end
-
   def need_params
     params.require(:need).permit(
-      :title, :description, :category, :address, :city, :postal_code, :country,
-      :capacity, :date_needed, :start_time, :end_time, :budget, :recurrence,
-      :latitude, :longitude, photos: [], equipment_needs: []
+      :title, :description, :category,
+      :address, :city, :postal_code,
+      :capacity, :date_needed, :duration, :start_time, :end_time,
+      :recurrence, :budget, :surface_min,
+      :contact_email, :contact_phone,
+      equipment_needs: []
     )
+  end
+
+  def label_for(field)
+    {
+      city: "Ville",
+      date_needed: "Date",
+      contact_email: "Email",
+      contact_phone: "Téléphone"
+    }[field] || field.to_s.humanize
   end
 end

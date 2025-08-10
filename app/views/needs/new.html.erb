@@ -2,664 +2,155 @@
 
 <% content_for :head do %>
 <style>
-        /* Container responsive */
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-            width: 100%;
-        }
-
-        /* Page Header */
-        .page-header {
-            background-image: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)),
-                            url('https://images.unsplash.com/photo-1542744095-fcf48d80b0fd?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
-            background-size: cover;
-            background-position: center;
-            padding: 120px 0 80px;
-            color: white;
-            text-align: center;
-        }
-
-        .page-header h1 {
-            font-size: clamp(2rem, 5vw, 2.8rem);
-            margin-bottom: 15px;
-            font-weight: 700;
-        }
-
-        .page-header p {
-            font-size: clamp(1rem, 2.5vw, 1.2rem);
-            max-width: 700px;
-            margin: 0 auto;
-        }
-
-        /* Main Content */
-        .main-content {
-            padding: 80px 0;
-        }
-
-        .form-container {
-            max-width: 900px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 20px;
-            padding: 50px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
-        }
-
-        .form-intro {
-            text-align: center;
-            margin-bottom: 40px;
-        }
-
-        .form-intro h2 {
-            font-size: 28px;
-            color: #333;
-            margin-bottom: 15px;
-            font-weight: 700;
-        }
-
-        .form-intro p {
-            color: #666;
-            font-size: 16px;
-            line-height: 1.6;
-        }
-
-        /* Form Sections */
-        .form-section {
-            margin-bottom: 40px;
-            padding-bottom: 30px;
-            border-bottom: 1px solid #eee;
-        }
-
-        .form-section:last-child {
-            border-bottom: none;
-        }
-
-        .form-section-title {
-            font-size: 20px;
-            color: #333;
-            margin-bottom: 25px;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .form-section-title i {
-            color: #4CAF50;
-            font-size: 24px;
-        }
-
-        .form-group {
-            margin-bottom: 25px;
-        }
-
-        .form-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-            margin-bottom: 25px;
-        }
-
-        .form-group label {
-            display: block;
-            font-weight: 600;
-            margin-bottom: 8px;
-            color: #333;
-        }
-
-        .required::after {
-            content: ' *';
-            color: #e74c3c;
-        }
-
-        .input-field {
-            width: 100%;
-            padding: 15px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            font-size: 16px;
-            transition: all 0.3s;
-            background-color: #fff;
-        }
-
-        .input-field:focus {
-            border-color: #4CAF50;
-            outline: none;
-            box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
-        }
-
-        .textarea-field {
-            min-height: 120px;
-            resize: vertical;
-        }
-
-        .help-text {
-            display: block;
-            margin-top: 5px;
-            font-size: 14px;
-            color: #666;
-            font-style: italic;
-        }
-
-        /* Radio Groups */
-        .radio-group {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 15px;
-            margin-top: 15px;
-        }
-
-        .radio-item {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 12px 15px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            transition: all 0.3s;
-            cursor: pointer;
-        }
-
-        .radio-item:hover {
-            border-color: #4CAF50;
-            background-color: rgba(76, 175, 80, 0.05);
-        }
-
-        .radio-item input[type="radio"] {
-            width: 18px;
-            height: 18px;
-            accent-color: #4CAF50;
-        }
-
-        .radio-item label {
-            margin: 0;
-            font-weight: normal;
-            cursor: pointer;
-            flex: 1;
-        }
-
-        .radio-item input[type="radio"]:checked + label {
-            font-weight: 600;
-            color: #4CAF50;
-        }
-
-        /* Checkbox Groups */
-        .checkbox-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 15px;
-            margin-top: 15px;
-        }
-
-        .checkbox-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px 15px;
-            border: 1px solid #e0e0e0;
-            border-radius: 8px;
-            transition: all 0.3s;
-            cursor: pointer;
-        }
-
-        .checkbox-item:hover {
-            background-color: #f8f9fa;
-            border-color: #4CAF50;
-        }
-
-        .checkbox-item input[type="checkbox"] {
-            width: 18px;
-            height: 18px;
-            accent-color: #4CAF50;
-        }
-
-        .checkbox-item label {
-            margin: 0;
-            font-weight: normal;
-            cursor: pointer;
-            flex: 1;
-        }
-
-        /* Budget Section */
-        .budget-container {
-            display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 15px;
-            align-items: end;
-        }
-
-        .budget-input {
-            position: relative;
-        }
-
-        .budget-input::after {
-            content: '€';
-            position: absolute;
-            right: 15px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #666;
-            font-weight: 600;
-        }
-
-        /* Category Select */
-        .category-select {
-            position: relative;
-        }
-
-        .category-select::after {
-            content: '\f107';
-            font-family: 'Font Awesome 5 Free';
-            font-weight: 900;
-            position: absolute;
-            right: 15px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #666;
-            pointer-events: none;
-        }
-
-        .category-select select {
-            appearance: none;
-            background-color: white;
-        }
-
-        /* Submit Button */
-        .btn-submit {
-            display: block;
-            width: 100%;
-            padding: 18px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 30px;
-            font-size: 18px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-            margin-top: 30px;
-        }
-
-        .btn-submit:hover {
-            background-color: #388E3C;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(76, 175, 80, 0.3);
-        }
-
-        /* Alert Messages */
-        .alert {
-            padding: 15px 20px;
-            border-radius: 8px;
-            margin-bottom: 30px;
-        }
-
-        .alert-danger {
-            background-color: #ffeaea;
-            border: 1px solid #f5c6cb;
-            color: #721c24;
-        }
-
-        .alert h4 {
-            margin-bottom: 10px;
-            font-size: 16px;
-        }
-
-        .alert ul {
-            margin: 0;
-            padding-left: 20px;
-        }
-
-        .alert li {
-            margin-bottom: 5px;
-        }
-
-        /* Tips Section */
-        .tips-section {
-            background-color: rgba(76, 175, 80, 0.05);
-            border: 1px solid rgba(76, 175, 80, 0.2);
-            border-radius: 10px;
-            padding: 25px;
-            margin-bottom: 30px;
-        }
-
-        .tips-section h3 {
-            color: #4CAF50;
-            margin-bottom: 15px;
-            font-size: 18px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .tips-section ul {
-            list-style: none;
-            padding: 0;
-        }
-
-        .tips-section li {
-            margin-bottom: 10px;
-            padding-left: 25px;
-            position: relative;
-            color: #555;
-        }
-
-        .tips-section li::before {
-            content: '\f058';
-            font-family: 'Font Awesome 5 Free';
-            font-weight: 900;
-            position: absolute;
-            left: 0;
-            color: #4CAF50;
-            font-size: 14px;
-        }
-
-        /* Responsive Design */
-        @media (max-width: 1024px) {
-            .form-container {
-                padding: 40px 30px;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .page-header {
-                padding: 80px 0 60px !important; /* Réduit le padding-top */
-                margin-top: -20px !important; /* Remonte la section */
-            }
-
-            .main-content {
-                padding: 60px 0;
-            }
-
-            .form-container {
-                padding: 30px 25px;
-                margin: 0 15px;
-            }
-
-            .form-row {
-                grid-template-columns: 1fr;
-                gap: 0;
-            }
-
-            .budget-container {
-                grid-template-columns: 1fr;
-            }
-
-            .radio-group {
-                grid-template-columns: 1fr;
-            }
-
-            .checkbox-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .form-intro h2 {
-                font-size: 24px;
-            }
-
-            .form-section-title {
-                font-size: 18px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .page-header {
-                padding: 70px 0 50px !important; /* Encore plus réduit */
-                margin-top: -30px !important; /* Remonte encore plus */
-            }
-
-            .form-container {
-                padding: 25px 20px;
-                margin: 0 10px;
-            }
-
-            .form-intro h2 {
-                font-size: 22px;
-            }
-
-            .form-section-title {
-                font-size: 16px;
-            }
-        }
+/* (styles inchangés, condensés) */
+.container{max-width:1200px;margin:0 auto;padding:0 20px;width:100%}
+.page-header{background-image:linear-gradient(rgba(0,0,0,.6),rgba(0,0,0,.6)),url('https://images.unsplash.com/photo-1542744095-fcf48d80b0fd?auto=format&fit=crop&w=1350&q=80');background-size:cover;background-position:center;padding:120px 0 80px;color:#fff;text-align:center}
+.page-header h1{font-size:clamp(2rem,5vw,2.8rem);margin-bottom:15px;font-weight:700}
+.page-header p{font-size:clamp(1rem,2.5vw,1.2rem);max-width:700px;margin:0 auto}
+.main-content{padding:80px 0}
+.form-container{max-width:900px;margin:0 auto;background:#fff;border-radius:20px;padding:50px;box-shadow:0 15px 35px rgba(0,0,0,.1)}
+.form-intro{text-align:center;margin-bottom:40px}
+.form-intro h2{font-size:28px;color:#333;margin-bottom:15px;font-weight:700}
+.form-intro p{color:#666;font-size:16px;line-height:1.6}
+.form-section{margin-bottom:40px;padding-bottom:30px;border-bottom:1px solid #eee}
+.form-section:last-child{border-bottom:none}
+.form-section-title{font-size:20px;color:#333;margin-bottom:25px;font-weight:600;display:flex;align-items:center;gap:12px}
+.form-section-title i{color:#4CAF50;font-size:24px}
+.form-group{margin-bottom:25px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:25px}
+.form-group label{display:block;font-weight:600;margin-bottom:8px;color:#333}
+.required::after{content:' *';color:#e74c3c}
+.input-field{width:100%;padding:15px;border:2px solid #e0e0e0;border-radius:8px;font-size:16px;transition:all .3s;background:#fff}
+.input-field:focus{border-color:#4CAF50;outline:none;box-shadow:0 0 0 3px rgba(76,175,80,.1)}
+.textarea-field{min-height:120px;resize:vertical}
+.help-text{display:block;margin-top:5px;font-size:14px;color:#666;font-style:italic}
+.checkbox-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:15px;margin-top:15px}
+.checkbox-item{display:flex;align-items:center;gap:12px;padding:12px 15px;border:1px solid #e0e0e0;border-radius:8px;transition:all .3s}
+.checkbox-item:hover{background:#f8f9fa;border-color:#4CAF50}
+.btn-submit{display:block;width:100%;padding:18px;background:#4CAF50;color:#fff;border:none;border-radius:30px;font-size:18px;font-weight:600;cursor:pointer;transition:all .3s;margin-top:30px}
+.btn-submit:hover{background:#388E3C;transform:translateY(-2px);box-shadow:0 5px 15px rgba(76,175,80,.3)}
+.alert{padding:15px 20px;border-radius:8px;margin-bottom:30px}
+.alert-danger{background:#ffeaea;border:1px solid #f5c6cb;color:#721c24}
+@media(max-width:768px){.form-container{padding:30px 25px;margin:0 15px}.form-row{grid-template-columns:1fr}}
 </style>
 <% end %>
 
-<!-- Page Header -->
 <div class="page-header">
-    <div class="container">
-        <h1>Indiquer mes besoins en locaux</h1>
-        <p>Décrivez vos besoins détaillés et nous vous aiderons à trouver l'espace parfait pour votre projet ou événement.</p>
-    </div>
+  <div class="container">
+    <h1>Indiquer mes besoins en locaux</h1>
+    <p>Décrivez vos besoins. Seuls la <b>ville</b>, le <b>jour</b>, l’<b>email</b> et le <b>téléphone</b> sont obligatoires.</p>
+  </div>
 </div>
 
-<!-- Main Content -->
 <div class="main-content">
-    <div class="container">
-        <div class="form-container">
-            <!-- Form Introduction -->
-            <div class="form-intro">
-                <h2>Partagez vos besoins avec nous</h2>
-                <p>Plus vous nous donnerez d'informations, mieux nous pourrons vous aider à trouver l'espace idéal qui correspond à vos attentes et à votre budget.</p>
-            </div>
+  <div class="container">
+    <div class="form-container">
+      <div class="form-intro">
+        <h2>Partagez vos besoins</h2>
+        <p>Tout le reste est facultatif, ajoutez ce que vous voulez : nous vous recontactons rapidement.</p>
+      </div>
 
-            <!-- Conseils pratiques -->
-            <div class="tips-section">
-                <h3><i class="fas fa-lightbulb"></i> Conseils pour bien remplir le formulaire</h3>
-                <ul>
-                    <li>Décrivez précisément le type d'événement ou d'activité prévue</li>
-                    <li>Indiquez le nombre approximatif de participants</li>
-                    <li>Précisez vos dates et horaires préférés</li>
-                    <li>Mentionnez les équipements indispensables</li>
-                    <li>N'hésitez pas à détailler vos besoins spécifiques</li>
-                </ul>
-            </div>
-
-            <!-- Affichage des erreurs -->
-            <% if @need && @need.errors.any? %>
-                <div class="alert alert-danger">
-                    <h4><%= pluralize(@need.errors.count, "erreur") %> <%= @need.errors.count == 1 ? "a empêché" : "ont empêché" %> l'enregistrement :</h4>
-                    <ul>
-                        <% @need.errors.full_messages.each do |message| %>
-                            <li><%= message %></li>
-                        <% end %>
-                    </ul>
-                </div>
+      <% if @need && @need.errors&.any? %>
+        <div class="alert alert-danger">
+          <h4><%= pluralize(@need.errors.count, "erreur") %> ont empêché l'envoi :</h4>
+          <ul>
+            <% @need.errors.full_messages.each do |message| %>
+              <li><%= message %></li>
             <% end %>
-
-            <!-- Formulaire -->
-            <%= form_with(model: @need, local: true, html: { class: 'needs-form' }) do |form| %>
-                
-                <!-- Section 1: Informations de base -->
-                <div class="form-section">
-                    <h3 class="form-section-title">
-                        <i class="fas fa-info-circle"></i>
-                        Informations de base
-                    </h3>
-                    
-                    <div class="form-group">
-                        <%= form.label :title, "Titre de votre demande", class: "required" %>
-                        <%= form.text_field :title, class: "input-field", placeholder: "Ex: Recherche salle pour conférence sur l'innovation" %>
-                        <small class="help-text">Résumez en quelques mots le type d'espace recherché</small>
-                    </div>
-
-                    <div class="form-group">
-                        <%= form.label :description, "Description détaillée", class: "required" %>
-                        <%= form.text_area :description, class: "input-field textarea-field", placeholder: "Décrivez votre projet, le type d'événement, l'ambiance recherchée..." %>
-                        <small class="help-text">Plus vous êtes précis, mieux nous pourrons vous aider</small>
-                    </div>
-                </div>
-
-                <!-- Section 2: Localisation et capacité -->
-                <div class="form-section">
-                    <h3 class="form-section-title">
-                        <i class="fas fa-map-marker-alt"></i>
-                        Localisation et capacité
-                    </h3>
-                    
-                    <div class="form-row">
-                        <div class="form-group">
-                            <%= form.label :city, "Ville souhaitée", class: "required" %>
-                            <%= form.text_field :city, class: "input-field", placeholder: "Ex: Paris, Lyon, Marseille..." %>
-                            <small class="help-text">Ville ou zone géographique</small>
-                        </div>
-                        
-                        <div class="form-group">
-                            <%= form.label :capacity, "Nombre de personnes", class: "required" %>
-                            <%= form.number_field :capacity, class: "input-field", min: 1, placeholder: "Ex: 50" %>
-                            <small class="help-text">Nombre approximatif de participants</small>
-                        </div>
-                    </div>
-
-                    <div class="form-row">
-                        <div class="form-group">
-                            <%= form.label :address, "Adresse ou quartier" %>
-                            <%= form.text_field :address, class: "input-field", placeholder: "Ex: Centre-ville, Quartier Montmartre..." %>
-                            <small class="help-text">Adresse approximative ou quartier préféré</small>
-                        </div>
-                        
-                        <div class="form-group">
-                            <%= form.label :postal_code, "Code postal" %>
-                            <%= form.text_field :postal_code, class: "input-field", placeholder: "Ex: 75001" %>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Section 3: Dates et horaires -->
-                <div class="form-section">
-                    <h3 class="form-section-title">
-                        <i class="fas fa-calendar-alt"></i>
-                        Dates et horaires
-                    </h3>
-                    
-                    <div class="form-row">
-                        <div class="form-group">
-                            <%= form.label :date_needed, "Date souhaitée", class: "required" %>
-                            <%= form.date_field :date_needed, class: "input-field" %>
-                        </div>
-                        
-                        <div class="form-group">
-                            <%= form.label :duration, "Durée (en heures)" %>
-                            <%= form.number_field :duration, class: "input-field", min: 1, step: 0.5, placeholder: "Ex: 4" %>
-                            <small class="help-text">Durée approximative de l'événement</small>
-                        </div>
-                    </div>
-                    
-                    <div class="form-row">
-                        <div class="form-group">
-                            <%= form.label :start_time, "Heure de début" %>
-                            <%= form.time_field :start_time, class: "input-field" %>
-                        </div>
-                        
-                        <div class="form-group">
-                            <%= form.label :end_time, "Heure de fin" %>
-                            <%= form.time_field :end_time, class: "input-field" %>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <%= form.label :recurrence, "Récurrence" %>
-                        <div class="category-select">
-                            <%= form.select :recurrence, 
-                                options_for_select([
-                                    ['Événement unique', 'once'],
-                                    ['Hebdomadaire', 'weekly'],
-                                    ['Mensuel', 'monthly'],
-                                    ['Autre', 'other']
-                                ], @need&.recurrence), 
-                                { prompt: 'Sélectionnez...' }, 
-                                { class: "input-field" } %>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Section 4: Budget et surface -->
-                <div class="form-section">
-                    <h3 class="form-section-title">
-                        <i class="fas fa-euro-sign"></i>
-                        Budget et surface
-                    </h3>
-                    
-                    <div class="form-row">
-                        <div class="form-group">
-                            <%= form.label :budget, "Budget maximum" %>
-                            <div class="budget-input">
-                                <%= form.number_field :budget, class: "input-field", min: 0, step: 10, placeholder: "Ex: 500" %>
-                            </div>
-                            <small class="help-text">Budget total pour la location</small>
-                        </div>
-                        
-                        <div class="form-group">
-                            <%= form.label :surface_min, "Surface minimale (m²)" %>
-                            <%= form.number_field :surface_min, class: "input-field", min: 0, placeholder: "Ex: 100" %>
-                            <small class="help-text">Surface minimale souhaitée</small>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Section 5: Catégorie -->
-                <div class="form-section">
-                    <h3 class="form-section-title">
-                        <i class="fas fa-building"></i>
-                        Catégorie d'espace recherché
-                    </h3>
-                    
-                    <div class="form-group">
-                        <%= form.label :category, "Type d'espace" %>
-                        <div class="category-select">
-                            <%= form.select :category, 
-                                options_for_select([
-                                    ['Salle de réunion', 'meeting_room'],
-                                    ['Espace événementiel', 'event_space'],
-                                    ['Atelier/Formation', 'workshop'],
-                                    ['Espace coworking', 'coworking'],
-                                    ['Espace d\'exposition', 'exhibition'],
-                                    ['Salle de sport', 'sport'],
-                                    ['Autre', 'other']
-                                ], @need&.category), 
-                                { prompt: 'Sélectionnez...' }, 
-                                { class: "input-field" } %>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Section 6: Équipements requis -->
-                <div class="form-section">
-                    <h3 class="form-section-title">
-                        <i class="fas fa-tools"></i>
-                        Équipements requis
-                    </h3>
-                    
-                    <div class="form-group">
-                        <%= form.label :equipment_needs, "Équipements souhaités" %>
-                        <div class="checkbox-grid">
-                            <% equipment_options = [
-                                ['Projecteur/Écran', 'projector'],
-                                ['Système audio', 'sound'],
-                                ['WiFi haut débit', 'wifi'],
-                                ['Espace traiteur', 'catering'],
-                                ['Parking', 'parking'],
-                                ['Accessibilité PMR', 'accessibility'],
-                                ['Cuisine équipée', 'kitchen'],
-                                ['Espace de stockage', 'storage']
-                            ] %>
-                            
-                            <% equipment_options.each do |label, value| %>
-                                <div class="checkbox-item">
-                                    <%= check_box_tag "need[equipment_needs][]", value, 
-                                        (@need&.equipment_needs&.include?(value) || false), 
-                                        { id: "need_equipment_needs_#{value}" } %>
-                                    <%= label_tag "need_equipment_needs_#{value}", label %>
-                                </div>
-                            <% end %>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Bouton de soumission -->
-                <%= form.submit "Envoyer ma demande", class: "btn-submit" %>
-                
-            <% end %>
+          </ul>
         </div>
+      <% end %>
+
+      <%= form_with(model: @need, scope: :need, url: needs_path, local: true, html: { class: 'needs-form' }) do |form| %>
+
+        <!-- Vos coordonnées (OBLIGATOIRE) -->
+        <div class="form-section">
+          <h3 class="form-section-title"><i class="fas fa-user"></i> Vos coordonnées</h3>
+          <div class="form-row">
+            <div class="form-group">
+              <%= form.label :contact_email, "Email", class: "required" %>
+              <%= form.email_field :contact_email, class: "input-field", placeholder: "votre@email.com", required: true %>
+            </div>
+            <div class="form-group">
+              <%= form.label :contact_phone, "Téléphone", class: "required" %>
+              <%= form.telephone_field :contact_phone, class: "input-field", placeholder: "06 12 34 56 78", required: true %>
+            </div>
+          </div>
+        </div>
+
+        <!-- Localisation (VILLE OBLIGATOIRE) -->
+        <div class="form-section">
+          <h3 class="form-section-title"><i class="fas fa-map-marker-alt"></i> Localisation</h3>
+          <div class="form-row">
+            <div class="form-group">
+              <%= form.label :city, "Ville souhaitée", class: "required" %>
+              <%= form.text_field :city, class: "input-field", placeholder: "Ex: Rennes, Lyon…", required: true %>
+            </div>
+            <div class="form-group">
+              <%= form.label :postal_code, "Code postal" %>
+              <%= form.text_field :postal_code, class: "input-field", placeholder: "Ex: 35000" %>
+            </div>
+          </div>
+          <div class="form-group">
+            <%= form.label :address, "Adresse / quartier (optionnel)" %>
+            <%= form.text_field :address, class: "input-field", placeholder: "Quartier, zone, etc." %>
+          </div>
+        </div>
+
+        <!-- Date (OBLIGATOIRE) -->
+        <div class="form-section">
+          <h3 class="form-section-title"><i class="fas fa-calendar-alt"></i> Date</h3>
+          <div class="form-row">
+            <div class="form-group">
+              <%= form.label :date_needed, "Jour souhaité", class: "required" %>
+              <%= form.date_field :date_needed, class: "input-field", required: true %>
+            </div>
+            <div class="form-group">
+              <%= form.label :duration, "Durée (h) (optionnel)" %>
+              <%= form.number_field :duration, class: "input-field", min: 0, step: 0.5, placeholder: "Ex: 4" %>
+            </div>
+          </div>
+        </div>
+
+        <!-- Détails optionnels -->
+        <div class="form-section">
+          <h3 class="form-section-title"><i class="fas fa-info-circle"></i> Détails optionnels</h3>
+          <div class="form-group">
+            <%= form.label :title, "Titre de la demande" %>
+            <%= form.text_field :title, class: "input-field", placeholder: "Ex: Atelier créatif, réunion d'équipe..." %>
+          </div>
+          <div class="form-group">
+            <%= form.label :description, "Description (optionnelle)" %>
+            <%= form.text_area :description, class: "input-field textarea-field", placeholder: "Ambiance, contraintes, etc." %>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <%= form.label :capacity, "Nb. de personnes (optionnel)" %>
+              <%= form.number_field :capacity, class: "input-field", min: 1, placeholder: "Ex: 20" %>
+            </div>
+            <div class="form-group">
+              <%= form.label :budget, "Budget max (optionnel)" %>
+              <%= form.number_field :budget, class: "input-field", min: 0, step: 10, placeholder: "Ex: 600" %>
+            </div>
+          </div>
+          <div class="form-group">
+            <%= form.label :equipment_needs, "Équipements souhaités (optionnel)" %>
+            <div class="checkbox-grid">
+              <% [
+                ['WiFi', 'wifi'], ['Projecteur/Écran', 'projector'], ['Système audio', 'sound'],
+                ['Espace traiteur', 'catering'], ['Parking', 'parking'], ['Accessibilité PMR', 'accessibility']
+              ].each do |label, value| %>
+                <div class="checkbox-item">
+                  <%= check_box_tag "need[equipment_needs][]", value, false, id: "need_equipment_#{value}" %>
+                  <%= label_tag "need_equipment_#{value}", label %>
+                </div>
+              <% end %>
+            </div>
+          </div>
+        </div>
+
+        <%= form.submit "Envoyer ma demande", class: "btn-submit" %>
+      <% end %>
     </div>
+  </div>
 </div>

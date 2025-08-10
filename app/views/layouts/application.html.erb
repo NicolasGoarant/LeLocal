@@ -124,6 +124,7 @@
   <body class="<%= yield(:body_class) %>">
 
     <header>
+    <%= render "shared/flash" %>
       <nav class="navbar">
         <div class="navbar-brand">
           <%= link_to "Le<span>Local</span>".html_safe, root_path %>

@@ -20,18 +20,19 @@ class Need < ApplicationRecord
   ]
   
   # Associations
-  belongs_to :user
+  belongs_to :user, optional: true
   has_many_attached :photos
   
   # Validations
-  validates :title, presence: true, length: { minimum: 5, maximum: 100 }
-  validates :description, presence: true, length: { minimum: 20 }
-  validates :category, presence: true
-  validates :address, presence: true
-  validates :city, presence: true
-  validates :capacity, numericality: { greater_than: 0 }, allow_nil: true
+  # Attributs virtuels (pas en base) pour le contact
+  attr_accessor :contact_email, :contact_phone
+
+  # On ne rend obligatoires que : la ville, la date, l'email et le téléphone
+  validates :city,        presence: true
   validates :date_needed, presence: true
-  
+  validates :contact_email, presence: true,
+                            format: { with: /\A[^@\s]+@[^@\s]+\z/ }
+  validates :contact_phone, presence: true
   # Geocoding
   geocoded_by :full_address
   after_validation :geocode, if: ->(obj) { obj.address_changed? || obj.city_changed? || 

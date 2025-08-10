@@ -1,0 +1,22 @@
+<% flash.each do |type, message| %>
+  <% next if message.blank? %>
+  <div class="flash flash-<%= type %>" 
+       style="margin:12px auto;max-width:1100px;padding:12px 16px;
+              border-radius:8px;background:#e8f5e9;border:1px solid #c8e6c9;
+              color:#1b5e20;transition:opacity 0.5s ease;" 
+       data-flash>
+    <%= message %>
+  </div>
+<% end %>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    const flashes = document.querySelectorAll("[data-flash]");
+    setTimeout(() => {
+      flashes.forEach(el => {
+        el.style.opacity = 0;
+        setTimeout(() => el.remove(), 500);
+      });
+    }, 4000);
+  });
+</script>

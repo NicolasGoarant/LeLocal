@@ -1,0 +1,12 @@
+Nouvelle demande de besoin en locaux
+
+[Coordonnées]
+- Email: <%= @raw_params[:contact_email] %>
+- Téléphone: <%= @raw_params[:contact_phone] %>
+
+[Essentiel]
+- Ville: <%= @raw_params[:city] %>
+- Jour : <%= @raw_params[:date_needed] %>
+
+[Brut]
+<%= JSON.pretty_generate(@raw_params.as_json) %>

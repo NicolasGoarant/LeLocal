@@ -1,8 +1,7 @@
 Rails.application.routes.draw do
   # Formulaire "Indiquer mes besoins"
-  # Needs: alias GET /needs vers le formulaire + routes REST pour create
-  get 'needs/new', to: 'needs#new', as: :needs_new
-  resources :needs, only: [:new, :create]
+  get 'needs/new', to: 'needs#new'
+  post "needs/submit", to: "needs#submit"
   # Page d'accueil
   root 'home#index'
   
@@ -29,7 +28,16 @@ Rails.application.routes.draw do
   
   # Routes pour les besoins
   resources :needs, only: [:new, :create]
-  resources :needs, only: [:new, :create]
+    collection do
+      get 'map'
+    end
+    member do
+      get 'propose'
+      post 'offer'
+    end
+  end
+  
+  # Routes statiques
   get 'about', to: 'static_pages#about'
   get 'contact', to: 'static_pages#contact'
   get 'terms', to: 'static_pages#terms'
