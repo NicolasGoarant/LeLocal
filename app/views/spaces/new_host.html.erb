@@ -1,1158 +1,443 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LeLocal - Proposer un espace</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <%= stylesheet_link_tag 'application', 'data-turbo-track': 'reload' %>
-    <%= csrf_meta_tags %>
-    <%= csp_meta_tag %>
-    <style>
-        /* CSS Reset */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            line-height: 1.6;
-            color: #333;
-            background-color: #f8f9fa;
-            overflow-x: hidden;
-        }
-
-        /* Container responsive */
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-            width: 100%;
-        }
-
-        /* Hero Section */
-        .hero-section {
-            background-image: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)),
-                            url('https://images.unsplash.com/photo-1542744095-fcf48d80b0fd?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
-            background-size: cover;
-            background-position: center;
-            padding: 120px 0 80px;
-            color: white;
-            text-align: center;
-            position: relative;
-        }
-
-        .hero-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0,0,0,0.6);
-        }
-
-        .hero-content {
-            position: relative;
-            z-index: 10;
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
-
-        .hero-content h1 {
-            font-size: clamp(2rem, 5vw, 2.8rem);
-            margin-bottom: 15px;
-            font-weight: 700;
-        }
-
-        .hero-content p {
-            font-size: clamp(1rem, 2.5vw, 1.2rem);
-            max-width: 600px;
-            margin: 0 auto;
-        }
-
-        /* Benefits Section */
-        .benefits-section {
-            padding: 80px 0 40px 0;
-            background: white;
-        }
-
-        .section-title {
-            text-align: center;
-            margin-bottom: 60px;
-        }
-
-        .section-title h2 {
-            font-size: clamp(1.8rem, 4vw, 2.5rem);
-            margin-bottom: 15px;
-            color: #333;
-            font-weight: 700;
-        }
-
-        .section-title p {
-            color: #666;
-            font-size: 18px;
-            max-width: 600px;
-            margin: 0 auto;
-        }
-
-        .benefits-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 40px;
-            margin-bottom: 60px;
-        }
-
-        .benefit-card {
-            background: #fff;
-            border-radius: 15px;
-            padding: 40px 30px;
-            text-align: center;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            transition: transform 0.3s;
-            border-top: 5px solid #4CAF50;
-        }
-
-        .benefit-card:hover {
-            transform: translateY(-10px);
-        }
-
-        .benefit-icon {
-            width: 80px;
-            height: 80px;
-            background-color: rgba(76, 175, 80, 0.1);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 25px;
-        }
-
-        .benefit-icon i {
-            font-size: 35px;
-            color: #4CAF50;
-        }
-
-        .benefit-card h3 {
-            font-size: 22px;
-            margin-bottom: 15px;
-            color: #333;
-            font-weight: 600;
-        }
-
-        .benefit-card p {
-            color: #666;
-            line-height: 1.6;
-        }
-
-        /* Form Section */
-        .form-section {
-            padding: 10px 0 40px 0;
-            background: #f8f9fa;
-        }
-
-        .form-container {
-            max-width: 800px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 20px;
-            padding: 50px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
-        }
-
-        .form-header {
-            text-align: center;
-            margin-bottom: 40px;
-        }
-
-        .form-header h2 {
-            font-size: 28px;
-            color: #333;
-            margin-bottom: 15px;
-            font-weight: 700;
-        }
-
-        .form-header p {
-            color: #666;
-            font-size: 16px;
-        }
-
-        .form-step {
-            margin-bottom: 40px;
-            padding-bottom: 30px;
-            border-bottom: 1px solid #eee;
-        }
-
-        .form-step:last-child {
-            border-bottom: none;
-        }
-
-        .step-title {
-            font-size: 20px;
-            color: #333;
-            margin-bottom: 20px;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .step-title i {
-            color: #4CAF50;
-            font-size: 24px;
-        }
-
-        .form-group {
-            margin-bottom: 25px;
-        }
-
-        .form-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-            margin-bottom: 25px;
-        }
-
-        .form-group label, .form-label {
-            display: block;
-            font-weight: 600;
-            margin-bottom: 8px;
-            color: #333;
-        }
-
-        .required::after {
-            content: ' *';
-            color: #e74c3c;
-        }
-
-        .input-field {
-            width: 100%;
-            padding: 15px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            font-size: 16px;
-            transition: all 0.3s;
-            background-color: #fff;
-        }
-
-        .input-field:focus {
-            border-color: #4CAF50;
-            outline: none;
-            box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
-        }
-
-        .textarea-field {
-            min-height: 120px;
-            resize: vertical;
-        }
-
-        .help-text {
-            display: block;
-            margin-top: 5px;
-            font-size: 14px;
-            color: #666;
-            font-style: italic;
-        }
-
-        /* Checkbox and Radio Groups */
-        .checkbox-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 15px;
-            margin-top: 15px;
-        }
-
-        .checkbox-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px;
-            border: 1px solid #e0e0e0;
-            border-radius: 8px;
-            transition: all 0.3s;
-        }
-
-        .checkbox-item:hover {
-            background-color: #f8f9fa;
-            border-color: #4CAF50;
-        }
-
-        .checkbox-item input[type="checkbox"] {
-            width: 18px;
-            height: 18px;
-            accent-color: #4CAF50;
-        }
-
-        .checkbox-item label {
-            margin: 0;
-            font-weight: normal;
-            cursor: pointer;
-        }
-
-        /* Image Upload */
-        .upload-area {
-            border: 2px dashed #ddd;
-            border-radius: 10px;
-            padding: 40px 20px;
-            text-align: center;
-            background-color: #f8f9fa;
-            transition: all 0.3s;
-            cursor: pointer;
-            position: relative;
-        }
-
-        .upload-area:hover {
-            border-color: #4CAF50;
-            background-color: rgba(76, 175, 80, 0.05);
-        }
-
-        .upload-area.dragover {
-            border-color: #4CAF50;
-            background-color: rgba(76, 175, 80, 0.1);
-        }
-
-        .upload-area i {
-            font-size: 48px;
-            color: #4CAF50;
-            margin-bottom: 15px;
-        }
-
-        .upload-area h3 {
-            margin-bottom: 10px;
-            color: #333;
-        }
-
-        .upload-area p {
-            color: #666;
-            font-size: 14px;
-        }
-
-        .upload-help {
-            margin-top: 10px;
-        }
-
-        .file-input {
-            display: none;
-        }
-
-        .image-preview-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-            gap: 15px;
-            margin-top: 20px;
-        }
-
-        .image-preview {
-            position: relative;
-            border-radius: 8px;
-            overflow: hidden;
-            aspect-ratio: 1;
-        }
-
-        .image-preview img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .remove-image {
-            position: absolute;
-            top: 5px;
-            right: 5px;
-            background: rgba(255, 0, 0, 0.8);
-            color: white;
-            border: none;
-            border-radius: 50%;
-            width: 25px;
-            height: 25px;
-            cursor: pointer;
-            font-size: 12px;
-        }
-
-        /* Availability Section */
-        .availability-container {
-            border: 1px solid #e0e0e0;
-            border-radius: 10px;
-            overflow: hidden;
-        }
-
-        .availability-header {
-            background-color: #f8f9fa;
-            padding: 15px 20px;
-            border-bottom: 1px solid #e0e0e0;
-            font-weight: 600;
-            color: #333;
-        }
-
-        .availability-day {
-            display: grid;
-            grid-template-columns: 1fr auto 2fr;
-            gap: 20px;
-            padding: 15px 20px;
-            border-bottom: 1px solid #f0f0f0;
-            align-items: center;
-        }
-
-        .availability-day:last-child {
-            border-bottom: none;
-        }
-
-        .day-name {
-            font-weight: 500;
-            color: #333;
-        }
-
-        .toggle-container {
-            display: flex;
-            align-items: center;
-        }
-
-        .toggle-switch {
-            position: relative;
-            width: 50px;
-            height: 24px;
-            background-color: #ccc;
-            border-radius: 12px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-
-        .toggle-switch::after {
-            content: '';
-            position: absolute;
-            top: 2px;
-            left: 2px;
-            width: 20px;
-            height: 20px;
-            background-color: white;
-            border-radius: 50%;
-            transition: left 0.3s;
-        }
-
-        .toggle-input {
-            display: none;
-        }
-
-        .toggle-input:checked + .toggle-switch {
-            background-color: #4CAF50;
-        }
-
-        .toggle-input:checked + .toggle-switch::after {
-            left: 28px;
-        }
-
-        .time-range {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            opacity: 0.5;
-            transition: opacity 0.3s;
-        }
-
-        .time-range.active {
-            opacity: 1;
-        }
-
-        .time-select {
-            flex: 1;
-            padding: 8px 12px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            font-size: 14px;
-        }
-
-        /* Form Actions */
-        .form-actions {
-            display: flex;
-            justify-content: space-between;
-            gap: 20px;
-            margin-top: 40px;
-            padding-top: 30px;
-            border-top: 1px solid #eee;
-        }
-
-        .btn-primary, .btn-secondary {
-            padding: 15px 30px;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .btn-primary {
-            background-color: #4CAF50;
-            color: white;
-        }
-
-        .btn-primary:hover {
-            background-color: #45a049;
-            transform: translateY(-2px);
-        }
-
-        .btn-primary:disabled {
-            background-color: #ccc;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        .btn-secondary {
-            background-color: #f0f0f0;
-            color: #333;
-        }
-
-        .btn-secondary:hover {
-            background-color: #e0e0e0;
-        }
-
-        /* Modal Styles */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0,0,0,0.5);
-            align-items: center;
-            justify-content: center;
-        }
-
-        .modal-content {
-            background-color: white;
-            border-radius: 15px;
-            max-width: 500px;
-            width: 90%;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-        }
-
-        .modal-header {
-            padding: 25px 30px 15px;
-            border-bottom: 1px solid #eee;
-        }
-
-        .modal-header h3 {
-            margin: 0;
-            color: #4CAF50;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .modal-header.error h3 {
-            color: #e74c3c;
-        }
-
-        .modal-body {
-            padding: 20px 30px;
-        }
-
-        .modal-footer {
-            padding: 15px 30px 25px;
-            text-align: right;
-        }
-
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            .form-row {
-                grid-template-columns: 1fr;
-            }
-            
-            .availability-day {
-                grid-template-columns: 1fr;
-                gap: 15px;
-                text-align: center;
-            }
-            
-            .form-actions {
-                flex-direction: column;
-            }
-            
-            .benefits-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .form-container {
-                padding: 30px 20px;
-            }
-            
-            .checkbox-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LeLocal - Proposer un espace</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <%= stylesheet_link_tag 'application', 'data-turbo-track': 'reload' %>
+  <%= csrf_meta_tags %>
+  <%= csp_meta_tag %>
+  <style>
+    /* CSS Reset */
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;line-height:1.6;color:#333;background-color:#f8f9fa;overflow-x:hidden}
+    .container{max-width:1200px;margin:0 auto;padding:0 20px;width:100%}
+
+    /* Hero Section */
+    .hero-section{background-image:linear-gradient(rgba(0,0,0,0.6),rgba(0,0,0,0.6)),url('https://images.unsplash.com/photo-1542744095-fcf48d80b0fd?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');background-size:cover;background-position:center;padding:120px 0 80px;color:#fff;text-align:center;position:relative}
+    .hero-overlay{position:absolute;inset:0;background:rgba(0,0,0,0.6)}
+    .hero-content{position:relative;z-index:10;max-width:800px;margin:0 auto;padding:0 20px}
+    .hero-content h1{font-size:clamp(2rem,5vw,2.8rem);margin-bottom:15px;font-weight:700}
+    .hero-content p{font-size:clamp(1rem,2.5vw,1.2rem);max-width:600px;margin:0 auto}
+
+    /* Benefits */
+    .benefits-section{padding:80px 0 40px;background:#fff}
+    .section-title{text-align:center;margin-bottom:60px}
+    .section-title h2{font-size:clamp(1.8rem,4vw,2.5rem);margin-bottom:15px;color:#333;font-weight:700}
+    .section-title p{color:#666;font-size:18px;max-width:600px;margin:0 auto}
+    .benefits-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:40px;margin-bottom:60px}
+    .benefit-card{background:#fff;border-radius:15px;padding:40px 30px;text-align:center;box-shadow:0 10px 30px rgba(0,0,0,0.1);transition:transform .3s;border-top:5px solid #4CAF50}
+    .benefit-card:hover{transform:translateY(-10px)}
+    .benefit-icon{width:80px;height:80px;background-color:rgba(76,175,80,.1);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 25px}
+    .benefit-icon i{font-size:35px;color:#4CAF50}
+    .benefit-card h3{font-size:22px;margin-bottom:15px;color:#333;font-weight:600}
+    .benefit-card p{color:#666;line-height:1.6}
+
+    /* Form */
+    .form-section{padding:10px 0 40px;background:#f8f9fa}
+    .form-container{max-width:800px;margin:0 auto;background:#fff;border-radius:20px;padding:50px;box-shadow:0 15px 35px rgba(0,0,0,0.1)}
+    .form-header{text-align:center;margin-bottom:40px}
+    .form-header h2{font-size:28px;color:#333;margin-bottom:15px;font-weight:700}
+    .form-header p{color:#666;font-size:16px}
+    .form-step{margin-bottom:40px;padding-bottom:30px;border-bottom:1px solid #eee}
+    .form-step:last-child{border-bottom:none}
+    .step-title{font-size:20px;color:#333;margin-bottom:20px;font-weight:600;display:flex;align-items:center;gap:12px}
+    .step-title i{color:#4CAF50;font-size:24px}
+    .form-group{margin-bottom:25px}
+    .form-row{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:25px}
+    .form-group label,.form-label{display:block;font-weight:600;margin-bottom:8px;color:#333}
+    .required::after{content:' *';color:#e74c3c}
+    .input-field{width:100%;padding:15px;border:2px solid #e0e0e0;border-radius:8px;font-size:16px;transition:all .3s;background:#fff}
+    .input-field:focus{border-color:#4CAF50;outline:none;box-shadow:0 0 0 3px rgba(76,175,80,.1)}
+    .textarea-field{min-height:120px;resize:vertical}
+    .help-text{display:block;margin-top:5px;font-size:14px;color:#666;font-style:italic}
+
+    /* Checkboxes */
+    .checkbox-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:15px;margin-top:15px}
+    .checkbox-item{display:flex;align-items:center;gap:12px;padding:12px;border:1px solid #e0e0e0;border-radius:8px;transition:all .3s}
+    .checkbox-item:hover{background:#f8f9fa;border-color:#4CAF50}
+    .checkbox-item input[type="checkbox"]{width:18px;height:18px;accent-color:#4CAF50}
+    .checkbox-item label{margin:0;font-weight:normal;cursor:pointer}
+
+    /* Upload */
+    .upload-area{border:2px dashed #ddd;border-radius:10px;padding:40px 20px;text-align:center;background:#f8f9fa;transition:all .3s;cursor:pointer;position:relative}
+    .upload-area:hover{border-color:#4CAF50;background-color:rgba(76,175,80,.05)}
+    .upload-area.dragover{border-color:#4CAF50;background-color:rgba(76,175,80,.1)}
+    .upload-area i{font-size:48px;color:#4CAF50;margin-bottom:15px}
+    .upload-area h3{margin-bottom:10px;color:#333}
+    .upload-area p{color:#666;font-size:14px}
+    .upload-help{margin-top:10px}
+    .file-input{display:none}
+    .image-preview-container{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:15px;margin-top:20px}
+    .image-preview{position:relative;border-radius:8px;overflow:hidden;aspect-ratio:1}
+    .image-preview img{width:100%;height:100%;object-fit:cover}
+    .remove-image{position:absolute;top:5px;right:5px;background:rgba(255,0,0,.8);color:#fff;border:none;border-radius:50%;width:25px;height:25px;cursor:pointer;font-size:12px}
+
+    /* Availability */
+    .availability-container{border:1px solid #e0e0e0;border-radius:10px;overflow:hidden}
+    .availability-header{background:#f8f9fa;padding:15px 20px;border-bottom:1px solid #e0e0e0;font-weight:600;color:#333}
+    .availability-day{display:grid;grid-template-columns:1fr auto 2fr;gap:20px;padding:15px 20px;border-bottom:1px solid #f0f0f0;align-items:center}
+    .availability-day:last-child{border-bottom:none}
+    .day-name{font-weight:500;color:#333}
+    .toggle-container{display:flex;align-items:center}
+    .toggle-switch{position:relative;width:50px;height:24px;background:#ccc;border-radius:12px;cursor:pointer;transition:background-color .3s}
+    .toggle-switch::after{content:'';position:absolute;top:2px;left:2px;width:20px;height:20px;background:#fff;border-radius:50%;transition:left .3s}
+    .toggle-input{display:none}
+    .toggle-input:checked + .toggle-switch{background:#4CAF50}
+    .toggle-input:checked + .toggle-switch::after{left:28px}
+    .time-range{display:flex;align-items:center;gap:10px;opacity:.5;transition:opacity .3s}
+    .time-range.active{opacity:1}
+    .time-select{flex:1;padding:8px 12px;border:1px solid #ddd;border-radius:5px;font-size:14px}
+
+    /* Actions */
+    .form-actions{display:flex;justify-content:space-between;gap:20px;margin-top:40px;padding-top:30px;border-top:1px solid #eee}
+    .btn-primary,.btn-secondary{padding:15px 30px;border:none;border-radius:8px;font-size:16px;font-weight:600;cursor:pointer;transition:all .3s;display:flex;align-items:center;gap:10px}
+    .btn-primary{background:#4CAF50;color:#fff}
+    .btn-primary:hover{background:#45a049;transform:translateY(-2px)}
+    .btn-primary:disabled{background:#ccc;cursor:not-allowed;transform:none}
+    .btn-secondary{background:#f0f0f0;color:#333}
+    .btn-secondary:hover{background:#e0e0e0}
+
+    /* Modal */
+    .modal{display:none;position:fixed;z-index:1000;left:0;top:0;width:100%;height:100%;background:rgba(0,0,0,.5);align-items:center;justify-content:center}
+    .modal-content{background:#fff;border-radius:15px;max-width:500px;width:90%;box-shadow:0 10px 30px rgba(0,0,0,.3)}
+    .modal-header{padding:25px 30px 15px;border-bottom:1px solid #eee}
+    .modal-header h3{margin:0;color:#4CAF50;display:flex;align-items:center;gap:10px}
+    .modal-header.error h3{color:#e74c3c}
+    .modal-body{padding:20px 30px}
+    .modal-footer{padding:15px 30px 25px;text-align:right}
+
+    /* Responsive */
+    @media (max-width:768px){
+      .form-row{grid-template-columns:1fr}
+      .availability-day{grid-template-columns:1fr;gap:15px;text-align:center}
+      .form-actions{flex-direction:column}
+      .benefits-grid{grid-template-columns:1fr}
+      .form-container{padding:30px 20px}
+      .checkbox-grid{grid-template-columns:1fr}
+    }
+  </style>
 </head>
 <body>
-    <!-- Hero Section -->
-    <section class="hero-section">
-        <div class="hero-overlay"></div>
-        <div class="hero-content">
-            <h1>Proposez votre espace</h1>
-            <p>Partagez votre espace avec la communauté et générez des revenus complémentaires en toute sécurité.</p>
-        </div>
-    </section>
-
-    <!-- Benefits Section avec icônes Font Awesome -->
-    <section class="benefits-section">
-        <div class="container">
-            <div class="section-title">
-                <h2>Pourquoi proposer votre espace ?</h2>
-                <p>Rejoignez notre communauté de propriétaires et découvrez tous les avantages de partager votre espace.</p>
-            </div>
-            
-            <div class="benefits-grid">
-                <div class="benefit-card">
-                    <div class="benefit-icon">
-                        <i class="fas fa-euro-sign"></i>
-                    </div>
-                    <h3>Générez des revenus</h3>
-                    <p>Monétisez votre espace inutilisé et créez une source de revenus complémentaires régulière.</p>
-                </div>
-                
-                <div class="benefit-card">
-                    <div class="benefit-icon">
-                        <i class="fas fa-clock"></i>
-                    </div>
-                    <h3>Flexibilité totale</h3>
-                    <p>Définissez vos propres disponibilités et tarifs selon vos contraintes et vos besoins.</p>
-                </div>
-                
-                <div class="benefit-card">
-                    <div class="benefit-icon">
-                        <i class="fas fa-shield-alt"></i>
-                    </div>
-                    <h3>Sécurité garantie</h3>
-                    <p>Profitez de notre système de vérification des utilisateurs et de notre assurance complète.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Form Section -->
-    <section class="form-section">
-        <div class="container">
-            <div class="form-container">
-                <div class="form-header">
-                    <h2>Décrivez votre espace</h2>
-                    <p>Remplissez ce formulaire pour mettre en ligne votre annonce</p>
-                </div>
-
-                <form id="space-form" action="/spaces/submit_host" method="POST" enctype="multipart/form-data" class="space-form">
-                    <!-- Informations générales -->
-                    <div class="form-step">
-                        <div class="step-title">
-                            <i class="fas fa-info-circle"></i>
-                            <span>Informations générales</span>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label class="form-label required">Nom de l'espace *</label>
-                            <input type="text" name="name" placeholder="Ex: Studio de danse moderne" class="input-field" required>
-                            <span class="help-text">Donnez un nom accrocheur à votre espace</span>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label class="form-label required">Description *</label>
-                            <textarea name="description" placeholder="Décrivez votre espace, son ambiance, ses particularités..." class="input-field textarea-field" required></textarea>
-                        </div>
-                        
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label class="form-label required">Catégorie *</label>
-                                <select name="category" class="input-field" required>
-                                    <option value="">Choisissez une catégorie</option>
-                                    <option value="bureau">Bureau</option>
-                                    <option value="salle-reunion">Salle de réunion</option>
-                                    <option value="atelier">Atelier</option>
-                                    <option value="studio">Studio</option>
-                                    <option value="salle-evenement">Salle d'événement</option>
-                                    <option value="espace-coworking">Espace coworking</option>
-                                </select>
-                            </div>
-                            
-                            <div class="form-group">
-                                <label class="form-label required">Capacité maximale *</label>
-                                <input type="number" name="capacity" placeholder="Nombre de personnes" class="input-field" min="1" required>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Localisation -->
-                    <div class="form-step">
-                        <div class="step-title">
-                            <i class="fas fa-map-marker-alt"></i>
-                            <span>Localisation</span>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label class="form-label required">Adresse complète *</label>
-                            <input type="text" name="address" placeholder="123 rue de la République" class="input-field" required>
-                        </div>
-                        
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label class="form-label required">Ville *</label>
-                                <input type="text" name="city" placeholder="Paris" class="input-field" required>
-                            </div>
-                            
-                            <div class="form-group">
-                                <label class="form-label required">Code postal *</label>
-                                <input type="text" name="postal_code" placeholder="75001" class="input-field" pattern="\d{5}" required>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Tarification -->
-                    <div class="form-step">
-                        <div class="step-title">
-                            <i class="fas fa-euro-sign"></i>
-                            <span>Tarification</span>
-                        </div>
-                        
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label class="form-label required">Prix par heure (€) *</label>
-                                <input type="number" name="price_per_hour" placeholder="25" class="input-field" min="0.01" step="0.01" required>
-                                <span class="help-text">Minimum 1€ par heure</span>
-                            </div>
-                            
-                            <div class="form-group">
-                                <label class="form-label">Prix par jour (€)</label>
-                                <input type="number" name="price_per_day" placeholder="150" class="input-field" min="0.01" step="0.01">
-                                <span class="help-text">Optionnel, laissez vide si non applicable</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Équipements disponibles -->
-                    <div class="form-step">
-                        <div class="step-title">
-                            <i class="fas fa-tools"></i>
-                            <span>Équipements disponibles</span>
-                        </div>
-                        
-                        <div class="checkbox-grid">
-                            <div class="checkbox-item">
-                                <input type="checkbox" name="equipment[]" value="wifi" id="equipment_wifi">
-                                <label for="equipment_wifi">Wi-Fi haut débit</label>
-                            </div>
-                            
-                            <div class="checkbox-item">
-                                <input type="checkbox" name="equipment[]" value="projector" id="equipment_projector">
-                                <label for="equipment_projector">Vidéoprojecteur</label>
-                            </div>
-                            
-                            <div class="checkbox-item">
-                                <input type="checkbox" name="equipment[]" value="sound_system" id="equipment_sound">
-                                <label for="equipment_sound">Système audio</label>
-                            </div>
-                            
-                            <div class="checkbox-item">
-                                <input type="checkbox" name="equipment[]" value="whiteboard" id="equipment_whiteboard">
-                                <label for="equipment_whiteboard">Tableau blanc</label>
-                            </div>
-                            
-                            <div class="checkbox-item">
-                                <input type="checkbox" name="equipment[]" value="parking" id="equipment_parking">
-                                <label for="equipment_parking">Parking disponible</label>
-                            </div>
-                            
-                            <div class="checkbox-item">
-                                <input type="checkbox" name="equipment[]" value="kitchen" id="equipment_kitchen">
-                                <label for="equipment_kitchen">Cuisine équipée</label>
-                            </div>
-                            
-                            <div class="checkbox-item">
-                                <input type="checkbox" name="equipment[]" value="air_conditioning" id="equipment_ac">
-                                <label for="equipment_ac">Climatisation</label>
-                            </div>
-                            
-                            <div class="checkbox-item">
-                                <input type="checkbox" name="equipment[]" value="accessibility" id="equipment_access">
-                                <label for="equipment_access">Accès PMR</label>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Photos de votre espace -->
-                    <div class="form-step">
-                        <div class="step-title">
-                            <i class="fas fa-camera"></i>
-                            <span>Photos de votre espace</span>
-                        </div>
-                        
-                        <div class="upload-area" id="upload-area">
-                            <i class="fas fa-cloud-upload-alt"></i>
-                            <h3>Ajoutez des photos</h3>
-                            <p>Glissez-déposez vos images ou cliquez pour les sélectionner</p>
-                            <p class="upload-help">Formats acceptés: JPG, PNG, WebP - Maximum 10 Mo par image</p>
-                            <input type="file" name="photos[]" multiple accept="image/*" class="file-input" id="photo-input">
-                        </div>
-                        
-                        <div class="image-preview-container" id="image-previews"></div>
-                    </div>
-
-                    <!-- Disponibilités - Tous les jours de la semaine -->
-                    <div class="form-step">
-                        <div class="step-title">
-                            <i class="fas fa-calendar-alt"></i>
-                            <span>Définissez vos disponibilités</span>
-                        </div>
-                        
-                        <div class="availability-container">
-                            <div class="availability-header">
-                                Sélectionnez vos créneaux de disponibilité
-                            </div>
-                            
-                            <div class="availability-day">
-                                <div class="day-name">Lundi</div>
-                                <div class="toggle-container">
-                                    <input type="hidden" name="availability[lundi][enabled]" value="false">
-                                    <input type="checkbox" name="availability[lundi][enabled]" value="true" class="toggle-input" id="toggle-lundi">
-                                    <label for="toggle-lundi" class="toggle-switch"></label>
-                                </div>
-                                <div class="time-range" id="time-range-lundi">
-                                    <select name="availability[lundi][start]" class="time-select">
-                                        <option value="06:00">06:00</option><option value="07:00">07:00</option><option value="08:00">08:00</option><option value="09:00" selected>09:00</option><option value="10:00">10:00</option><option value="11:00">11:00</option><option value="12:00">12:00</option><option value="13:00">13:00</option><option value="14:00">14:00</option><option value="15:00">15:00</option><option value="16:00">16:00</option><option value="17:00">17:00</option><option value="18:00">18:00</option><option value="19:00">19:00</option><option value="20:00">20:00</option><option value="21:00">21:00</option><option value="22:00">22:00</option>
-                                    </select>
-                                    <span>à</span>
-                                    <select name="availability[lundi][end]" class="time-select">
-                                        <option value="06:00">06:00</option><option value="07:00">07:00</option><option value="08:00">08:00</option><option value="09:00">09:00</option><option value="10:00">10:00</option><option value="11:00">11:00</option><option value="12:00">12:00</option><option value="13:00">13:00</option><option value="14:00">14:00</option><option value="15:00">15:00</option><option value="16:00">16:00</option><option value="17:00">17:00</option><option value="18:00" selected>18:00</option><option value="19:00">19:00</option><option value="20:00">20:00</option><option value="21:00">21:00</option><option value="22:00">22:00</option>
-                                    </select>
-                                </div>
-                            </div>
-                            
-                            <div class="availability-day">
-                                <div class="day-name">Mardi</div>
-                                <div class="toggle-container">
-                                    <input type="hidden" name="availability[mardi][enabled]" value="false">
-                                    <input type="checkbox" name="availability[mardi][enabled]" value="true" class="toggle-input" id="toggle-mardi">
-                                    <label for="toggle-mardi" class="toggle-switch"></label>
-                                </div>
-                                <div class="time-range" id="time-range-mardi">
-                                    <select name="availability[mardi][start]" class="time-select">
-                                        <option value="06:00">06:00</option><option value="07:00">07:00</option><option value="08:00">08:00</option><option value="09:00" selected>09:00</option><option value="10:00">10:00</option><option value="11:00">11:00</option><option value="12:00">12:00</option><option value="13:00">13:00</option><option value="14:00">14:00</option><option value="15:00">15:00</option><option value="16:00">16:00</option><option value="17:00">17:00</option><option value="18:00">18:00</option><option value="19:00">19:00</option><option value="20:00">20:00</option><option value="21:00">21:00</option><option value="22:00">22:00</option>
-                                    </select>
-                                    <span>à</span>
-                                    <select name="availability[mardi][end]" class="time-select">
-                                        <option value="06:00">06:00</option><option value="07:00">07:00</option><option value="08:00">08:00</option><option value="09:00">09:00</option><option value="10:00">10:00</option><option value="11:00">11:00</option><option value="12:00">12:00</option><option value="13:00">13:00</option><option value="14:00">14:00</option><option value="15:00">15:00</option><option value="16:00">16:00</option><option value="17:00">17:00</option><option value="18:00" selected>18:00</option><option value="19:00">19:00</option><option value="20:00">20:00</option><option value="21:00">21:00</option><option value="22:00">22:00</option>
-                                    </select>
-                                </div>
-                            </div>
-                            
-                            <div class="availability-day">
-                                <div class="day-name">Mercredi</div>
-                                <div class="toggle-container">
-                                    <input type="hidden" name="availability[mercredi][enabled]" value="false">
-                                    <input type="checkbox" name="availability[mercredi][enabled]" value="true" class="toggle-input" id="toggle-mercredi">
-                                    <label for="toggle-mercredi" class="toggle-switch"></label>
-                                </div>
-                                <div class="time-range" id="time-range-mercredi">
-                                    <select name="availability[mercredi][start]" class="time-select">
-                                        <option value="06:00">06:00</option><option value="07:00">07:00</option><option value="08:00">08:00</option><option value="09:00" selected>09:00</option><option value="10:00">10:00</option><option value="11:00">11:00</option><option value="12:00">12:00</option><option value="13:00">13:00</option><option value="14:00">14:00</option><option value="15:00">15:00</option><option value="16:00">16:00</option><option value="17:00">17:00</option><option value="18:00">18:00</option><option value="19:00">19:00</option><option value="20:00">20:00</option><option value="21:00">21:00</option><option value="22:00">22:00</option>
-                                    </select>
-                                    <span>à</span>
-                                    <select name="availability[mercredi][end]" class="time-select">
-                                        <option value="06:00">06:00</option><option value="07:00">07:00</option><option value="08:00">08:00</option><option value="09:00">09:00</option><option value="10:00">10:00</option><option value="11:00">11:00</option><option value="12:00">12:00</option><option value="13:00">13:00</option><option value="14:00">14:00</option><option value="15:00">15:00</option><option value="16:00">16:00</option><option value="17:00">17:00</option><option value="18:00" selected>18:00</option><option value="19:00">19:00</option><option value="20:00">20:00</option><option value="21:00">21:00</option><option value="22:00">22:00</option>
-                                    </select>
-                                </div>
-                            </div>
-                            
-                            <div class="availability-day">
-                                <div class="day-name">Jeudi</div>
-                                <div class="toggle-container">
-                                    <input type="hidden" name="availability[jeudi][enabled]" value="false">
-                                    <input type="checkbox" name="availability[jeudi][enabled]" value="true" class="toggle-input" id="toggle-jeudi">
-                                    <label for="toggle-jeudi" class="toggle-switch"></label>
-                                </div>
-                                <div class="time-range" id="time-range-jeudi">
-                                    <select name="availability[jeudi][start]" class="time-select">
-                                        <option value="06:00">06:00</option><option value="07:00">07:00</option><option value="08:00">08:00</option><option value="09:00" selected>09:00</option><option value="10:00">10:00</option><option value="11:00">11:00</option><option value="12:00">12:00</option><option value="13:00">13:00</option><option value="14:00">14:00</option><option value="15:00">15:00</option><option value="16:00">16:00</option><option value="17:00">17:00</option><option value="18:00">18:00</option><option value="19:00">19:00</option><option value="20:00">20:00</option><option value="21:00">21:00</option><option value="22:00">22:00</option>
-                                    </select>
-                                    <span>à</span>
-                                    <select name="availability[jeudi][end]" class="time-select">
-                                        <option value="06:00">06:00</option><option value="07:00">07:00</option><option value="08:00">08:00</option><option value="09:00">09:00</option><option value="10:00">10:00</option><option value="11:00">11:00</option><option value="12:00">12:00</option><option value="13:00">13:00</option><option value="14:00">14:00</option><option value="15:00">15:00</option><option value="16:00">16:00</option><option value="17:00">17:00</option><option value="18:00" selected>18:00</option><option value="19:00">19:00</option><option value="20:00">20:00</option><option value="21:00">21:00</option><option value="22:00">22:00</option>
-                                    </select>
-                                </div>
-                            </div>
-                            
-                            <div class="availability-day">
-                                <div class="day-name">Vendredi</div>
-                                <div class="toggle-container">
-                                    <input type="hidden" name="availability[vendredi][enabled]" value="false">
-                                    <input type="checkbox" name="availability[vendredi][enabled]" value="true" class="toggle-input" id="toggle-vendredi">
-                                    <label for="toggle-vendredi" class="toggle-switch"></label>
-                                </div>
-                                <div class="time-range" id="time-range-vendredi">
-                                    <select name="availability[vendredi][start]" class="time-select">
-                                        <option value="06:00">06:00</option><option value="07:00">07:00</option><option value="08:00">08:00</option><option value="09:00" selected>09:00</option><option value="10:00">10:00</option><option value="11:00">11:00</option><option value="12:00">12:00</option><option value="13:00">13:00</option><option value="14:00">14:00</option><option value="15:00">15:00</option><option value="16:00">16:00</option><option value="17:00">17:00</option><option value="18:00">18:00</option><option value="19:00">19:00</option><option value="20:00">20:00</option><option value="21:00">21:00</option><option value="22:00">22:00</option>
-                                    </select>
-                                    <span>à</span>
-                                    <select name="availability[vendredi][end]" class="time-select">
-                                        <option value="06:00">06:00</option><option value="07:00">07:00</option><option value="08:00">08:00</option><option value="09:00">09:00</option><option value="10:00">10:00</option><option value="11:00">11:00</option><option value="12:00">12:00</option><option value="13:00">13:00</option><option value="14:00">14:00</option><option value="15:00">15:00</option><option value="16:00">16:00</option><option value="17:00">17:00</option><option value="18:00" selected>18:00</option><option value="19:00">19:00</option><option value="20:00">20:00</option><option value="21:00">21:00</option><option value="22:00">22:00</option>
-                                    </select>
-                                </div>
-                            </div>
-                            
-                            <div class="availability-day">
-                                <div class="day-name">Samedi</div>
-                                <div class="toggle-container">
-                                    <input type="hidden" name="availability[samedi][enabled]" value="false">
-                                    <input type="checkbox" name="availability[samedi][enabled]" value="true" class="toggle-input" id="toggle-samedi">
-                                    <label for="toggle-samedi" class="toggle-switch"></label>
-                                </div>
-                                <div class="time-range" id="time-range-samedi">
-                                    <select name="availability[samedi][start]" class="time-select">
-                                        <option value="06:00">06:00</option><option value="07:00">07:00</option><option value="08:00">08:00</option><option value="09:00" selected>09:00</option><option value="10:00">10:00</option><option value="11:00">11:00</option><option value="12:00">12:00</option><option value="13:00">13:00</option><option value="14:00">14:00</option><option value="15:00">15:00</option><option value="16:00">16:00</option><option value="17:00">17:00</option><option value="18:00">18:00</option><option value="19:00">19:00</option><option value="20:00">20:00</option><option value="21:00">21:00</option><option value="22:00">22:00</option>
-                                    </select>
-                                    <span>à</span>
-                                    <select name="availability[samedi][end]" class="time-select">
-                                        <option value="06:00">06:00</option><option value="07:00">07:00</option><option value="08:00">08:00</option><option value="09:00">09:00</option><option value="10:00">10:00</option><option value="11:00">11:00</option><option value="12:00">12:00</option><option value="13:00">13:00</option><option value="14:00">14:00</option><option value="15:00">15:00</option><option value="16:00">16:00</option><option value="17:00">17:00</option><option value="18:00" selected>18:00</option><option value="19:00">19:00</option><option value="20:00">20:00</option><option value="21:00">21:00</option><option value="22:00">22:00</option>
-                                    </select>
-                                </div>
-                            </div>
-                            
-                            <div class="availability-day">
-                                <div class="day-name">Dimanche</div>
-                                <div class="toggle-container">
-                                    <input type="hidden" name="availability[dimanche][enabled]" value="false">
-                                    <input type="checkbox" name="availability[dimanche][enabled]" value="true" class="toggle-input" id="toggle-dimanche">
-                                    <label for="toggle-dimanche" class="toggle-switch"></label>
-                                </div>
-                                <div class="time-range" id="time-range-dimanche">
-                                    <select name="availability[dimanche][start]" class="time-select">
-                                        <option value="06:00">06:00</option><option value="07:00">07:00</option><option value="08:00">08:00</option><option value="09:00" selected>09:00</option><option value="10:00">10:00</option><option value="11:00">11:00</option><option value="12:00">12:00</option><option value="13:00">13:00</option><option value="14:00">14:00</option><option value="15:00">15:00</option><option value="16:00">16:00</option><option value="17:00">17:00</option><option value="18:00">18:00</option><option value="19:00">19:00</option><option value="20:00">20:00</option><option value="21:00">21:00</option><option value="22:00">22:00</option>
-                                    </select>
-                                    <span>à</span>
-                                    <select name="availability[dimanche][end]" class="time-select">
-                                        <option value="06:00">06:00</option><option value="07:00">07:00</option><option value="08:00">08:00</option><option value="09:00">09:00</option><option value="10:00">10:00</option><option value="11:00">11:00</option><option value="12:00">12:00</option><option value="13:00">13:00</option><option value="14:00">14:00</option><option value="15:00">15:00</option><option value="16:00">16:00</option><option value="17:00">17:00</option><option value="18:00" selected>18:00</option><option value="19:00">19:00</option><option value="20:00">20:00</option><option value="21:00">21:00</option><option value="22:00">22:00</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Boutons d'action -->
-                    <div class="form-actions">
-                        <button type="button" class="btn-secondary" onclick="resetForm()">Réinitialiser</button>
-                        <button type="submit" class="btn-primary" id="submit-btn">
-                            <i class="fas fa-paper-plane"></i>
-                            Publier mon espace
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </section>
-
-    <!-- Modal de succès -->
-    <div class="modal" id="success-modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3><i class="fas fa-check-circle"></i> Proposition envoyée !</h3>
-            </div>
-            <div class="modal-body">
-                <p>Votre demande va être envoyée par email. Merci !</p>
-            </div>
-            <div class="modal-footer">
-                <button class="btn-primary" onclick="closeModal()">OK</button>
-            </div>
-        </div>
+  <!-- Hero -->
+  <section class="hero-section">
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <h1>Proposez votre espace</h1>
+      <p>Partagez votre espace avec la communauté et générez des revenus complémentaires en toute sécurité.</p>
     </div>
+  </section>
 
-    <!-- Modal d'erreur -->
-    <div class="modal" id="error-modal">
-        <div class="modal-content">
-            <div class="modal-header error">
-                <h3><i class="fas fa-exclamation-triangle"></i> Erreur</h3>
-            </div>
-            <div class="modal-body">
-                <p id="error-message">Une erreur est survenue. Veuillez réessayer.</p>
-            </div>
-            <div class="modal-footer">
-                <button class="btn-primary" onclick="closeModal()">OK</button>
-            </div>
+  <!-- Benefits -->
+  <section class="benefits-section">
+    <div class="container">
+      <div class="section-title">
+        <h2>Pourquoi proposer votre espace ?</h2>
+        <p>Rejoignez notre communauté de propriétaires et découvrez tous les avantages de partager votre espace.</p>
+      </div>
+      <div class="benefits-grid">
+        <div class="benefit-card">
+          <div class="benefit-icon"><i class="fas fa-euro-sign"></i></div>
+          <h3>Générez des revenus</h3>
+          <p>Monétisez votre espace inutilisé et créez une source de revenus complémentaires régulière.</p>
         </div>
+        <div class="benefit-card">
+          <div class="benefit-icon"><i class="fas fa-clock"></i></div>
+          <h3>Flexibilité totale</h3>
+          <p>Définissez vos propres disponibilités et tarifs selon vos contraintes et vos besoins.</p>
+        </div>
+        <div class="benefit-card">
+          <div class="benefit-icon"><i class="fas fa-shield-alt"></i></div>
+          <h3>Sécurité garantie</h3>
+          <p>Profitez de notre système de vérification des utilisateurs et de notre assurance complète.</p>
+        </div>
+      </div>
     </div>
+  </section>
 
-    <script>
-        // Gestion du formulaire et des interactions
-        document.addEventListener('DOMContentLoaded', function() {
-            const form = document.getElementById('space-form');
-            const uploadArea = document.getElementById('upload-area');
-            const fileInput = document.getElementById('photo-input');
-            const imagePreviewContainer = document.getElementById('image-previews');
-            let selectedFiles = [];
+  <!-- Form -->
+  <section class="form-section">
+    <div class="container">
+      <div class="form-container">
+        <div class="form-header">
+          <h2>Décrivez votre espace</h2>
+          <p>Remplissez ce formulaire pour mettre en ligne votre annonce</p>
+        </div>
 
-            // Gestion du drag & drop pour les images
-            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-                uploadArea.addEventListener(eventName, preventDefaults, false);
-            });
+        <form id="space-form" action="<%= submit_host_spaces_path %>" method="POST" enctype="multipart/form-data" class="space-form">
+          <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
 
-            function preventDefaults(e) {
-                e.preventDefault();
-                e.stopPropagation();
-            }
+          <!-- Informations générales -->
+          <div class="form-step">
+            <div class="step-title"><i class="fas fa-info-circle"></i><span>Informations générales</span></div>
+            <div class="form-group">
+              <label class="form-label required">Nom de l'espace *</label>
+              <input type="text" name="name" placeholder="Ex: Studio de danse moderne" class="input-field" required>
+              <span class="help-text">Donnez un nom accrocheur à votre espace</span>
+            </div>
+            <div class="form-group">
+              <label class="form-label required">Description *</label>
+              <textarea name="description" placeholder="Décrivez votre espace, son ambiance, ses particularités..." class="input-field textarea-field" required></textarea>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label required">Catégorie *</label>
+                <select name="category" class="input-field" required>
+                  <option value="">Choisissez une catégorie</option>
+                  <option value="bureau">Bureau</option>
+                  <option value="salle-reunion">Salle de réunion</option>
+                  <option value="atelier">Atelier</option>
+                  <option value="studio">Studio</option>
+                  <option value="salle-evenement">Salle d'événement</option>
+                  <option value="espace-coworking">Espace coworking</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label required">Capacité maximale *</label>
+                <input type="number" name="capacity" placeholder="Nombre de personnes" class="input-field" min="1" required>
+              </div>
+            </div>
+          </div>
 
-            ['dragenter', 'dragover'].forEach(eventName => {
-                uploadArea.addEventListener(eventName, () => uploadArea.classList.add('dragover'), false);
-            });
+          <!-- Localisation -->
+          <div class="form-step">
+            <div class="step-title"><i class="fas fa-map-marker-alt"></i><span>Localisation</span></div>
+            <div class="form-group">
+              <label class="form-label required">Adresse complète *</label>
+              <input type="text" name="address" placeholder="123 rue de la République" class="input-field" required>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label required">Ville *</label>
+                <input type="text" name="city" placeholder="Paris" class="input-field" required>
+              </div>
+              <div class="form-group">
+                <label class="form-label required">Code postal *</label>
+                <input type="text" name="postal_code" placeholder="75001" class="input-field" pattern="\d{5}" required>
+              </div>
+            </div>
+          </div>
 
-            ['dragleave', 'drop'].forEach(eventName => {
-                uploadArea.addEventListener(eventName, () => uploadArea.classList.remove('dragover'), false);
-            });
+          <!-- Tarification -->
+          <div class="form-step">
+            <div class="step-title"><i class="fas fa-euro-sign"></i><span>Tarification</span></div>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label required">Prix par heure (€) *</label>
+                <input type="number" name="price_per_hour" placeholder="25" class="input-field" min="0.01" step="0.01" required>
+                <span class="help-text">Minimum 1€ par heure</span>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Prix par jour (€)</label>
+                <input type="number" name="price_per_day" placeholder="150" class="input-field" min="0.01" step="0.01">
+                <span class="help-text">Optionnel, laissez vide si non applicable</span>
+              </div>
+            </div>
+          </div>
 
-            uploadArea.addEventListener('drop', handleDrop, false);
-            uploadArea.addEventListener('click', () => fileInput.click());
-            fileInput.addEventListener('change', handleFileSelect);
+          <!-- Équipements -->
+          <div class="form-step">
+            <div class="step-title"><i class="fas fa-tools"></i><span>Équipements disponibles</span></div>
+            <div class="checkbox-grid">
+              <div class="checkbox-item"><input type="checkbox" name="equipment[]" value="wifi" id="equipment_wifi"><label for="equipment_wifi">Wi-Fi haut débit</label></div>
+              <div class="checkbox-item"><input type="checkbox" name="equipment[]" value="projector" id="equipment_projector"><label for="equipment_projector">Vidéoprojecteur</label></div>
+              <div class="checkbox-item"><input type="checkbox" name="equipment[]" value="sound_system" id="equipment_sound"><label for="equipment_sound">Système audio</label></div>
+              <div class="checkbox-item"><input type="checkbox" name="equipment[]" value="whiteboard" id="equipment_whiteboard"><label for="equipment_whiteboard">Tableau blanc</label></div>
+              <div class="checkbox-item"><input type="checkbox" name="equipment[]" value="parking" id="equipment_parking"><label for="equipment_parking">Parking disponible</label></div>
+              <div class="checkbox-item"><input type="checkbox" name="equipment[]" value="kitchen" id="equipment_kitchen"><label for="equipment_kitchen">Cuisine équipée</label></div>
+              <div class="checkbox-item"><input type="checkbox" name="equipment[]" value="air_conditioning" id="equipment_ac"><label for="equipment_ac">Climatisation</label></div>
+              <div class="checkbox-item"><input type="checkbox" name="equipment[]" value="accessibility" id="equipment_access"><label for="equipment_access">Accès PMR</label></div>
+            </div>
+          </div>
 
-            function handleDrop(e) {
-                const dt = e.dataTransfer;
-                const files = dt.files;
-                handleFiles(files);
-            }
+          <!-- Photos -->
+          <div class="form-step">
+            <div class="step-title"><i class="fas fa-camera"></i><span>Photos de votre espace</span></div>
+            <div class="upload-area" id="upload-area">
+              <i class="fas fa-cloud-upload-alt"></i>
+              <h3>Ajoutez des photos</h3>
+              <p>Glissez-déposez vos images ou cliquez pour les sélectionner</p>
+              <p class="upload-help">Formats acceptés: JPG, PNG, WebP - Maximum 10 Mo par image</p>
+              <input type="file" name="photos[]" multiple accept="image/*" class="file-input" id="photo-input">
+            </div>
+            <div class="image-preview-container" id="image-previews"></div>
+          </div>
 
-            function handleFileSelect(e) {
-                const files = e.target.files;
-                handleFiles(files);
-            }
+          <!-- Disponibilités -->
+          <div class="form-step">
+            <div class="step-title"><i class="fas fa-calendar-alt"></i><span>Définissez vos disponibilités</span></div>
+            <div class="availability-container">
+              <div class="availability-header">Sélectionnez vos créneaux de disponibilité</div>
 
-            function handleFiles(files) {
-                Array.from(files).forEach(file => {
-                    if (file.type.startsWith('image/')) {
-                        selectedFiles.push(file);
-                        previewImage(file);
-                    }
-                });
-            }
+              <% %w[lundi mardi mercredi jeudi vendredi samedi dimanche].each do |jour| %>
+                <div class="availability-day">
+                  <div class="day-name"><%= jour.capitalize %></div>
+                  <div class="toggle-container">
+                    <input type="hidden" name="availability[<%= jour %>][enabled]" value="false">
+                    <input type="checkbox" name="availability[<%= jour %>][enabled]" value="true" class="toggle-input" id="toggle-<%= jour %>">
+                    <label for="toggle-<%= jour %>" class="toggle-switch"></label>
+                  </div>
+                  <div class="time-range" id="time-range-<%= jour %>">
+                    <select name="availability[<%= jour %>][start]" class="time-select">
+                      <% ["06:00","07:00","08:00","09:00","10:00","11:00","12:00","13:00","14:00","15:00","16:00","17:00","18:00","19:00","20:00","21:00","22:00"].each do |t| %>
+                        <option value="<%= t %>" <%= "selected" if t=="09:00" %>><%= t %></option>
+                      <% end %>
+                    </select>
+                    <span>à</span>
+                    <select name="availability[<%= jour %>][end]" class="time-select">
+                      <% ["06:00","07:00","08:00","09:00","10:00","11:00","12:00","13:00","14:00","15:00","16:00","17:00","18:00","19:00","20:00","21:00","22:00"].each do |t| %>
+                        <option value="<%= t %>" <%= "selected" if t=="18:00" %>><%= t %></option>
+                      <% end %>
+                    </select>
+                  </div>
+                </div>
+              <% end %>
+            </div>
+          </div>
 
-            function previewImage(file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const imageDiv = document.createElement('div');
-                    imageDiv.className = 'image-preview';
-                    imageDiv.innerHTML = `
-                        <img src="${e.target.result}" alt="Preview">
-                        <button type="button" class="remove-image" onclick="removeImage(this, '${file.name}')">×</button>
-                    `;
-                    imagePreviewContainer.appendChild(imageDiv);
-                };
-                reader.readAsDataURL(file);
-            }
+          <!-- Actions -->
+          <div class="form-actions">
+            <button type="button" class="btn-secondary" onclick="resetForm()">Réinitialiser</button>
+            <button type="submit" class="btn-primary" id="submit-btn">
+              <i class="fas fa-paper-plane"></i>
+              Publier mon espace
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </section>
 
-            window.removeImage = function(button, fileName) {
-                selectedFiles = selectedFiles.filter(file => file.name !== fileName);
-                button.parentElement.remove();
-            };
+  <!-- Modales -->
+  <div class="modal" id="success-modal">
+    <div class="modal-content">
+      <div class="modal-header"><h3><i class="fas fa-check-circle"></i> Proposition envoyée !</h3></div>
+      <div class="modal-body"><p>Votre demande va être envoyée par email. Merci !</p></div>
+      <div class="modal-footer"><button class="btn-primary" onclick="closeModal()">OK</button></div>
+    </div>
+  </div>
 
-            // Gestion des toggles de disponibilité
-            document.querySelectorAll('.toggle-input').forEach(toggle => {
-                const timeRange = document.getElementById('time-range-' + toggle.id.replace('toggle-', ''));
-                
-                toggle.addEventListener('change', function() {
-                    if (this.checked) {
-                        timeRange.classList.add('active');
-                    } else {
-                        timeRange.classList.remove('active');
-                    }
-                });
-            });
+  <div class="modal" id="error-modal">
+    <div class="modal-content">
+      <div class="modal-header error"><h3><i class="fas fa-exclamation-triangle"></i> Erreur</h3></div>
+      <div class="modal-body"><p id="error-message">Une erreur est survenue. Veuillez réessayer.</p></div>
+      <div class="modal-footer"><button class="btn-primary" onclick="closeModal()">OK</button></div>
+    </div>
+  </div>
 
-            // Soumission du formulaire avec gestion des erreurs
-            form.addEventListener('submit', async function(e) {
-                e.preventDefault();
-                
-                const submitBtn = document.getElementById('submit-btn');
-                const originalText = submitBtn.innerHTML;
-                
-                // Désactiver le bouton et afficher un indicateur de chargement
-                submitBtn.disabled = true;
-                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Envoi en cours...';
-                
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const form = document.getElementById('space-form');
+      const uploadArea = document.getElementById('upload-area');
+      const fileInput = document.getElementById('photo-input');
+      const imagePreviewContainer = document.getElementById('image-previews');
+      let selectedFiles = [];
+
+      // Drag & drop
+      ['dragenter','dragover','dragleave','drop'].forEach(eName => uploadArea.addEventListener(eName, preventDefaults, false));
+      function preventDefaults(e){e.preventDefault();e.stopPropagation()}
+      ;['dragenter','dragover'].forEach(eName => uploadArea.addEventListener(eName, () => uploadArea.classList.add('dragover'), false));
+      ;['dragleave','drop'].forEach(eName => uploadArea.addEventListener(eName, () => uploadArea.classList.remove('dragover'), false));
+      uploadArea.addEventListener('drop', handleDrop, false);
+      uploadArea.addEventListener('click', () => fileInput.click());
+      fileInput.addEventListener('change', handleFileSelect);
+
+      function handleDrop(e){handleFiles(e.dataTransfer.files)}
+      function handleFileSelect(e){handleFiles(e.target.files)}
+      function handleFiles(files){Array.from(files).forEach(file => {if(file.type.startsWith('image/')){selectedFiles.push(file);previewImage(file)}})}
+      function previewImage(file){
+        const reader=new FileReader();
+        reader.onload=function(e){
+          const imageDiv=document.createElement('div');
+          imageDiv.className='image-preview';
+          imageDiv.innerHTML=`<img src="${e.target.result}" alt="Preview"><button type="button" class="remove-image" onclick="removeImage(this, '${file.name}')">×</button>`;
+          imagePreviewContainer.appendChild(imageDiv);
+        };
+        reader.readAsDataURL(file);
+      }
+      window.removeImage=function(button,fileName){selectedFiles=selectedFiles.filter(f=>f.name!==fileName);button.parentElement.remove()}
+
+      // Toggles disponibilités
+      document.querySelectorAll('.toggle-input').forEach(toggle=>{
+        const timeRange=document.getElementById('time-range-'+toggle.id.replace('toggle-',''));
+        toggle.addEventListener('change',function(){this.checked?timeRange.classList.add('active'):timeRange.classList.remove('active')})
+      });
+
+      // Submit
+      form.addEventListener('submit', async function(e){
+        e.preventDefault();
+
+        const submitBtn=document.getElementById('submit-btn');
+        const originalText=submitBtn.innerHTML;
+        submitBtn.disabled=true;
+        submitBtn.innerHTML='<i class="fas fa-spinner fa-spin"></i> Envoi en cours...';
+
                 try {
-                    const formData = new FormData(form);
-                    
-                    // Ajouter les fichiers sélectionnés
-                    selectedFiles.forEach(file => {
-                        formData.append('photos[]', file);
-                    });
-                    
-                    const response = await fetch('/spaces/submit_host', {
-                        method: 'POST',
-                        body: formData
-                    });
-                    
-                    const result = await response.json();
-                    
-                    if (result.success) {
-                        showModal('success-modal');
-                        form.reset();
-                        selectedFiles = [];
-                        imagePreviewContainer.innerHTML = '';
-                        
-                        // Réinitialiser les toggles
-                        document.querySelectorAll('.toggle-input').forEach(toggle => {
-                            toggle.checked = false;
-                            const timeRange = document.getElementById('time-range-' + toggle.id.replace('toggle-', ''));
-                            timeRange.classList.remove('active');
-                        });
-                    } else {
-                        document.getElementById('error-message').textContent = result.message || 'Une erreur est survenue.';
-                        showModal('error-modal');
-                    }
-                } catch (error) {
-                    console.error('Erreur:', error);
-                    document.getElementById('error-message').textContent = 'Erreur de connexion. Veuillez réessayer.';
-                    showModal('error-modal');
-                } finally {
-                    // Réactiver le bouton
-                    submitBtn.disabled = false;
-                    submitBtn.innerHTML = originalText;
-                }
-            });
+        const formData = new FormData(form);
+        selectedFiles.forEach(file => formData.append('photos[]', file));
 
-            // Fonctions utilitaires pour les modales
-            window.showModal = function(modalId) {
-                document.getElementById(modalId).style.display = 'flex';
-            };
+        // IMPORTANT: ajoute aussi le token dans le formData (en plus du header)
+        formData.append('authenticity_token', document.querySelector('meta[name="csrf-token"]').getAttribute('content'));
 
-            window.closeModal = function() {
-                document.querySelectorAll('.modal').forEach(modal => {
-                    modal.style.display = 'none';
-                });
-            };
-
-            window.resetForm = function() {
-                if (confirm('Êtes-vous sûr de vouloir réinitialiser le formulaire ?')) {
-                    form.reset();
-                    selectedFiles = [];
-                    imagePreviewContainer.innerHTML = '';
-                    
-                    // Réinitialiser les toggles
-                    document.querySelectorAll('.toggle-input').forEach(toggle => {
-                        toggle.checked = false;
-                        const timeRange = document.getElementById('time-range-' + toggle.id.replace('toggle-', ''));
-                        timeRange.classList.remove('active');
-                    });
-                }
-            };
-
-            // Fermer les modales en cliquant à l'extérieur
-            document.querySelectorAll('.modal').forEach(modal => {
-                modal.addEventListener('click', function(e) {
-                    if (e.target === modal) {
-                        closeModal();
-                    }
-                });
-            });
+        const response = await fetch('<%= submit_host_spaces_path %>', {
+            method: 'POST',
+            body: formData,
+            headers: {
+            'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+            'Accept': 'application/json'
+            },
+            credentials: 'same-origin'
         });
-    </script>
+
+        const contentType = response.headers.get('Content-Type') || '';
+        let payload;
+
+        if (contentType.includes('application/json')) {
+            payload = await response.json();
+        } else {
+            const text = await response.text();
+            console.warn('Réponse non-JSON:', response.status, text);
+            throw new Error(`HTTP ${response.status} – ${text.slice(0, 300)}`);
+        }
+
+        if (response.ok && payload?.success) {
+            showModal('success-modal');
+            // reset…
+        } else {
+            const msg = payload?.message || `HTTP ${response.status}`;
+            document.getElementById('error-message').textContent = msg;
+            showModal('error-modal');
+        }
+        } catch (err) {
+        console.error('Soumission échouée:', err);
+        document.getElementById('error-message').textContent = String(err.message || err);
+        showModal('error-modal');
+        }
+
+        finally{
+          submitBtn.disabled=false;
+          submitBtn.innerHTML=originalText;
+        }
+      });
+
+      // Modales helpers
+      window.showModal=function(id){document.getElementById(id).style.display='flex'}
+      window.closeModal=function(){document.querySelectorAll('.modal').forEach(m=>m.style.display='none')}
+      window.resetForm=function(){
+        if(confirm('Êtes-vous sûr de vouloir réinitialiser le formulaire ?')){
+          form.reset();selectedFiles=[];imagePreviewContainer.innerHTML='';
+          document.querySelectorAll('.toggle-input').forEach(toggle=>{
+            toggle.checked=false;
+            const timeRange=document.getElementById('time-range-'+toggle.id.replace('toggle-',''));
+            timeRange.classList.remove('active');
+          });
+        }
+      };
+      document.querySelectorAll('.modal').forEach(modal=>{
+        modal.addEventListener('click',function(e){if(e.target===modal){closeModal()}})
+      });
+    });
+  </script>
 </body>
 </html>

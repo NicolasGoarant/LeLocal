@@ -1,0 +1,26 @@
+require "securerandom"
+class HostProposalMailer < ApplicationMailer
+  # Attends :
+  #   params[:raw_params]     -> hash des données "lisibles" (sans les fichiers)
+  #   params[:uploaded_files] -> Array<ActionDispatch::Http::UploadedFile>
+  def notify_admin
+    @raw_params = params[:raw_params]
+    Rails.logger.info "[MAILER] photos=#{Array(params[:photos]).size} raw_params?=#{params.key?(:raw_params)}"
+
+    # Joindre les fichiers si présents
+    Array(params[:uploaded_files]).each do |uploaded|
+      next unless uploaded.respond_to?(:original_filename) && uploaded.respond_to?(:tempfile)
+      fname = uploaded.original_filename.presence || "photo_#{SecureRandom.hex(4)}"
+      attachments[fname] = {
+        mime_type: uploaded.content_type || "application/octet-stream",
+        content:   File.binread(uploaded.tempfile.path)
+      }
+    end
+
+    mail(
+      from: ENV.fetch("HOST_PROPOSAL_FROM", "no-reply@lelocal.dev"),
+      to:   ENV.fetch("HOST_PROPOSAL_TO",   "admin@example.com"),
+      subject: "Nouvelle proposition d'espace"
+    )
+  end
+end

@@ -1,0 +1,14 @@
+Nouvelle proposition d'espace
+
+<% if @space.present? %>
+[Récapitulatif (Space enregistré)]
+Nom: <%= @space.name %>
+Description: <%= @space.description %>
+Catégorie: <%= @space.category %>
+Capacité: <%= @space.capacity %> pers.
+Adresse: <%= @space.address %>
+Prix / heure: <%= @space.price_per_hour %> €
+<% end %>
+
+[Données brutes du formulaire]
+<%= JSON.pretty_generate(@raw_params.as_json) rescue @raw_params.inspect %>

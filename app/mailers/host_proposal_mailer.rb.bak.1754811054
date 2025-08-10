@@ -1,0 +1,11 @@
+class HostProposalMailer < ApplicationMailer
+  default from: ENV.fetch("SMTP_USERNAME", "nicolas.goarant35@gmail.com")
+
+  def notify_admin
+    @raw_params = params[:raw_params]
+    mail(
+      to: ENV.fetch("HOST_PROPOSAL_TO", "nicolas.goarant35@gmail.com"),
+      subject: "Nouvelle proposition d'espace"
+    )
+  end
+end

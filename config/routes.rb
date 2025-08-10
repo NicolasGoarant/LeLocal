@@ -15,6 +15,7 @@ Rails.application.routes.draw do
     collection do
       get 'map'
       get 'new_host' # Route pour les hôtes proposant un espace
+      post 'submit_host'  
     end
     member do
       get 'reserve'

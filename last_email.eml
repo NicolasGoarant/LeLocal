@@ -1,0 +1,76 @@
+Date: Sun, 10 Aug 2025 10:17:18 +0200
+From: no-reply@lelocal.dev
+To: nicolas.goarant35@gmail.com
+Message-ID: <6898558e42fc7_36aefc8695c0@goarant-ThinkPad-L390.mail>
+Subject: Nouvelle proposition d'espace
+Mime-Version: 1.0
+Content-Type: multipart/alternative;
+ boundary="--==_mimepart_6898558e4236a_36aefc86941d";
+ charset=UTF-8
+Content-Transfer-Encoding: 7bit
+
+
+----==_mimepart_6898558e4236a_36aefc86941d
+Content-Type: text/plain;
+ charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+
+Nouvelle proposition d'espace
+
+[R=C3=A9capitulatif (Space enregistr=C3=A9)]
+Nom: espoir
+Description: Nouvel essai
+Cat=C3=A9gorie: bureau
+Capacit=C3=A9: 15 pers.
+Adresse: 3 impasse du canal 54000 Nancy
+Prix / heure: 34.0 =E2=82=AC
+
+[Donn=C3=A9es brutes du formulaire]
+{
+  "ping": "2025-08-10 10:17:18 +0200"
+}
+
+
+----==_mimepart_6898558e4236a_36aefc86941d
+Content-Type: text/html;
+ charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+
+<!-- BEGIN app/views/layouts/mailer.html.erb --><!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3Dutf=
+-8">
+    <style>
+      /* Email styles need to be inline */
+    </style>
+  </head>
+
+  <body>
+    <!-- BEGIN app/views/host_proposal_mailer/notify_admin.html.erb --><h=
+2>Nouvelle proposition d'espace</h2>
+
+  <h3>R=C3=A9capitulatif (Space enregistr=C3=A9)</h3>
+  <ul>
+    <li><strong>Nom :</strong> espoir</li>
+    <li><strong>Description :</strong> Nouvel essai</li>
+    <li><strong>Cat=C3=A9gorie :</strong> bureau</li>
+    <li><strong>Capacit=C3=A9 :</strong> 15 pers.</li>
+    <li><strong>Adresse :</strong> 3 impasse du canal 54000 Nancy</li>
+    <li><strong>Prix / heure :</strong> 34.0 =E2=82=AC</li>
+  </ul>
+  <hr/>
+
+<h3>Donn=C3=A9es brutes du formulaire</h3>
+<pre style=3D"white-space:pre-wrap;background:#f7f7f7;padding:12px;border=
+-radius:8px;">
+{
+  &quot;ping&quot;: &quot;2025-08-10 10:17:18 +0200&quot;
+}
+</pre>
+<!-- END app/views/host_proposal_mailer/notify_admin.html.erb -->
+  </body>
+</html>
+<!-- END app/views/layouts/mailer.html.erb -->=
+
+----==_mimepart_6898558e4236a_36aefc86941d--

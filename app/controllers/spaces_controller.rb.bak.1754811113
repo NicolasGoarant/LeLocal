@@ -16,7 +16,6 @@ class SpacesController < ApplicationController
 
 def submit_host
   # Concatène adresse + CP + ville dans le seul champ address
-    Rails.logger.info "[SUBMIT_HOST] photos=#{Array(params[:photos]).size}"
   full_address = [params[:address], params[:postal_code], params[:city]]
                    .compact.reject(&:blank?).join(' ')
 
@@ -37,19 +36,10 @@ def submit_host
 
   if @space.save
     # Envoi d’email – ne casse jamais la requête si SMTP échoue
-    Array(params[:photos]).each do |ph|
-      Rails.logger.info "[DEBUG_PHOTO] \#{ph.inspect} size=\#{ph.size if ph.respond_to?(:size)}"
-    end
-
-    Array(params[:photos]).each do |ph|
-      Rails.logger.info "[DEBUG_PHOTO] #{ph.inspect} size=#{ph.size if ph.respond_to?(:size)}"
-    end
-
     begin
       HostProposalMailer.with(
         space: @space,
-        raw_params: params.to_unsafe_h,
-        photos: params[:photos]
+        raw_params: params.to_unsafe_h.except(:photos)
       ).notify_admin.deliver_now
     rescue => e
       Rails.logger.error("[MAILER] #{e.class}: #{e.message}")

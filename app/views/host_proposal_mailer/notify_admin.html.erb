@@ -1,0 +1,22 @@
+<h2>Nouvelle proposition d'espace</h2>
+
+<% if @space.present? %>
+  <h3>Récapitulatif (Space enregistré)</h3>
+  <ul>
+    <li><strong>Nom :</strong> <%= @space.name %></li>
+    <li><strong>Description :</strong> <%= @space.description %></li>
+    <li><strong>Catégorie :</strong> <%= @space.category %></li>
+    <li><strong>Capacité :</strong> <%= @space.capacity %> pers.</li>
+    <li><strong>Adresse :</strong> <%= @space.address %></li>
+    <li><strong>Prix / heure :</strong> <%= @space.price_per_hour %> €</li>
+    <% if @space.respond_to?(:amenities) && @space.amenities.present? %>
+      <li><strong>Équipements :</strong> <%= Array(@space.amenities).join(', ') %></li>
+    <% end %>
+  </ul>
+  <hr/>
+<% end %>
+
+<h3>Données brutes du formulaire</h3>
+<pre style="white-space:pre-wrap;background:#f7f7f7;padding:12px;border-radius:8px;">
+<%= JSON.pretty_generate(@raw_params.as_json) rescue @raw_params.inspect %>
+</pre>
