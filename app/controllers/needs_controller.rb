@@ -7,6 +7,19 @@ class NeedsController < ApplicationController
     @need = OpenStruct.new
   end
 
+  def show
+  @need = Need.find(params[:id])
+  # Fallback de coordonnées si manquantes (centre France)
+  @center = if @need.latitude.present? && @need.longitude.present?
+              [@need.latitude, @need.longitude]
+            else
+              [46.603354, 1.888334]
+            end
+  # Petites infos de contact mock si absentes
+  @need.contact_email ||= "contact+need#{@need.id}@lelocal.fr"
+  @need.contact_phone ||= "+33 6 00 00 #{format('%02d', @need.id % 100)}"
+  end
+
   def create
     raw    = need_params.to_h
     errors = []
@@ -82,9 +95,10 @@ class NeedsController < ApplicationController
 
       # Transforme un Need AR OU un OpenStruct en OpenStruct “safe”
       def normalize_need(n)
-        title = (n.respond_to?(:title) && n.title.present?) ? n.title : "Besoin d'espace"
-        date  = (n.respond_to?(:date_needed) && n.date_needed.present?) ? n.date_needed : Date.today + 7
-        city  = (n.respond_to?(:city) && n.city.present?) ? n.city : "Paris"
+        id    = (n.respond_to?(:id) && n.id.present?) ? n.id : nil
+        title = n.respond_to?(:title) && n.title.present? ? n.title : "Besoin d'espace"
+        date  = n.respond_to?(:date_needed) && n.date_needed.present? ? n.date_needed : Date.today + 7
+        city  = n.respond_to?(:city) && n.city.present? ? n.city : "Paris"
 
         lat = n.respond_to?(:latitude) ? n.latitude : nil
         lng = n.respond_to?(:longitude) ? n.longitude : nil
@@ -103,6 +117,7 @@ class NeedsController < ApplicationController
           end
 
         OpenStruct.new(
+          id: id,                    # <<<<<< IMPORTANT
           title: title,
           date_needed: date,
           city: city,
@@ -112,25 +127,30 @@ class NeedsController < ApplicationController
         )
       end
 
+
       def build_simulated_needs
         [
           OpenStruct.new(
+            id: nil, # ou -1
             city: "Nancy", latitude: 48.6937, longitude: 6.1844,
             title: "Atelier créatif – 15/20 pers.", date_needed: Date.today + 10,
             user: OpenStruct.new(display_name: "Collectif Nancy")
           ),
           OpenStruct.new(
+            id: nil,
             city: "Paris", latitude: 48.8566, longitude: 2.3522,
             title: "Réunion mensuelle", date_needed: Date.today + 5,
             user: OpenStruct.new(display_name: "Association Paris")
           ),
           OpenStruct.new(
+            id: nil,
             city: "Lyon", latitude: 45.7640, longitude: 4.8357,
             title: "Expo photo", date_needed: Date.today + 20,
             user: OpenStruct.new(display_name: "Club Photo")
           )
         ]
       end
+
 
       def city_coords(city)
         lut = {

@@ -90,8 +90,8 @@
         <% if @spaces.any? %>
           <% @spaces.each do |space| %>
             <div class="space-card horizontal" data-space-id="<%= space.id %>" data-lat="<%= space.latitude %>" data-lng="<%= space.longitude %>">
-              <div class="space-img" style="background-color: <%= get_category_color(space.category) %>; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 14px; text-align: center; padding: 10px;">
-                <div><%= get_category_icon(space.category) %><span class="space-img-name"><%= space.name %></span></div>
+              <div class="space-img" style="background-color: <%= get_category_color(category_display(space.category)) %>; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 14px; text-align: center; padding: 10px;">
+                <div><%= get_category_icon(category_display(space.category)) %><span class="space-img-name"><%= space.name %></span></div>
               </div>
               <div class="space-content">
                 <div class="space-title">

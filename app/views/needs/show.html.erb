@@ -1,20 +1,134 @@
-<h1>Exprimer un besoin en local</h1>
+<% content_for :title, "LeLocal - #{@need.title}" %>
 
-<%= form_with model: @need do |f| %>
-  <%= f.label :title, "Titre du besoin" %>
-  <%= f.text_field :title %>
+<% content_for :head do %>
+  <style>
+    header { margin-bottom: 0 !important; }
+    .container-page { max-width: 1100px; margin: 14px auto 48px; padding: 0 16px; }
+    .hero-wrap { margin: 0 auto 16px; }
+    .hero-box{
+      height: 220px; border-radius: 14px; overflow: hidden; color:#fff;
+      display:grid; align-items:end;
+      background:
+        linear-gradient(rgba(0,0,0,.28), rgba(0,0,0,.45)),
+        url("<%= (@need.respond_to?(:photos) && @need.photos.attached?) ? url_for(@need.photos.first) : 'https://images.unsplash.com/photo-1506784983877-45594efa4cbe?q=80&w=1600&auto=format&fit=crop' %>")
+        center/cover no-repeat;
+    }
+    .hero-inner{ padding:18px; }
+    .hero-title{ font-size: clamp(20px,3vw,28px); font-weight: 800; margin:0 0 6px; }
+    .hero-meta{ display:flex; gap:10px; flex-wrap:wrap; align-items:center; font-size:14px; opacity:.98; }
+    .chip { background: rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.25);
+            padding:4px 10px; border-radius:999px; font-size:12px; }
 
-  <%= f.label :description %>
-  <%= f.text_area :description %>
-
-  <%= f.label :city, "Ville" %>
-  <%= f.text_field :city %>
-
-  <%= f.label :surface_min, "Surface minimale souhaitée (m²)" %>
-  <%= f.number_field :surface_min %>
-
-  <%= f.label :duration, "Durée d’occupation souhaitée" %>
-  <%= f.text_field :duration %>
-
-  <%= f.submit "Publier le besoin" %>
+    .grid { display:grid; grid-template-columns: 1fr 320px; gap: 24px; }
+    .card { background:#fff; border-radius:14px; box-shadow:0 8px 24px rgba(0,0,0,.06); }
+    .card-body{ padding:18px; }
+    .section-title{ font-weight:700; font-size:16px; margin:2px 0 12px; color:#222; }
+    .muted{ color:#666; font-size:13px; }
+    .gallery{ margin-bottom:16px; }
+    .gallery-strip{ display:flex; gap:10px; overflow-x:auto; scroll-snap-type:x mandatory; padding: 10px 6px; }
+    .photo{ flex: 0 0 260px; height: 160px; border-radius:12px; overflow:hidden; scroll-snap-align:start; }
+    .photo img{ width:100%; height:100%; object-fit:cover; display:block; }
+    #need-map{ width:100%; height:320px; border-radius:10px; }
+    .price{ font-size:24px; font-weight:800; color:#2e7d32; }
+    .pill{ background:#f2f4f7; border:1px solid #e5e7eb; padding:6px 10px; border-radius:999px; font-size:13px; }
+    .info-row{ display:flex; gap:8px; align-items:center; margin:2px 0; }
+    .contact a{ color:#2e7d32; text-decoration:none; }
+    .contact a:hover{ text-decoration:underline; }
+    @media (max-width: 900px){
+      .grid{ grid-template-columns: 1fr; gap:16px; }
+      .hero-box{ height: 200px; }
+      #need-map{ height:260px; }
+      .container-page{ margin-top: 8px; }
+    }
+  </style>
 <% end %>
+
+<div class="container-page">
+  <!-- HERO -->
+  <div class="hero-wrap">
+    <div class="hero-box">
+      <div class="hero-inner">
+        <h1 class="hero-title"><%= @need.title %></h1>
+        <div class="hero-meta">
+          <span><%= @need.city.presence || "Localisation non renseignée" %></span>
+          <% if @need.date_needed.present? %><span class="chip">Pour le <%= l(@need.date_needed, format: :long) %></span><% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Galerie si plusieurs photos -->
+  <% if @need.respond_to?(:photos) && @need.photos.attached? && @need.photos.count > 1 %>
+    <div class="card gallery">
+      <div class="card-body">
+        <div class="section-title">Photos</div>
+        <div class="gallery-strip">
+          <% @need.photos.each_with_index do |ph, idx| %>
+            <% next if idx == 0 %>
+            <div class="photo">
+              <%= image_tag ph, alt: "#{@need.title} photo #{idx+1}" %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
+  <div class="grid">
+    <!-- MAIN -->
+    <div>
+      <div class="card">
+        <div class="card-body">
+          <div class="section-title">À propos de ce besoin</div>
+          <p class="muted"><%= @need.description.presence || "Description non renseignée." %></p>
+          <% if @need.budget.present? %>
+            <div class="pill">Budget : <strong><%= @need.budget %> €</strong></div>
+          <% end %>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:16px;">
+        <div class="card-body">
+          <div class="section-title">Localisation</div>
+          <div id="need-map"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ASIDE -->
+    <aside>
+      <div class="card">
+        <div class="card-body">
+          <% if @need.budget.present? %>
+            <div class="price"><%= @need.budget %>€</div>
+            <div class="muted" style="margin-top:2px;">Budget prévu</div>
+          <% end %>
+
+          <div class="contact" style="margin-top:14px;">
+            <div class="section-title" style="margin-bottom:8px;">Contacter l’association</div>
+            <% email = @need.try(:contact_email) || "contact@asso.fr" %>
+            <% phone = @need.try(:contact_phone) || "+33 6 12 34 56 78" %>
+            <div class="info-row"><span class="muted">Email :</span>&nbsp;<a href="mailto:<%= email %>"><%= email %></a></div>
+            <div class="info-row"><span class="muted">Téléphone :</span>&nbsp;<a href="tel:<%= phone.gsub(/\s+/,'') %>"><%= phone %></a></div>
+          </div>
+        </div>
+      </div>
+    </aside>
+  </div>
+</div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    var lat = <%= @need.latitude.present? ? @need.latitude : 48.8566 %>;
+    var lng = <%= @need.longitude.present? ? @need.longitude : 2.3522 %>;
+    var mapEl = document.getElementById('need-map');
+    if (!mapEl) return;
+    var map = L.map('need-map').setView([lat, lng], 14);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 }).addTo(map);
+    L.marker([lat, lng]).addTo(map)
+      .bindPopup("<strong><%= j @need.title %></strong><br><%= j(@need.city || '') %>");
+  });
+</script>
+
+
+

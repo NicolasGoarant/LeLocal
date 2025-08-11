@@ -452,54 +452,49 @@
       }).addTo(map);
       
       // Données des espaces (à remplacer par vos données réelles)
-      var spaces = <%= raw @spaces.to_json(
-        only: [:id, :name, :address, :city, :capacity, :hourly_price],
-        methods: [:latitude, :longitude, :average_rating, :address_short]
-      ) %>;
-      
+      // Données des espaces -> on prépare une image_url sûre côté Rails
+      var spaces = <%= raw @spaces.map { |s|
+        {
+          id:            s.id,
+          name:          s.name,
+          address_short: (s.respond_to?(:address_short) ? s.address_short : s.address),
+          capacity:      s.capacity,
+          hourly_price:  (s.respond_to?(:hourly_price) ? s.hourly_price : s.price_per_hour),
+          latitude:      s.latitude,
+          longitude:     s.longitude,
+          image_url:     (s.photos.attached? ? url_for(s.photos.first) : 'https://images.unsplash.com/photo-1497366754035-f200968a6e72')
+        }
+      }.to_json %>;
+
       // Ajouter des marqueurs pour chaque espace
       spaces.forEach(function(space) {
         if (space.latitude && space.longitude) {
-          // Créer le contenu du popup
+          // Popup joli
           var popupContent = `
             <div class="popup-content">
-              <img src="${space.photos_urls ? space.photos_urls[0] : 'https://images.unsplash.com/photo-1497366754035-f200968a6e72'}" class="popup-image">
-              <h3 class="popup-title">${space.name}</h3>
-              <p class="popup-details">${space.address_short} • Jusqu'à ${space.capacity} personnes</p>
-              <p class="popup-price">${space.hourly_price}€ / heure</p>
-              <a href="/spaces/${space.id}" class="popup-link">Voir détails</a>
+              <img src="${space.image_url}" class="popup-image" alt="">
+              <h3 class="popup-title" style="font-size:16px;font-weight:700;color:#2c3e50;margin:0 0 6px">${space.name}</h3>
+              <p class="popup-details" style="margin:0 0 6px;color:#555">
+                ${space.address_short} • Jusqu'à ${space.capacity} personnes
+              </p>
+              <p class="popup-price" style="margin:0 0 10px;color:#4CAF50;font-weight:600">
+                ${space.hourly_price}€ / heure
+              </p>
+              <a href="<%= space_path(':id') %>".replace(':id', space.id) class="popup-link">Voir détails</a>
             </div>
           `;
-          
-          // Créer un marqueur et l'ajouter à la carte
+
           var marker = L.marker([space.latitude, space.longitude]).addTo(map)
             .bindPopup(popupContent);
-          
-          // Associer le marqueur à l'élément de la liste
+
+          // Clic sur la carte = ouvrir le bon popup
           document.querySelector(`.space-item[data-space-id="${space.id}"]`)?.addEventListener('click', function() {
             map.setView([space.latitude, space.longitude], 15);
             marker.openPopup();
           });
         }
       });
-      
-      // Si la liste est vide, centrer la carte sur la France
-      if (spaces.length === 0) {
-        map.setView([46.603354, 1.888334], 6); // Centre de la France
-      } else if (spaces.length === 1) {
-        // Si un seul espace, zoomer dessus
-        var space = spaces[0];
-        if (space.latitude && space.longitude) {
-          map.setView([space.latitude, space.longitude], 15);
-        }
-      } else {
-        // Adapter la vue pour voir tous les marqueurs
-        var bounds = [];
-        spaces.forEach(function(space) {
-          if (space.latitude && space.longitude) {
-            bounds.push([space.latitude, space.longitude]);
-          }
-        });
+
         
         if (bounds.length > 0) {
           map.fitBounds(bounds);

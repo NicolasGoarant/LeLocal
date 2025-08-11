@@ -1,7 +1,7 @@
 Rails.application.routes.draw do
   # Besoins (form + page carte)
   get 'needs', to: redirect('/needs/new')
-  resources :needs, only: [:new, :create] do
+  resources :needs, only: [:new, :create, :show] do
     collection { get :map }   # => map_needs_path
   end
 
@@ -63,7 +63,7 @@ Rails.application.routes.draw do
   namespace :api, defaults: { format: :json } do
     namespace :v1 do
       resources :spaces, only: [:index, :show]
-      resources :needs,  only: [:new, :create]
+      resources :needs,  only: [:new, :create, :show]
     end
   end
 end

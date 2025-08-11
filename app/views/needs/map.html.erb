@@ -3,8 +3,8 @@
 <% content_for :head do %>
   <!-- Leaflet CSS -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" 
-  integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A==" 
-  crossorigin="" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
   
   <!-- Font Awesome pour les icônes -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -544,162 +544,70 @@
     <!-- Conteneur de la carte -->
     <div id="map" style="height: 500px; width: 100%;"></div>
 
-    <script>
-      document.addEventListener("DOMContentLoaded", function () {
-        // Initialisation de la carte centrée
-        var map = L.map('map').setView([<%= @center_coords[0] %>, <%= @center_coords[1] %>], 12);
-    
-        // Ajouter le fond de carte OpenStreetMap
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-          attribution: '© OpenStreetMap contributors'
-        }).addTo(map);
-    
-        // Ajouter les marqueurs des besoins
-        var needs = <%= raw @needs.map { |need|
-          {
-            lat: need.latitude,
-            lng: need.longitude,
-            info: need.title,
-            id: need.id
-          }
-        }.to_json %>;
-    
-        needs.forEach(function (need) {
-          if (need.lat && need.lng) {
-            L.marker([need.lat, need.lng])
-              .addTo(map)
-              .bindPopup(`<strong>${need.info}</strong><br><a href="/needs/${need.id}">Voir le besoin</a>`);
-          }
-        });
-      });
-    </script>
-    
-  </div>
-</div>
 
 <% content_for :scripts do %>
-  <!-- Leaflet JS -->
-  <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
-  integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
-  crossorigin=""></script>
-  
-  <script>
-    // Déclarer les variables au niveau global pour pouvoir les utiliser dans d'autres fonctions
-    var map;
-    var markers = {};
-    var previouslyHighlighted = null;
-    
-    // Fonction pour mettre en évidence un marqueur quand on clique sur un élément de la liste
-    function highlightMarker(needId) {
-      if (markers[needId]) {
-        // Réinitialiser le marqueur précédemment mis en évidence
-        if (previouslyHighlighted && markers[previouslyHighlighted]) {
-          markers[previouslyHighlighted].setIcon(defaultIcon);
-        }
-        
-        // Centre la carte sur le marqueur sélectionné
-        map.setView(markers[needId].getLatLng(), 15);
-        markers[needId].openPopup();
-        
-        // Mettre en évidence le marqueur actuel
-        markers[needId].setIcon(highlightIcon);
-        previouslyHighlighted = needId;
-        
-        // Mettre en évidence l'élément dans la liste
-        var listItems = document.querySelectorAll('.need-item');
-        listItems.forEach(function(item) {
-          item.classList.remove('selected');
-        });
-        var selectedItem = document.querySelector('.need-item[data-need-id="' + needId + '"]');
-        if (selectedItem) {
-          selectedItem.classList.add('selected');
-          // Faire défiler jusqu'à l'élément de la liste
-          selectedItem.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        }
-      }
-    }
-    
-    document.addEventListener('DOMContentLoaded', function() {
-      // Créer les icônes pour les marqueurs standard et mis en évidence
-      var defaultIcon = L.icon({
-        iconUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon.png',
-        iconSize: [25, 41],
-        iconAnchor: [12, 41],
-        popupAnchor: [1, -34],
-        shadowUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png',
-        shadowSize: [41, 41]
-      });
-      
-      var highlightIcon = L.icon({
-        iconUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon-2x.png',
-        iconSize: [30, 45],
-        iconAnchor: [15, 45],
-        popupAnchor: [1, -34],
-        shadowUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png',
-        shadowSize: [41, 41]
-      });
-      
-      // Initialiser la carte avec le centre par défaut (Paris)
-      map = L.map('map').setView([48.8566, 2.3522], 13);
-      
-      // Ajouter la couche de tuiles OpenStreetMap
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-      }).addTo(map);
-      
-      // Tableau pour stocker les coordonnées des marqueurs
-      var bounds = [];
-      
-      <% if @needs.present? %>
-        <% @needs.each do |need| %>
-          <% if need.respond_to?(:latitude) && need.respond_to?(:longitude) && need.latitude.present? && need.longitude.present? %>
-            // Ajouter les coordonnées aux limites
-            bounds.push([<%= need.latitude %>, <%= need.longitude %>]);
-            
-            // Créer le contenu du popup
-            var popupContent = '<div class="popup-content">' +
-              '<img src="<%= need.respond_to?(:photos) && need.photos.respond_to?(:attached?) && need.photos.attached? ? url_for(need.photos.first) : "https://images.unsplash.com/photo-1517457373958-b7bdd4587205" %>" class="popup-image">' +
-              '<h3 class="popup-title" style="font-size: 16px; font-weight: bold; color: #2c3e50;"><%= need.user.display_name %></h3>' +
-              '<p class="popup-title"><%= need.title %></p>' +
-              '<p class="popup-details"><%= need.respond_to?(:address_short) ? need.address_short : (need.respond_to?(:city) ? need.city : need.address.split(",").first) %> • <%= need.date_needed.strftime("%d/%m/%Y") %></p>' +
-              '<% if need.respond_to?(:budget) && need.budget.present? %>' +
-              '<p class="popup-budget">Budget : <%= need.budget %>€</p>' +
-              '<% else %>' +
-              '<p class="popup-budget">Budget non spécifié</p>' +
-              '<% end %>' +
-              '<a href="/needs/<%= need.id %>" class="popup-link">Proposer mon espace</a>' +
-              '</div>';
-            
-            // Créer un marqueur et l'ajouter à la carte
-            var marker = L.marker([<%= need.latitude %>, <%= need.longitude %>], {icon: defaultIcon}).addTo(map)
-              .bindPopup(popupContent);
-            
-            // Ajouter un événement de clic au marqueur pour mettre en évidence l'élément correspondant dans la liste
-            marker.on('click', function() {
-              highlightMarker('<%= need.id %>');
-            });
-            
-            // Stocker le marqueur dans le tableau des marqueurs
-            markers['<%= need.id %>'] = marker;
-          <% end %>
-        <% end %>
-      <% end %>
-      
-      // Si aucun besoin n'a de coordonnées, centrer la carte sur la France
-      if (bounds.length === 0) {
-        map.setView([46.603354, 1.888334], 6); // Centre de la France
-      } else if (bounds.length === 1) {
-        // Si un seul besoin, zoomer dessus
-        map.setView(bounds[0], 15);
-      } else {
-        // Adapter la vue pour voir tous les marqueurs
-        try {
-          map.fitBounds(bounds);
-        } catch (e) {
-          console.error("Erreur lors de l'ajustement des limites de la carte:", e);
-          map.setView([46.603354, 1.888334], 6); // Centre de la France par défaut
-        }
-      }
+<script>
+(function(){
+  function initNeedsMap(){
+    var el = document.getElementById('map');
+    if (!el) return;
+    if (el.dataset.initialized === '1') return;
+    el.dataset.initialized = '1';
+
+    var centerLat = <%= (@center_coords && @center_coords[0]) || 46.6 %>;
+    var centerLng = <%= (@center_coords && @center_coords[1]) || 2.2 %>;
+
+    var map = L.map('map', { scrollWheelZoom: true }).setView([centerLat, centerLng], 6);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; OpenStreetMap'
+    }).addTo(map);
+
+    var defaultIcon = L.icon({
+      iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
+      iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
+      shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+      iconSize: [25,41], iconAnchor:[12,41], popupAnchor:[1,-30], shadowSize:[41,41]
     });
-  </script>
-<% end %>
+
+    var bounds = [];
+    <% if @needs.present? %>
+      <% @needs.each do |need| %>
+        <% lat = need.try(:latitude); lng = need.try(:longitude) %>
+        <% next unless lat.present? && lng.present? %>
+        var popupHtml = `
+          <div class="popup-content">
+            <img src="<%= (need.respond_to?(:photos) && need.photos.respond_to?(:attached?) && need.photos.attached?) ? url_for(need.photos.first) : "https://images.unsplash.com/photo-1517457373958-b7bdd4587205?q=80&w=800&auto=format&fit=crop" %>" class="popup-image">
+            <h3 class="popup-title"><%= j need.title %></h3>
+            <p class="popup-details">
+              <%= j(need.try(:city) || need.try(:address).to_s.split(',').first) %>
+              • <%= need.date_needed.strftime("%d/%m/%Y") rescue "" %>
+            </p>
+            <p class="popup-budget">
+              <%= need.try(:budget).present? ? "Budget : #{need.budget}€" : "Budget non spécifié" %>
+            </p>
+            <% if need.id.present? %><a href="<%= need_path(need.id) %>" class="popup-link">Voir le besoin</a><% else %><a href="<%= new_need_path %>" class="popup-link">Proposer mon espace</a><% end %>
+          </div>
+        `;
+        L.marker([<%= lat %>, <%= lng %>], {icon: defaultIcon})
+          .addTo(map)
+          .bindPopup(popupHtml);
+        bounds.push([<%= lat %>, <%= lng %>]);
+      <% end %>
+    <% end %>
+
+    if (bounds.length > 0){
+      map.fitBounds(bounds, {padding:[30,30]});
+    } else {
+      map.setView([centerLat, centerLng], 11);
+    }
+  }
+  document.addEventListener('turbo:load', initNeedsMap);
+  document.addEventListener('DOMContentLoaded', initNeedsMap);
+})();
+</script>
+
+<%= render "needs/map_data" %>
+<%= render "needs/map_script" %>
+
+      <% end %>

@@ -31,6 +31,27 @@ class SpacesController < ApplicationController
     render :map
   end
 
+    def map
+      # 1) Espaces en base avec coordonnées
+      base = Space.where.not(latitude: nil, longitude: nil).to_a
+
+      # 2) Éventuels espaces simulés si la méthode existe
+      simulated = respond_to?(:simulated_spaces, true) ? Array(simulated_spaces) : []
+
+      # 3) Fusion (on nettoie les nil)
+      @spaces = (base + simulated).compact
+
+      # 4) Centre de carte par défaut (Nancy) si on n’a rien
+      @center_coords =
+        if @spaces.any? && @spaces.first.respond_to?(:latitude) && @spaces.first.respond_to?(:longitude)
+          # centre sur le premier (tu peux faire une moyenne si tu préfères)
+          [@spaces.first.latitude, @spaces.first.longitude]
+        else
+          [48.6921, 6.1844] # Nancy par défaut
+        end
+
+      render :map
+    end
   # --- FORM HÔTE ---
   def submit_host
     Rails.logger.info "[SUBMIT_HOST] photos=#{Array(params[:photos]).size}"
@@ -90,7 +111,7 @@ class SpacesController < ApplicationController
 
     unless @space
       flash[:alert] = "L'espace demandé n'a pas été trouvé."
-      redirect_to search_spaces_path and return
+      redirect_to map_spaces_path and return
     end
 
     @marker = { lat: @space.latitude, lng: @space.longitude, info: @space.name, id: @space.id }

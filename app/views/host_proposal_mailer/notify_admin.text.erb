@@ -4,7 +4,7 @@ Nouvelle proposition d'espace
 [Récapitulatif (Space enregistré)]
 Nom: <%= @space.name %>
 Description: <%= @space.description %>
-Catégorie: <%= @space.category %>
+Catégorie: <%= category_display(@space.category) %>
 Capacité: <%= @space.capacity %> pers.
 Adresse: <%= @space.address %>
 Prix / heure: <%= @space.price_per_hour %> €

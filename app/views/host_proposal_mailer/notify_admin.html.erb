@@ -5,7 +5,7 @@
   <ul>
     <li><strong>Nom :</strong> <%= @space.name %></li>
     <li><strong>Description :</strong> <%= @space.description %></li>
-    <li><strong>Catégorie :</strong> <%= @space.category %></li>
+    <li><strong>Catégorie :</strong> <%= category_display(@space.category) %></li>
     <li><strong>Capacité :</strong> <%= @space.capacity %> pers.</li>
     <li><strong>Adresse :</strong> <%= @space.address %></li>
     <li><strong>Prix / heure :</strong> <%= @space.price_per_hour %> €</li>

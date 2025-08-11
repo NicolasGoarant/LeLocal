@@ -359,22 +359,48 @@
           attribution: '© OpenStreetMap'
         }).addTo(map);
     
-        // Exemple de marqueurs (tu pourras les remplacer dynamiquement ensuite)
-        var spaces = <%= raw @spaces.map { |space| 
+        var spaces = <%= raw @spaces.map { |s|
           {
-            lat: space.latitude, 
-            lng: space.longitude, 
-            name: space.name.gsub("'", "\\\\'")
-          } 
-        }.to_json %>;
-    
-        spaces.forEach(function(space) {
-          if (space.lat && space.lng) {
-            L.marker([space.lat, space.lng])
-              .addTo(map)
-              .bindPopup('<strong>' + space.name + '</strong>');
+            id:             s.id,
+            name:           s.name,
+            address:        s.address,
+            capacity:       s.capacity,
+            price_per_hour: s.price_per_hour,
+            latitude:       s.latitude,
+            longitude:      s.longitude,
+            image_url:      (s.respond_to?(:photos) && s.photos.respond_to?(:attached?) && s.photos.attached? ?
+                              url_for(s.photos.first) :
+                              "https://images.unsplash.com/photo-1517457373958-b7bdd4587205"),
+            # IMPORTANT : on génère l’URL show ici (marche aussi pour les ids négatifs des “simulés”)
+            show_url:       space_path(s.id)
           }
-        });
+        }.to_json %>;
+
+      // Ajouter des marqueurs pour chaque espace
+      spaces.forEach(function(space) {
+        if (space.latitude && space.longitude) {
+          // Popup joli
+          var popupContent = `
+            <div class="popup-card">
+              <img src="${space.image_url}" class="popup-image" alt="${space.name}">
+              <h3 class="popup-title">${space.name}</h3>
+              <p class="popup-details">${space.address}</p>
+              <p class="popup-price"><strong>${space.price_per_hour || 0} €</strong> / heure • ${space.capacity || "—"} pers.</p>
+              <a href="${space.show_url}" class="popup-link">Voir détails</a>
+            </div>
+          `;
+
+          var marker = L.marker([space.latitude, space.longitude]).addTo(map)
+            .bindPopup(popupContent);
+
+          // Clic sur la carte = ouvrir le bon popup
+          document.querySelector(`.space-item[data-space-id="${space.id}"]`)?.addEventListener('click', function() {
+            map.setView([space.latitude, space.longitude], 15);
+            marker.openPopup();
+          });
+        }
+      });
+
       });
     </script>
     

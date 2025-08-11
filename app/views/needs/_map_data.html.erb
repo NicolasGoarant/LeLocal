@@ -1,0 +1,15 @@
+<% needs = (@needs || []).map do |n|
+  next unless n.try(:latitude).present? && n.try(:longitude).present?
+  {
+    id:     (n.respond_to?(:id) ? n.id : nil),
+    title:  n.title,
+    city:   (n.try(:city) || n.try(:address).to_s.split(',').first),
+    date:   (n.try(:date_needed)&.strftime("%d/%m/%Y")),
+    budget: n.try(:budget),
+    image:  (n.respond_to?(:photos) && n.photos.respond_to?(:attached?) && n.photos.attached?) ? url_for(n.photos.first) : "https://images.unsplash.com/photo-1517457373958-b7bdd4587205?q=80&w=800&auto=format&fit=crop",
+    lat:    n.latitude,
+    lng:    n.longitude,
+    url:    (n.respond_to?(:id) && n.id.present? ? need_path(n.id) : nil)
+  }
+end.compact %>
+<script>window.NEEDS_DATA = <%= raw needs.to_json %>;</script>
