@@ -8,16 +8,19 @@ class NeedsController < ApplicationController
   end
 
   def show
-  @need = Need.find(params[:id])
-  # Fallback de coordonnées si manquantes (centre France)
-  @center = if @need.latitude.present? && @need.longitude.present?
-              [@need.latitude, @need.longitude]
-            else
-              [46.603354, 1.888334]
-            end
-  # Petites infos de contact mock si absentes
-  @need.contact_email ||= "contact+need#{@need.id}@lelocal.fr"
-  @need.contact_phone ||= "+33 6 00 00 #{format('%02d', @need.id % 100)}"
+    @need = Need.find(params[:id])
+
+    # Fallback de coordonnées si manquantes (centre France)
+    @center =
+      if @need.latitude.present? && @need.longitude.present?
+        [@need.latitude, @need.longitude]
+      else
+        [46.603354, 1.888334]
+      end
+
+    # Petites infos de contact mock si absentes
+    @need.contact_email ||= "contact+need#{@need.id}@lelocal.fr"
+    @need.contact_phone ||= "+33 6 00 00 #{format('%02d', @need.id % 100)}"
   end
 
   def create
@@ -64,112 +67,102 @@ class NeedsController < ApplicationController
     render :new, status: :internal_server_error
   end
 
+  def map
+    # 1) Récupère les besoins BDD si le modèle existe
+    db_needs = defined?(Need) ? Need.limit(100).to_a : []
 
-      def map
-        # 1) Récupère les besoins BDD si le modèle existe
-        db_needs = defined?(Need) ? Need.limit(100).to_a : []
+    # 2) Ajoute quelques besoins simulés (avec user fictif)
+    sim_needs = build_simulated_needs
 
-        # 2) Ajoute quelques besoins simulés (avec user fictif)
-        sim_needs = build_simulated_needs
+    # 3) Normalise tout le monde pour que la vue puisse appeler
+    @needs = (db_needs + sim_needs).map { |n| normalize_need(n) }
 
-        # 3) Normalise tout le monde pour que la vue puisse appeler
-        #    need.user.display_name / need.latitude / need.longitude sans planter
-        @needs = (db_needs + sim_needs).map { |n| normalize_need(n) }
-
-        # 4) Centre de carte :
-        #    - si ?city= est passé => centre sur cette ville
-        #    - sinon moyenne des points
-        #    - fallback Paris
-        if params[:city].present? && (c = city_coords(params[:city]))
-          @center_coords = c
-        elsif @needs.any?
-          lat = @needs.map(&:latitude).compact.sum / @needs.size.to_f
-          lng = @needs.map(&:longitude).compact.sum / @needs.size.to_f
-          @center_coords = [lat, lng]
-        else
-          @center_coords = [48.8566, 2.3522] # Paris
-        end
-      end
-
-      private
-
-      # Transforme un Need AR OU un OpenStruct en OpenStruct “safe”
-      def normalize_need(n)
-        id    = (n.respond_to?(:id) && n.id.present?) ? n.id : nil
-        title = n.respond_to?(:title) && n.title.present? ? n.title : "Besoin d'espace"
-        date  = n.respond_to?(:date_needed) && n.date_needed.present? ? n.date_needed : Date.today + 7
-        city  = n.respond_to?(:city) && n.city.present? ? n.city : "Paris"
-
-        lat = n.respond_to?(:latitude) ? n.latitude : nil
-        lng = n.respond_to?(:longitude) ? n.longitude : nil
-        if lat.blank? || lng.blank?
-          c = city_coords(city) || [48.8566, 2.3522]
-          lat ||= c[0]; lng ||= c[1]
-        end
-
-        display_name =
-          if n.respond_to?(:user) && n.user.present? && n.user.respond_to?(:display_name) && n.user.display_name.present?
-            n.user.display_name
-          elsif n.respond_to?(:contact_email) && n.contact_email.present?
-            n.contact_email.split("@").first.capitalize
-          else
-            "Association"
-          end
-
-        OpenStruct.new(
-          id: id,                    # <<<<<< IMPORTANT
-          title: title,
-          date_needed: date,
-          city: city,
-          latitude: lat,
-          longitude: lng,
-          user: OpenStruct.new(display_name: display_name)
-        )
-      end
-
-
-      def build_simulated_needs
-        [
-          OpenStruct.new(
-            id: nil, # ou -1
-            city: "Nancy", latitude: 48.6937, longitude: 6.1844,
-            title: "Atelier créatif – 15/20 pers.", date_needed: Date.today + 10,
-            user: OpenStruct.new(display_name: "Collectif Nancy")
-          ),
-          OpenStruct.new(
-            id: nil,
-            city: "Paris", latitude: 48.8566, longitude: 2.3522,
-            title: "Réunion mensuelle", date_needed: Date.today + 5,
-            user: OpenStruct.new(display_name: "Association Paris")
-          ),
-          OpenStruct.new(
-            id: nil,
-            city: "Lyon", latitude: 45.7640, longitude: 4.8357,
-            title: "Expo photo", date_needed: Date.today + 20,
-            user: OpenStruct.new(display_name: "Club Photo")
-          )
-        ]
-      end
-
-
-      def city_coords(city)
-        lut = {
-          "Paris" => [48.8566, 2.3522],
-          "Lyon" => [45.7640, 4.8357],
-          "Nancy" => [48.6937, 6.1844],
-          "Marseille" => [43.2965, 5.3698],
-          "Lille" => [50.6292, 3.0573],
-          "Bordeaux" => [44.8378, -0.5792],
-          "Toulouse" => [43.6047, 1.4442],
-        }
-        # normalise un peu l’entrée
-        key = city.to_s.strip
-        key = key[0].upcase + key[1..] if key.present?
-        lut[key]
-      end
+    # 4) Centre de carte
+    if params[:city].present? && (c = city_coords(params[:city]))
+      @center_coords = c
+    elsif @needs.any?
+      lat = @needs.map(&:latitude).compact.sum / @needs.size.to_f
+      lng = @needs.map(&:longitude).compact.sum / @needs.size.to_f
+      @center_coords = [lat, lng]
+    else
+      @center_coords = [48.8566, 2.3522] # Paris
     end
+  end
 
   private
+
+  # Transforme un Need AR OU un OpenStruct en OpenStruct “safe”
+  def normalize_need(n)
+    id    = (n.respond_to?(:id) && n.id.present?) ? n.id : nil
+    title = n.respond_to?(:title) && n.title.present? ? n.title : "Besoin d'espace"
+    date  = n.respond_to?(:date_needed) && n.date_needed.present? ? n.date_needed : Date.today + 7
+    city  = n.respond_to?(:city) && n.city.present? ? n.city : "Paris"
+
+    lat = n.respond_to?(:latitude) ? n.latitude : nil
+    lng = n.respond_to?(:longitude) ? n.longitude : nil
+    if lat.blank? || lng.blank?
+      c = city_coords(city) || [48.8566, 2.3522]
+      lat ||= c[0]
+      lng ||= c[1]
+    end
+
+    display_name =
+      if n.respond_to?(:user) && n.user.present? && n.user.respond_to?(:display_name) && n.user.display_name.present?
+        n.user.display_name
+      elsif n.respond_to?(:contact_email) && n.contact_email.present?
+        n.contact_email.split("@").first.capitalize
+      else
+        "Association"
+      end
+
+    OpenStruct.new(
+      id: id,  # ← clé pour corriger le /needs/null
+      title: title,
+      date_needed: date,
+      city: city,
+      latitude: lat,
+      longitude: lng,
+      user: OpenStruct.new(display_name: display_name)
+    )
+  end
+
+  def build_simulated_needs
+    [
+      OpenStruct.new(
+        id: -1,
+        city: "Nancy", latitude: 48.6937, longitude: 6.1844,
+        title: "Atelier créatif – 15/20 pers.", date_needed: Date.today + 10,
+        user: OpenStruct.new(display_name: "Collectif Nancy")
+      ),
+      OpenStruct.new(
+        id: -2,
+        city: "Paris", latitude: 48.8566, longitude: 2.3522,
+        title: "Réunion mensuelle", date_needed: Date.today + 5,
+        user: OpenStruct.new(display_name: "Association Paris")
+      ),
+      OpenStruct.new(
+        id: -3,
+        city: "Lyon", latitude: 45.7640, longitude: 4.8357,
+        title: "Expo photo", date_needed: Date.today + 20,
+        user: OpenStruct.new(display_name: "Club Photo")
+      )
+    ]
+  end
+
+  def city_coords(city)
+    lut = {
+      "Paris" => [48.8566, 2.3522],
+      "Lyon" => [45.7640, 4.8357],
+      "Nancy" => [48.6937, 6.1844],
+      "Marseille" => [43.2965, 5.3698],
+      "Lille" => [50.6292, 3.0573],
+      "Bordeaux" => [44.8378, -0.5792],
+      "Toulouse" => [43.6047, 1.4442],
+    }
+    key = city.to_s.strip
+    key = key[0].upcase + key[1..] if key.present?
+    lut[key]
+  end
 
   def need_params
     params.require(:need).permit(
@@ -190,4 +183,4 @@ class NeedsController < ApplicationController
       contact_phone: "Téléphone"
     }[field] || field.to_s.humanize
   end
-
+end
