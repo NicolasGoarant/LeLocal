@@ -180,6 +180,12 @@ class Space < ApplicationRecord
     spaces
   end
 
+    # Libellé humain de la catégorie (pour vues / emails)
+  def category_display
+    pair = CATEGORIES.find { |label, val| val.to_s == category.to_s }
+    pair ? pair.first : category.to_s.humanize
+  end
+
   def self.amenity_categories
     { basic: %w[wifi tables restroom heating],
       av:    %w[projector screen sound_system microphone],
