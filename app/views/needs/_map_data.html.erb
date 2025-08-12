@@ -45,6 +45,22 @@
 %>
 
 <script>
-  window.NEEDS_DATA = <%= raw(data.to_json) %>;
+  (function(){
+    window.NEEDS_DATA = <%= raw(
+      @needs.map { |n|
+        {
+          id:   n.id,
+          title:n.title,
+          city: n.city,
+          date: (n.date_needed.respond_to?(:strftime) ? n.date_needed.strftime('%d/%m/%Y') : n.date_needed),
+          lat:  n.latitude,
+          lng:  n.longitude,
+          budget: n.respond_to?(:budget) ? n.budget : nil,
+          image: nil,
+          url:  n.id.present? ? need_path(n.id) : "#"
+        }
+      }.to_json
+    ) %>;
+  })();
 </script>
 
