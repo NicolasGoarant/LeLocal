@@ -1,64 +1,55 @@
-<%# app/views/needs/_map_data.html.erb %>
-<%
-  data = (@needs || []).map do |n|
-    # id présent uniquement pour les besoins en BDD
-    nid =
-      if n.respond_to?(:id) && n.id.present?
-        n.id
-      else
-        nil
-      end
-
-    # Titre / ville / date / budget
-    ntitle = (n.respond_to?(:title) && n.title.present?) ? n.title : "Besoin d'espace"
-    ncity  = (n.respond_to?(:city) && n.city.present?) ? n.city : nil
-    ndate  =
-      if n.respond_to?(:date_needed) && n.date_needed.present?
-        begin
-          l(n.date_needed, format: '%d/%m/%Y')
-        rescue
-          n.date_needed.to_s
-        end
-      else
-        nil
-      end
-    nbudget = (n.respond_to?(:budget) && n.budget.present?) ? n.budget : nil
-
-    # Coords
-    nlat = n.respond_to?(:latitude) ? n.latitude : nil
-    nlng = n.respond_to?(:longitude) ? n.longitude : nil
-
-    # Image (photo jointe sinon fallback)
-    nimage =
-      begin
-        if n.respond_to?(:photos) && n.photos.respond_to?(:attached?) && n.photos.attached?
-          url_for(n.photos.first)
-        else
-          # Fallback image (remplace si tu as un asset local)
-          "https://images.unsplash.com/photo-1517457373958-b7bdd4587205?q=80&w=800&auto=format&fit=crop"
-        end
-      rescue
-        "https://images.unsplash.com/photo-1517457373958-b7bdd4587205?q=80&w=800&auto=format&fit=crop"
-      end
-
-    # URL uniquement si id valide
-    nurl = nid ? need_path(nid) : nil
-
-    {
-      id: nid,
-      title: ntitle,
-      city: ncity,
-      date: ndate,
-      budget: nbudget,
-      lat: nlat,
-      lng: nlng,
-      image: nimage,
-      url: nurl
-    }
-  end
-%>
-
+<%# Reads window.NEEDS_DATA and renders markers/popups without composing IDs %>
 <script>
-  window.NEEDS_DATA = <%= raw(data.to_json) %>;
+(function(){
+  function initNeedsMap(){
+    var el = document.getElementById('map');
+    if (!el) return;
+    if (el.dataset.initialized === '1') return;
+    el.dataset.initialized = '1';
+
+    var center = [<%= (@center_coords && @center_coords[0]) || 46.6 %>, <%= (@center_coords && @center_coords[1]) || 2.2 %>];
+    var map = L.map('map', { scrollWheelZoom: true }).setView(center, 6);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; OpenStreetMap'
+    }).addTo(map);
+
+    var ico = L.icon({
+      iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
+      iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
+      shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+      iconSize: [25,41], iconAnchor:[12,41], popupAnchor:[1,-30], shadowSize:[41,41]
+    });
+
+    var NEW_NEED_URL = "<%= new_need_path %>";
+
+    var bounds = [];
+    (window.NEEDS_DATA || []).forEach(function(n){
+      if (typeof n.lat !== 'number' || typeof n.lng !== 'number') return;
+
+      var linkHtml = n.url
+        ? '<a class="popup-link" href="'+ n.url +'">Voir le besoin</a>'
+        : '<a class="popup-link" href="'+ NEW_NEED_URL +'">Proposer mon espace</a>';
+
+      var html =
+        '<div class="popup-content">' +
+          '<img class="popup-image" src="'+ (n.image || '') +'" alt="">' +
+          '<h3 class="popup-title">'+ (n.title || 'Besoin d’espace') +'</h3>' +
+          '<p class="popup-details">'+ (n.city || '') + (n.date ? ' • '+n.date : '') +'</p>' +
+          '<p class="popup-budget">'+ (n.budget ? ('Budget : '+n.budget+'€') : 'Budget non spécifié') +'</p>' +
+          linkHtml +
+        '</div>';
+
+      L.marker([n.lat, n.lng], {icon: ico}).addTo(map).bindPopup(html);
+      bounds.push([n.lat, n.lng]);
+    });
+
+    if (bounds.length) map.fitBounds(bounds, {padding:[30,30]}); else map.setView(center, 11);
+  }
+
+  document.addEventListener('turbo:load', initNeedsMap);
+  document.addEventListener('DOMContentLoaded', initNeedsMap);
+})();
 </script>
+
 
