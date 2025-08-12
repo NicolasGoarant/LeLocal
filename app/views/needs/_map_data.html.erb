@@ -1,53 +1,16 @@
-<%
-  data = (@needs || []).map do |n|
-    nid = (n.respond_to?(:id) && n.id.present?) ? n.id : nil
-
-    ntitle = (n.respond_to?(:title) && n.title.present?) ? n.title : "Besoin d'espace"
-    ncity  = (n.respond_to?(:city)  && n.city.present?)  ? n.city  : nil
-    ndate  =
-      if n.respond_to?(:date_needed) && n.date_needed.present?
-        begin
-          l(n.date_needed, format: '%d/%m/%Y')
-        rescue
-          n.date_needed.to_s
-        end
-      end
-    nbudget = (n.respond_to?(:budget) && n.budget.present?) ? n.budget : nil
-
-    nlat = n.respond_to?(:latitude)  ? n.latitude  : nil
-    nlng = n.respond_to?(:longitude) ? n.longitude : nil
-
-    nimage =
-      begin
-        if n.respond_to?(:photos) && n.photos.respond_to?(:attached?) && n.photos.attached?
-          url_for(n.photos.first)
-        else
-          "https://images.unsplash.com/photo-1517457373958-b7bdd4587205?q=80&w=800&auto=format&fit=crop"
-        end
-      rescue
-        "https://images.unsplash.com/photo-1517457373958-b7bdd4587205?q=80&w=800&auto=format&fit=crop"
-      end
-
-    nurl = nid ? need_path(nid) : nil
-
-    {
-      id: nid,
-      title: ntitle,
-      city: ncity,
-      date: ndate,
-      budget: nbudget,
-      lat: nlat,
-      lng: nlng,
-      image: nimage,
-      url: nurl
-    }
-  end
-%>
-
 <script>
-  (function(){
+  (function () {
     window.NEEDS_DATA = <%= raw(
       @needs.map { |n|
+        # Essaie de prendre la première photo si elle existe, sinon un placeholder
+        image_url =
+          if n.respond_to?(:photos) && n.photos.respond_to?(:attached?) && n.photos.attached?
+            url_for(n.photos.first)
+          else
+            # Image par défaut (sécurisée pour prod)
+            "https://images.unsplash.com/photo-1517457373958-b7bdd4587205?q=80&w=800&auto=format&fit=crop"
+          end
+
         {
           id:   n.id,
           title:n.title,
@@ -55,12 +18,13 @@
           date: (n.date_needed.respond_to?(:strftime) ? n.date_needed.strftime('%d/%m/%Y') : n.date_needed),
           lat:  n.latitude,
           lng:  n.longitude,
-          budget: n.respond_to?(:budget) ? n.budget : nil,
-          image: nil,
-          url:  n.id.present? ? need_path(n.id) : "#"
+          budget: (n.respond_to?(:budget) ? n.budget : nil),
+          image: image_url,
+          url:  (n.id.present? ? need_path(n.id) : "#")
         }
       }.to_json
     ) %>;
   })();
 </script>
+
 
