@@ -947,7 +947,7 @@ section + section {
               
               <div class="dual-section">
                   <h3>J'ai un espace</h3>
-                  <p>Partagez votre local avec une association ou découvrez les besoins des associations près de chez vous</p>
+                  <p>Entreprises, particuliers, autres associations : partagez votre local ou découvrez les besoins près de chez vous</p>
                   <div class="section-buttons">
                       <%= link_to "Je propose mon local", new_host_spaces_path, class: "btn-primary" %>
                       <%= link_to "Je regarde les besoins des associations", map_needs_path, class: "btn-secondary" %>
@@ -989,79 +989,96 @@ section + section {
   </div>
 </section>
 
-              <!-- Section des espaces populaires -->
-              <section class="featured-spaces">
-                  <div class="container">
-                      <div class="section-title">
-                          <h2>Espaces les plus appréciés par les associations</h2>
-                          <p>Découvrez les espaces plébiscités par notre communauté</p>
-                      </div>
-                      <div class="space-grid">
-                      <div class="space-card">
-                      <div class="space-img" style="background-image: url('<%= asset_path("atelier1.jpeg") %>');"></div>
-                      <div class="space-badge">Populaire</div>
-                      <div class="space-content">
-                        <div class="space-title">
-                          <h3>Espace Créatif Montmartre</h3>
-                          <div class="space-rating">
-                            <i class="fas fa-star"></i>
-                            <span>4.8</span>
-                          </div>
-                        </div>
-                        <p class="space-location"><i class="fas fa-map-marker-alt"></i> Paris 18ème</p>
-                        <p class="space-capacity"><i class="fas fa-users"></i> Jusqu'à 25 personnes</p>
-                        <div class="space-footer">
-                          <p class="space-price">45€ / heure</p>
-                          <a href="#" class="btn-small">Réserver</a>
-                        </div>
+          <!-- Section des espaces populaires -->
+          <section class="featured-spaces">
+            <div class="container">
+              <div class="section-title">
+                <h2>Espaces les plus appréciés par les associations</h2>
+                <p>Découvrez les espaces plébiscités par notre communauté</p>
+              </div>
+
+              <%# On récupère les 3 espaces mis en avant créés par le seed %>
+              <% montmartre = Space.find_by(name: "Espace Créatif Montmartre") %>
+              <% bastille   = Space.find_by(name: "Atelier Artistique Bastille") %>
+              <% republique = Space.find_by(name: "Salle Panoramique République") %>
+
+              <div class="space-grid">
+                <!-- Carte 1 -->
+                <div class="space-card">
+                  <div class="space-img"
+                      style="background-image: url('<%= montmartre&.photos&.attached? ? url_for(montmartre.photos.first) : asset_path("atelier1.jpeg") %>');">
+                  </div>
+                  <div class="space-badge">Populaire</div>
+                  <div class="space-content">
+                    <div class="space-title">
+                      <h3>Espace Créatif Montmartre</h3>
+                      <div class="space-rating">
+                        <i class="fas fa-star"></i><span>4.8</span>
                       </div>
                     </div>
-                    
-                  
+                    <p class="space-location"><i class="fas fa-map-marker-alt"></i> Paris 18ème</p>
+                    <p class="space-capacity"><i class="fas fa-users"></i> Jusqu'à 25 personnes</p>
+                    <div class="space-footer">
+                      <p class="space-price">45€ / heure</p>
+                      <%= link_to "Réserver",
+                                  (montmartre ? space_path(montmartre) : spaces_path(map: true)),
+                                  class: "btn-small" %>
+                    </div>
+                  </div>
+                </div>
 
-        
-          <div class="space-card">
-            <div class="space-img" style="background-image: url('<%= image_path("atelier2.jpeg") %>')"></div>
-            <div class="space-badge">Nouveau</div>
-            <div class="space-content">
-              <div class="space-title">
-                <h3>Atelier Artistique Bastille</h3>
-                <div class="space-rating">
-                  <i class="fas fa-star"></i>
-                  <span>4.9</span>
+                <!-- Carte 2 -->
+                <div class="space-card">
+<div class="space-img"
+     style="background-image: url('<%= (Space.find_by(name: "Atelier Artistique Bastille")&.photos&.attached?) ? url_for(Space.find_by(name: "Atelier Artistique Bastille").photos.first) : asset_path("workshop_artistique.jpg") %>');">
+</div>
+
+                  <div class="space-badge">Nouveau</div>
+                  <div class="space-content">
+                    <div class="space-title">
+                      <h3>Atelier Artistique Bastille</h3>
+                      <div class="space-rating">
+                        <i class="fas fa-star"></i><span>4.9</span>
+                      </div>
+                    </div>
+                    <p class="space-location"><i class="fas fa-map-marker-alt"></i> Paris 12ème</p>
+                    <p class="space-capacity"><i class="fas fa-users"></i> Jusqu'à 15 personnes</p>
+                    <div class="space-footer">
+                      <p class="space-price">35€ / heure</p>
+                      <%= link_to "Réserver",
+                                  (bastille ? space_path(bastille) : spaces_path(map: true)),
+                                  class: "btn-small" %>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Carte 3 -->
+                <div class="space-card">
+                  <div class="space-img"
+                      style="background-image: url('<%= republique&.photos&.attached? ? url_for(republique.photos.first) : "https://images.unsplash.com/photo-1577412647305-991150c7d163?w=1600&auto=format&fit=crop" %>');">
+                  </div>
+                  <div class="space-content">
+                    <div class="space-title">
+                      <h3>Salle Panoramique République</h3>
+                      <div class="space-rating">
+                        <i class="fas fa-star"></i><span>4.7</span>
+                      </div>
+                    </div>
+                    <p class="space-location"><i class="fas fa-map-marker-alt"></i> Paris 11ème</p>
+                    <p class="space-capacity"><i class="fas fa-users"></i> Jusqu'à 40 personnes</p>
+                    <div class="space-footer">
+                      <p class="space-price">60€ / heure</p>
+                      <%= link_to "Réserver",
+                                  (republique ? space_path(republique) : spaces_path(map: true)),
+                                  class: "btn-small" %>
+                    </div>
+                  </div>
                 </div>
               </div>
-              <p class="space-location"><i class="fas fa-map-marker-alt"></i> Paris 12ème</p>
-              <p class="space-capacity"><i class="fas fa-users"></i> Jusqu'à 15 personnes</p>
-              <div class="space-footer">
-                <p class="space-price">35€ / heure</p>
-                <a href="#" class="btn-small">Réserver</a>
-              </div>
+
+              <a href="<%= spaces_path(map: true) %>" class="view-all">Voir tous les espaces <i class="fas fa-arrow-right"></i></a>
             </div>
-          </div>
-        
-          <div class="space-card">
-            <div class="space-img" style="background-image: url('https://images.unsplash.com/photo-1577412647305-991150c7d163')"></div>
-            <div class="space-content">
-              <div class="space-title">
-                <h3>Salle Panoramique République</h3>
-                <div class="space-rating">
-                  <i class="fas fa-star"></i>
-                  <span>4.7</span>
-                </div>
-              </div>
-              <p class="space-location"><i class="fas fa-map-marker-alt"></i> Paris 11ème</p>
-              <p class="space-capacity"><i class="fas fa-users"></i> Jusqu'à 40 personnes</p>
-              <div class="space-footer">
-                <p class="space-price">60€ / heure</p>
-                <a href="#" class="btn-small">Réserver</a>
-              </div>
-            </div>
-          </div>
-        </div>
-        
-        
-          <a href="<%= spaces_path(map: true) %>" class="view-all">Voir tous les espaces <i class="fas fa-arrow-right"></i></a>
+          </section>
       </div>
   </section>
 

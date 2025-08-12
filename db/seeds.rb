@@ -393,3 +393,74 @@ Space.find_each do |sp|
     puts "  xx aucune photo attachée à \#{sp.name}"
   end
 end
+
+# --- Featured spaces for homepage ---
+# --- Featured spaces for homepage ---
+require "open-uri"
+
+featured = [
+  {
+    name:  "Espace Créatif Montmartre",
+    address: "18 Rue Gabrielle, 75018 Paris",
+    capacity: 25,
+    price_per_hour: 45,
+    category: Category.find_by(name: "Atelier") || Category.first,
+    latitude: 48.8867, longitude: 2.3425,
+    photos: [
+      "https://images.unsplash.com/photo-1526318472351-c75fcf070305?w=1600&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1600461601623-5e995b2d2e1f?w=1600&auto=format&fit=crop"
+    ]
+  },
+  {
+    name:  "Atelier Artistique Bastille",
+    address: "12 Rue de la Roquette, 75011 Paris",
+    capacity: 15,
+    price_per_hour: 35,
+    category: Category.find_by(name: "Atelier") || Category.first,
+    latitude: 48.8531, longitude: 2.3710,
+    photos: [
+      "https://images.unsplash.com/photo-1498887960847-2a5e46312788?w=1600&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1519710164239-da123dc03ef4?w=1600&auto=format&fit=crop"
+    ]
+  },
+  {
+    name:  "Salle Panoramique République",
+    address: "24 Bd Saint-Martin, 75010 Paris",
+    capacity: 40,
+    price_per_hour: 60,
+    category: Category.find_by(name: "Salle d'événement") || Category.first,
+    latitude: 48.8680, longitude: 2.3630,
+    photos: [
+      "https://images.unsplash.com/photo-1577412647305-991150c7d163?w=1600&auto=format&fit=crop"
+    ]
+  }
+]
+
+featured.each do |attrs|
+  space = Space.find_or_initialize_by(name: attrs[:name])
+  space.assign_attributes(
+    description:    "#{attrs[:name]} — espace mis en avant.",
+    address:        attrs[:address],
+    capacity:       attrs[:capacity],
+    price_per_hour: attrs[:price_per_hour],
+    category:       attrs[:category],
+    latitude:       attrs[:latitude],
+    longitude:      attrs[:longitude]
+  )
+  space.save!
+
+  if space.photos.blank?
+    attrs[:photos].each_with_index do |url, i|
+      begin
+        file = URI.open(url)
+        space.photos.attach(io: file, filename: "#{space.name.parameterize}-#{i+1}.jpg", content_type: "image/jpeg")
+      rescue OpenURI::HTTPError => e
+        puts "⚠️  Impossible de télécharger #{url} : #{e.message}"
+        fallback = URI.open("https://via.placeholder.com/800x600?text=#{CGI.escape(space.name)}")
+        space.photos.attach(io: fallback, filename: "#{space.name.parameterize}-fallback.jpg", content_type: "image/jpeg")
+      end
+    end
+    puts "  -> photos attachées à #{space.name}"
+  end
+end
+
