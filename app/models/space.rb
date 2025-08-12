@@ -208,4 +208,26 @@ class Space < ApplicationRecord
       "strict"   => "Stricte (annulation gratuite jusqu'à 7 jours avant)"
     }
   end
+  # Libellé humain de la catégorie (instance OU classe)
+
+  def category_display(val=nil)
+
+    v = val || (self.respond_to?(:category) ? self.category : nil)
+
+    pair = CATEGORIES.find { |label, key| key.to_s == v.to_s }
+
+    pair ? pair.first : (v.present? ? v.to_s.humanize : "Autre")
+
+  end
+
+
+
+  def self.category_display(val)
+
+    pair = CATEGORIES.find { |label, key| key.to_s == val.to_s }
+
+    pair ? pair.first : (val.present? ? val.to_s.humanize : "Autre")
+
+  end
+
 end
