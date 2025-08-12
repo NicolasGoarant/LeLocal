@@ -1,7 +1,8 @@
 require "ostruct"
 
 class NeedsController < ApplicationController
-  skip_before_action :authenticate_user!, only: [:new, :create] rescue nil
+  # Rends ces actions publiques (au cas où l'auth soit activée ailleurs)
+  skip_before_action :authenticate_user!, only: [:new, :create, :map, :show] rescue nil
 
   def new
     @need = OpenStruct.new
@@ -71,10 +72,10 @@ class NeedsController < ApplicationController
     # 1) Récupère les besoins BDD si le modèle existe
     db_needs = defined?(Need) ? Need.limit(100).to_a : []
 
-    # 2) Ajoute quelques besoins simulés (avec user fictif)
+    # 2) Ajoute quelques besoins simulés (avec user fictif) — sans ID
     sim_needs = build_simulated_needs
 
-    # 3) Normalise tout le monde pour que la vue puisse appeler
+    # 3) Normalise tout le monde pour la vue
     @needs = (db_needs + sim_needs).map { |n| normalize_need(n) }
 
     # 4) Centre de carte
@@ -92,8 +93,16 @@ class NeedsController < ApplicationController
   private
 
   # Transforme un Need AR OU un OpenStruct en OpenStruct “safe”
+  # Important : on ne conserve une id QUE si le record est réellement persisté et id > 0
   def normalize_need(n)
-    id    = (n.respond_to?(:id) && n.id.present?) ? n.id : nil
+    id =
+      if n.respond_to?(:persisted?) && n.persisted? &&
+         n.respond_to?(:id) && n.id.is_a?(Integer) && n.id.positive?
+        n.id
+      else
+        nil
+      end
+
     title = n.respond_to?(:title) && n.title.present? ? n.title : "Besoin d'espace"
     date  = n.respond_to?(:date_needed) && n.date_needed.present? ? n.date_needed : Date.today + 7
     city  = n.respond_to?(:city) && n.city.present? ? n.city : "Paris"
@@ -116,7 +125,7 @@ class NeedsController < ApplicationController
       end
 
     OpenStruct.new(
-      id: id,  # ← clé pour corriger le /needs/null
+      id: id,  # nil pour les besoins simulés ⇒ pas de /needs/-1 possible
       title: title,
       date_needed: date,
       city: city,
@@ -126,22 +135,20 @@ class NeedsController < ApplicationController
     )
   end
 
+  # Besoins simulés : PAS d'ID ici
   def build_simulated_needs
     [
       OpenStruct.new(
-        id: -1,
         city: "Nancy", latitude: 48.6937, longitude: 6.1844,
         title: "Atelier créatif – 15/20 pers.", date_needed: Date.today + 10,
         user: OpenStruct.new(display_name: "Collectif Nancy")
       ),
       OpenStruct.new(
-        id: -2,
         city: "Paris", latitude: 48.8566, longitude: 2.3522,
         title: "Réunion mensuelle", date_needed: Date.today + 5,
         user: OpenStruct.new(display_name: "Association Paris")
       ),
       OpenStruct.new(
-        id: -3,
         city: "Lyon", latitude: 45.7640, longitude: 4.8357,
         title: "Expo photo", date_needed: Date.today + 20,
         user: OpenStruct.new(display_name: "Club Photo")
@@ -151,13 +158,13 @@ class NeedsController < ApplicationController
 
   def city_coords(city)
     lut = {
-      "Paris" => [48.8566, 2.3522],
-      "Lyon" => [45.7640, 4.8357],
-      "Nancy" => [48.6937, 6.1844],
+      "Paris"     => [48.8566, 2.3522],
+      "Lyon"      => [45.7640, 4.8357],
+      "Nancy"     => [48.6937, 6.1844],
       "Marseille" => [43.2965, 5.3698],
-      "Lille" => [50.6292, 3.0573],
-      "Bordeaux" => [44.8378, -0.5792],
-      "Toulouse" => [43.6047, 1.4442],
+      "Lille"     => [50.6292, 3.0573],
+      "Bordeaux"  => [44.8378, -0.5792],
+      "Toulouse"  => [43.6047, 1.4442],
     }
     key = city.to_s.strip
     key = key[0].upcase + key[1..] if key.present?
@@ -184,3 +191,4 @@ class NeedsController < ApplicationController
     }[field] || field.to_s.humanize
   end
 end
+
